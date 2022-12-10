@@ -48,6 +48,10 @@ public class BoardManager : MonoBehaviour
         {
             for (int y = 0; y < ySize; y++)
             {
+                // Change the "currentFruit" to a prefab made fruit randomly
+                int random = Random.Range(0, prefabs.Count);
+                currentFruit = prefabs[random];
+
                 GameObject newFruit = Instantiate(currentFruit, new Vector3(
                                                                 startX + (offset * x),
                                                                 startY + (offset * y),
@@ -57,6 +61,7 @@ public class BoardManager : MonoBehaviour
                 // Add name to each fruit where we indicate in which column and row it is located
                 newFruit.name = string.Format("Fruit[{0}] [{1}]", x, y);
                 newFruit.transform.parent = transform;
+                newFruit.GetComponent<Fruit>().Id = -1;
 
                 fruits[x, y] = newFruit; // Add fruit to the board
             }

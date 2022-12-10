@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1393836645415585426}
+  - component: {fileID: 6003032988174106775}
   m_Layer: 0
   m_Name: Fruit
   m_TagString: Untagged
@@ -32,6 +33,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6003032988174106775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1393836645415585421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be5f38ec85fdceb408ec741bd522a361, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1393836646070208601
 GameObject:
   m_ObjectHideFlags: 0
