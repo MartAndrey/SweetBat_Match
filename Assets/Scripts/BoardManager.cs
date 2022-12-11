@@ -10,14 +10,24 @@ public class BoardManager : MonoBehaviour
     // Check if a fruit is changing
     public bool isShifting { get; set; }
 
+    [Tooltip("All prefabs fruits")]
     [SerializeField] List<GameObject> prefabs = new List<GameObject>();
+    [Tooltip("Reference fruit")]
     [SerializeField] GameObject currentFruit;
+    [Tooltip("Board size in columns(y) and Rows(x)")]
     [SerializeField] int xSize, ySize; // Board size
+    [Tooltip("Where the first fruit appears")]
+    [SerializeField] Transform spawnFruit;
 
+    // All the fruits on the board
     GameObject[,] fruits;
-    
+    Collider2D boardCollider;
+
     // Variable that gives the distance of each fruit on the board
     float offset = 1;
+
+    // Variable in charge of returning true when all the fruits on the board are reviewed 
+    bool checkFruits = false;
 
     void Awake()
     {
@@ -29,6 +39,8 @@ public class BoardManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        boardCollider = GetComponent<Collider2D>();
     }
 
     void Start()
@@ -36,13 +48,19 @@ public class BoardManager : MonoBehaviour
         CreateInitialBoard();
     }
 
+    void Update()
+    {
+        if(!checkFruits)
+            IsFruitTouchingTheBoard(fruits);
+    }
+
     // Create the initial elements or fruits of the board
     void CreateInitialBoard()
     {
         fruits = new GameObject[xSize, ySize]; // Columns and rows of the board
 
-        float startX = transform.position.x;
-        float startY = transform.position.y;
+        float startX = spawnFruit.position.x;
+        float startY = spawnFruit.position.y;
 
         for (int x = 0; x < xSize; x++)
         {
@@ -60,11 +78,30 @@ public class BoardManager : MonoBehaviour
 
                 // Add name to each fruit where we indicate in which column and row it is located
                 newFruit.name = string.Format("Fruit[{0}] [{1}]", x, y);
-                newFruit.transform.parent = transform;
+                newFruit.transform.parent = spawnFruit;
                 newFruit.GetComponent<Fruit>().Id = -1;
 
                 fruits[x, y] = newFruit; // Add fruit to the board
             }
         }
+    }
+
+    // Check if the fruit is on the table, if not, destroy it.
+    void IsFruitTouchingTheBoard(GameObject[,] fruits)
+    {
+        for (int x = 0; x < xSize; x++)
+        {
+            for (int y = 0; y < ySize; y++)
+            {
+                Collider2D currentFruit = fruits[x, y].GetComponent<Collider2D>();
+
+                if (!boardCollider.IsTouching(currentFruit))
+                {
+                    Destroy(currentFruit.gameObject);
+                }
+            }
+        }
+
+        checkFruits = true;
     }
 }
