@@ -50,7 +50,7 @@ public class BoardManager : MonoBehaviour
 
     void Update()
     {
-        if(!checkFruits)
+        if (!checkFruits)
             IsFruitTouchingTheBoard(fruits);
     }
 
@@ -62,24 +62,30 @@ public class BoardManager : MonoBehaviour
         float startX = spawnFruit.position.x;
         float startY = spawnFruit.position.y;
 
+        int idx = -1; // The initial value is temporary
+
         for (int x = 0; x < xSize; x++)
         {
             for (int y = 0; y < ySize; y++)
             {
-                // Change the "currentFruit" to a prefab made fruit randomly
-                int random = Random.Range(0, prefabs.Count);
-                currentFruit = prefabs[random];
+                do
+                {
+                    // Change the "currentFruit" to a prefab made fruit randomly
+                    idx = Random.Range(0, prefabs.Count);
+                } while (NeighborsSameCandy(x, y, idx));
+
+                // int random = Random.Range(0, prefabs.Count);
+                currentFruit = prefabs[idx];
 
                 GameObject newFruit = Instantiate(currentFruit, new Vector3(
                                                                 startX + (offset * x),
                                                                 startY + (offset * y),
                                                                 0),
-                                                                currentFruit.transform.rotation);
+                                                                currentFruit.transform.rotation, spawnFruit);
 
                 // Add name to each fruit where we indicate in which column and row it is located
                 newFruit.name = string.Format("Fruit[{0}] [{1}]", x, y);
-                newFruit.transform.parent = spawnFruit;
-                newFruit.GetComponent<Fruit>().Id = -1;
+                newFruit.GetComponent<Fruit>().Id = idx;
 
                 fruits[x, y] = newFruit; // Add fruit to the board
             }
@@ -104,4 +110,8 @@ public class BoardManager : MonoBehaviour
 
         checkFruits = true;
     }
+
+    // Method in charge of verifying if the fruit is repeated in said column and row
+    bool NeighborsSameCandy(int x, int y, int idx) => (x > 1 && idx == fruits[x - 2, y].GetComponent<Fruit>().Id) ||
+                                                        (y > 1 && idx == fruits[x, y - 2].GetComponent<Fruit>().Id);
 }
