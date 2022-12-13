@@ -23,6 +23,8 @@ public class BoardManager : MonoBehaviour
     GameObject[,] fruits;
     Collider2D boardCollider;
 
+    Fruit selectedFruit;
+
     // Variable that gives the distance of each fruit on the board
     float offset = 1;
 
@@ -51,7 +53,10 @@ public class BoardManager : MonoBehaviour
     void Update()
     {
         if (!checkFruits)
+        {
             IsFruitTouchingTheBoard(fruits);
+            boardCollider.enabled = false;
+        }
     }
 
     // Create the initial elements or fruits of the board
