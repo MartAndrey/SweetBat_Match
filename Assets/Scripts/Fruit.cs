@@ -17,9 +17,29 @@ public class Fruit : MonoBehaviour
 
     SpriteRenderer spriteRenderer;
 
+    // Position to move 
+    Vector3 targetPosition;
+
+    // Time it takes to move to the target
+    float time = 5;
+
     void Awake()
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        targetPosition = Vector3.zero;
+    }
+
+    void Update()
+    {
+        if (targetPosition != Vector3.zero)
+        {
+            this.transform.position = Vector3.Lerp(this.transform.position, targetPosition, time * Time.deltaTime);
+
+            if (transform.position == targetPosition)
+            {
+                targetPosition = Vector3.zero;
+            }
+        }
     }
 
     // Selected Fruit
@@ -45,21 +65,31 @@ public class Fruit : MonoBehaviour
             return;
 
 
-        if (isSelected)
+        if (isSelected) // If the fruit is selected
         {
             DeselectFruit();
         }
         else
         {
-            if (previousSelected == null)
+            if (previousSelected == null) // If there is no fruit selected
             {
                 SelectFruit();
             }
-            else
+            else // If there is fruit selected
             {
+                SwapFruit(previousSelected.gameObject);
                 previousSelected.DeselectFruit();
-                SelectFruit();
             }
         }
+    }
+
+    // Method in charge of changing the position of two fruits
+    public void SwapFruit(GameObject newFruit)
+    {
+        if (spriteRenderer.sprite == newFruit.GetComponentInChildren<SpriteRenderer>().sprite)
+            return;
+
+        this.targetPosition = newFruit.transform.position;
+        newFruit.GetComponent<Fruit>().targetPosition = this.transform.position;
     }
 }
