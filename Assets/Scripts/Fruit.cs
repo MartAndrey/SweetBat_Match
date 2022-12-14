@@ -61,6 +61,7 @@ public class Fruit : MonoBehaviour
     // Method in charge of detecting the mouse or the touch
     void OnMouseDown()
     {
+        Debug.Log("OnMouseDown");
         if (spriteRenderer.sprite == null || BoardManager.Instance.isShifting)
             return;
 
@@ -77,8 +78,16 @@ public class Fruit : MonoBehaviour
             }
             else // If there is fruit selected
             {
-                SwapFruit(previousSelected.gameObject);
-                previousSelected.DeselectFruit();
+                if (CanSwipe())
+                {
+                    SwapFruit(previousSelected.gameObject);
+                    previousSelected.DeselectFruit();
+                }
+                else
+                {
+                    previousSelected.DeselectFruit();
+                    SelectFruit();
+                }
             }
         }
     }
@@ -91,5 +100,39 @@ public class Fruit : MonoBehaviour
 
         this.targetPosition = newFruit.transform.position;
         newFruit.GetComponent<Fruit>().targetPosition = this.transform.position;
+    }
+
+    // Returns the neighboring fruit in that specified direction
+    GameObject GetNeighbor(Vector2 direction)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction);
+
+        if (hit.collider != null)
+        {
+            return hit.collider.gameObject;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    // Returns neighboring fruits in all directions
+    List<GameObject> GetAllNeighbors()
+    {
+        List<GameObject> neighbors = new List<GameObject>();
+
+        foreach (Vector2 direction in adjacentDirections)
+        {
+            neighbors.Add(GetNeighbor(direction));
+        }
+
+        return neighbors;
+    }
+
+    // Check if the fruit is a neighbor to be able to change the positions
+    bool CanSwipe()
+    {
+        return GetAllNeighbors().Contains(previousSelected.gameObject);
     }
 }
