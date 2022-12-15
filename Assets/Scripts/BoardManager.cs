@@ -25,6 +25,9 @@ public class BoardManager : MonoBehaviour
 
     Fruit selectedFruit;
 
+    // minimum number of fruits to combine including the current one
+    const int MinFruitsToMatch = 2;
+
     // Variable that gives the distance of each fruit on the board
     float offset = 1;
 
@@ -119,4 +122,11 @@ public class BoardManager : MonoBehaviour
     // Method in charge of verifying if the fruit is repeated in said column and row
     bool NeighborsSameCandy(int x, int y, int idx) => (x > 1 && idx == fruits[x - 2, y].GetComponent<Fruit>().Id) ||
                                                         (y > 1 && idx == fruits[x, y - 2].GetComponent<Fruit>().Id);
+
+    // List<GameObject> FindMatch(Vector2 direction)
+    // {
+    //     List<GameObject> matchingCandies = new List<GameObject>();
+
+    //     return matchingCandies;
+    // }
 }

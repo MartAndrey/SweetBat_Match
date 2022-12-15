@@ -61,7 +61,6 @@ public class Fruit : MonoBehaviour
     // Method in charge of detecting the mouse or the touch
     void OnMouseDown()
     {
-        Debug.Log("OnMouseDown");
         if (spriteRenderer.sprite == null || BoardManager.Instance.isShifting)
             return;
 
@@ -131,8 +130,31 @@ public class Fruit : MonoBehaviour
     }
 
     // Check if the fruit is a neighbor to be able to change the positions
-    bool CanSwipe()
+    bool CanSwipe() => GetAllNeighbors().Contains(previousSelected.gameObject);
+
+    // Find 3 or more fruits to match
+    List<GameObject> FindMatch(Vector2 direction)
     {
-        return GetAllNeighbors().Contains(previousSelected.gameObject);
+        List<GameObject> matchingFruits = new List<GameObject>();
+
+        // Query the neighbors in the direction of the parameter
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction);
+
+        while(hit.collider != null && hit.collider.GetComponent<Fruit>().Id == Id)
+        {
+            matchingFruits.Add(hit.collider.gameObject);
+            hit = Physics2D.Raycast(hit.collider.transform.position, direction); 
+        }
+
+        // Consultation of neighbors in the opposite direction
+        hit = Physics2D.Raycast(transform.position, -direction);
+
+        while(hit.collider != null && hit.collider.GetComponent<Fruit>().Id == Id)
+        {
+            matchingFruits.Add(hit.collider.gameObject);
+            hit = Physics2D.Raycast(hit.collider.transform.position, -direction); 
+        }
+
+        return matchingFruits; 
     }
 }
