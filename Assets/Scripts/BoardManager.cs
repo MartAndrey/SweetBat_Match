@@ -10,6 +10,9 @@ public class BoardManager : MonoBehaviour
     // Check if a fruit is changing
     public bool isShifting { get; set; }
 
+    // minimum number of fruits to combine including the current one
+    public const int MinFruitsToMatch = 2;
+
     [Tooltip("All prefabs fruits")]
     [SerializeField] List<GameObject> prefabs = new List<GameObject>();
     [Tooltip("Reference fruit")]
@@ -24,9 +27,6 @@ public class BoardManager : MonoBehaviour
     Collider2D boardCollider;
 
     Fruit selectedFruit;
-
-    // minimum number of fruits to combine including the current one
-    const int MinFruitsToMatch = 2;
 
     // Variable that gives the distance of each fruit on the board
     float offset = 1;

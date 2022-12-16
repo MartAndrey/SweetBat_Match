@@ -80,7 +80,9 @@ public class Fruit : MonoBehaviour
                 if (CanSwipe())
                 {
                     SwapFruit(previousSelected.gameObject);
+                    previousSelected.Invoke("FindAllMatches", .6f);
                     previousSelected.DeselectFruit();
+                    Invoke("FindAllMatches", .6f);
                 }
                 else
                 {
@@ -132,29 +134,54 @@ public class Fruit : MonoBehaviour
     // Check if the fruit is a neighbor to be able to change the positions
     bool CanSwipe() => GetAllNeighbors().Contains(previousSelected.gameObject);
 
-    // Find 3 or more fruits to match
+    // Method returns the neighboring fruits that match
     List<GameObject> FindMatch(Vector2 direction)
     {
         List<GameObject> matchingFruits = new List<GameObject>();
 
         // Query the neighbors in the direction of the parameter
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction);
+        RaycastHit2D hit = Physics2D.Raycast(this.transform.position, direction);
 
-        while(hit.collider != null && hit.collider.GetComponent<Fruit>().Id == Id)
+        while (hit.collider != null && hit.collider.GetComponent<Fruit>().Id == Id)
         {
             matchingFruits.Add(hit.collider.gameObject);
-            hit = Physics2D.Raycast(hit.collider.transform.position, direction); 
+            hit = Physics2D.Raycast(hit.collider.transform.position, direction);
         }
 
-        // Consultation of neighbors in the opposite direction
-        hit = Physics2D.Raycast(transform.position, -direction);
+        return matchingFruits;
+    }
 
-        while(hit.collider != null && hit.collider.GetComponent<Fruit>().Id == Id)
+    // Method in charge of cleaning the fruits and returns true if it is the case
+    bool ClearMatch(Vector2[] directions)
+    {
+        List<GameObject> matchingFruits = new List<GameObject>();
+
+        foreach (Vector2 direction in directions)
         {
-            matchingFruits.Add(hit.collider.gameObject);
-            hit = Physics2D.Raycast(hit.collider.transform.position, -direction); 
+            matchingFruits.AddRange(FindMatch(direction));
         }
 
-        return matchingFruits; 
+        if (matchingFruits.Count >= BoardManager.MinFruitsToMatch)
+        {
+            foreach (GameObject fruit in matchingFruits)
+            {
+                fruit.SetActive(false);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+
+    // Method in charge of looking for the fruits horizontally and vertically 
+    void FindAllMatches()
+    {
+        bool hMatch = ClearMatch(new Vector2[2] { Vector2.left, Vector2.right });
+        bool vMatch = ClearMatch(new Vector2[2] { Vector2.up, Vector2.down });
+
+        if (hMatch || vMatch)
+            gameObject.SetActive(false);
     }
 }
