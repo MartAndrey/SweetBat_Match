@@ -123,10 +123,56 @@ public class BoardManager : MonoBehaviour
     bool NeighborsSameCandy(int x, int y, int idx) => (x > 1 && idx == fruits[x - 2, y].GetComponent<Fruit>().Id) ||
                                                         (y > 1 && idx == fruits[x, y - 2].GetComponent<Fruit>().Id);
 
-    // List<GameObject> FindMatch(Vector2 direction)
-    // {
-    //     List<GameObject> matchingCandies = new List<GameObject>();
+    public IEnumerator FindNullFruits()
+    {
+        yield return new WaitForSeconds(0.7f);
 
-    //     return matchingCandies;
-    // }
+        for (int x = 0; x < xSize; x++)
+        {
+            for (int y = 0; y < ySize; y++)
+            {
+                if (fruits[x, y] != null && !fruits[x, y].activeSelf)
+                {
+                    yield return StartCoroutine(MakeFruitsFall(x, y));
+                    break;
+                }
+            }
+        }
+    }
+
+    IEnumerator MakeFruitsFall(int x, int yStart, float shiftDelay = 0.05f)
+    {
+        isShifting = true;
+
+        List<GameObject> boardFruits = new List<GameObject>();
+        int disabledFruits = 0;
+
+        for (int y = yStart; y < ySize; y++)
+        {
+            if (fruits[x, y] != null)
+            {
+                GameObject boardFruit = fruits[x, y];
+
+                if (!boardFruit.activeSelf)
+                {
+                    disabledFruits++;
+                }
+
+                boardFruits.Add(boardFruit);
+            }
+        }
+
+        for (int i = 0; i < disabledFruits; i++)
+        {
+            yield return new WaitForSeconds(shiftDelay);
+
+            for (int j = 0; j < boardFruits.Count - 1; j++)
+            {
+                boardFruits[j] = boardFruits[j + 1];
+                boardFruits[j + 1].SetActive(false);
+            }
+        }
+
+        isShifting = false;
+    }
 }

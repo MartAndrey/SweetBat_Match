@@ -83,6 +83,9 @@ public class Fruit : MonoBehaviour
                     previousSelected.Invoke("FindAllMatches", .6f);
                     previousSelected.DeselectFruit();
                     Invoke("FindAllMatches", .6f);
+
+                    StopCoroutine(BoardManager.Instance.FindNullFruits());
+                    StartCoroutine(BoardManager.Instance.FindNullFruits());
                 }
                 else
                 {
