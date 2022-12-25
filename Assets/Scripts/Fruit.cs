@@ -7,6 +7,8 @@ public class Fruit : MonoBehaviour
     // Unique fruit identifier
     public int Id { get; set; }
 
+    public Vector3 TargetPosition { get { return targetPosition; } set { targetPosition = value; } }
+
     // Variables that refer to the "fruits" when is selected or which is the last one that was selected
     static Color selectedColor = new Color(.5f, .5f, .5f, 1);
     static Fruit previousSelected = null;
@@ -21,7 +23,10 @@ public class Fruit : MonoBehaviour
     Vector3 targetPosition;
 
     // Time it takes to move to the target
-    float time = 5;
+    float time = 38;
+
+    // Time it takes to change the positions of the fruits when they are moved
+    float timeChangePositionFruits  = 0.2f;
 
     void Awake()
     {
@@ -80,12 +85,12 @@ public class Fruit : MonoBehaviour
                 if (CanSwipe())
                 {
                     SwapFruit(previousSelected.gameObject);
-                    previousSelected.Invoke("FindAllMatches", .6f);
+                    previousSelected.Invoke("FindAllMatches", timeChangePositionFruits);
                     previousSelected.DeselectFruit();
-                    Invoke("FindAllMatches", .6f);
+                    Invoke("FindAllMatches", timeChangePositionFruits);
 
-                    StopCoroutine(BoardManager.Instance.FindNullFruits());
-                    StartCoroutine(BoardManager.Instance.FindNullFruits());
+                    StopCoroutine(BoardManager.Instance.FindDisableFruits());
+                    StartCoroutine(BoardManager.Instance.FindDisableFruits());
                 }
                 else
                 {
@@ -104,6 +109,35 @@ public class Fruit : MonoBehaviour
 
         this.targetPosition = newFruit.transform.position;
         newFruit.GetComponent<Fruit>().targetPosition = this.transform.position;
+
+        MoveFruitsPositionOfFruits(newFruit, this.gameObject);
+    }
+
+    // Method that changes the position of the 2 fruits in the "fruit" array
+    void MoveFruitsPositionOfFruits(GameObject previousFruits, GameObject currentFruit)
+    {
+        string name = currentFruit.name; // Saves the name of the second selected fruit
+
+        for (int x = 0; x < BoardManager.Instance.XSize; x++)
+        {
+            for (int y = 0; y < BoardManager.Instance.YSize; y++)
+            {
+                GameObject fruit = BoardManager.Instance.Fruits[x, y];
+
+                if (fruit == previousFruits)
+                {
+                    // Change the position and name of the previously selected fruit to the currently selected 
+                    BoardManager.Instance.Fruits[x, y] = currentFruit; 
+                    BoardManager.Instance.Fruits[x, y].name = previousFruits.name;
+                }
+                else if (fruit == currentFruit)
+                {
+                    // Change the position and name of the fruit currently selected to the previously selected
+                    BoardManager.Instance.Fruits[x, y] = previousFruits;
+                    BoardManager.Instance.Fruits[x, y].name = name;
+                }
+            }
+        }
     }
 
     // Returns the neighboring fruit in that specified direction
@@ -117,7 +151,7 @@ public class Fruit : MonoBehaviour
         }
         else
         {
-            return null;
+            return null;    
         }
     }
 
@@ -168,7 +202,7 @@ public class Fruit : MonoBehaviour
         {
             foreach (GameObject fruit in matchingFruits)
             {
-                fruit.SetActive(false);
+                fruit.GetComponentInChildren<SpriteRenderer>().enabled = false;
             }
 
             return true;
@@ -185,6 +219,6 @@ public class Fruit : MonoBehaviour
         bool vMatch = ClearMatch(new Vector2[2] { Vector2.up, Vector2.down });
 
         if (hMatch || vMatch)
-            gameObject.SetActive(false);
+            gameObject.GetComponentInChildren<SpriteRenderer>().enabled = false;
     }
 }

@@ -7,11 +7,15 @@ public class BoardManager : MonoBehaviour
     // Singleton
     public static BoardManager Instance;
 
-    // Check if a fruit is changing
-    public bool isShifting { get; set; }
-
     // minimum number of fruits to combine including the current one
     public const int MinFruitsToMatch = 2;
+
+    // Check if a fruit is changing
+    public bool isShifting { get; set; }
+    public int XSize { get { return xSize; } }
+    public int YSize { get { return ySize; } }
+
+    public GameObject[,] Fruits { get { return fruits; } set { fruits = value; } }
 
     [Tooltip("All prefabs fruits")]
     [SerializeField] List<GameObject> prefabs = new List<GameObject>();
@@ -30,6 +34,9 @@ public class BoardManager : MonoBehaviour
 
     // Variable that gives the distance of each fruit on the board
     float offset = 1;
+
+    // Time it takes to change the positions of the fruits when they are moved
+    float timeChangePositionFruits = 0.2f;
 
     // Variable in charge of returning true when all the fruits on the board are reviewed 
     bool checkFruits = false;
@@ -123,15 +130,16 @@ public class BoardManager : MonoBehaviour
     bool NeighborsSameCandy(int x, int y, int idx) => (x > 1 && idx == fruits[x - 2, y].GetComponent<Fruit>().Id) ||
                                                         (y > 1 && idx == fruits[x, y - 2].GetComponent<Fruit>().Id);
 
-    public IEnumerator FindNullFruits()
+    // Search in each row and column what space there is, that is, what fruit is deactivated
+    public IEnumerator FindDisableFruits()
     {
-        yield return new WaitForSeconds(0.7f);
+        yield return new WaitForSeconds(timeChangePositionFruits); // Time that waits for it to finish changing the position of the fruits
 
         for (int x = 0; x < xSize; x++)
         {
             for (int y = 0; y < ySize; y++)
             {
-                if (fruits[x, y] != null && !fruits[x, y].activeSelf)
+                if (fruits[x, y] != null && fruits[x, y].GetComponentInChildren<SpriteRenderer>().enabled == false)
                 {
                     yield return StartCoroutine(MakeFruitsFall(x, y));
                     break;
@@ -140,7 +148,8 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    IEnumerator MakeFruitsFall(int x, int yStart, float shiftDelay = 0.05f)
+    // Makes the fruits fall to occupy an empty position
+    IEnumerator MakeFruitsFall(int x, int yStart, float shiftDelay = 0.1f)
     {
         isShifting = true;
 
@@ -153,7 +162,7 @@ public class BoardManager : MonoBehaviour
             {
                 GameObject boardFruit = fruits[x, y];
 
-                if (!boardFruit.activeSelf)
+                if (boardFruit.GetComponentInChildren<SpriteRenderer>().enabled == false)
                 {
                     disabledFruits++;
                 }
@@ -164,15 +173,33 @@ public class BoardManager : MonoBehaviour
 
         for (int i = 0; i < disabledFruits; i++)
         {
-            yield return new WaitForSeconds(shiftDelay);
+            yield return new WaitForSeconds(shiftDelay);    
+            // yield return new WaitForSeconds(timeChangePositionFruits);
 
             for (int j = 0; j < boardFruits.Count - 1; j++)
             {
-                boardFruits[j] = boardFruits[j + 1];
-                boardFruits[j + 1].SetActive(false);
+                boardFruits[j + 1].GetComponent<Fruit>().TargetPosition = boardFruits[j].transform.position;
+                // boardFruits[j + 1].SetActive(false);
             }
         }
 
         isShifting = false;
     }
+
+    // GameObject GetNewFruit(int x, int y)
+    // {
+    //     List<GameObject> possibleFruits = new List<GameObject>();
+    //     possibleFruits.AddRange(prefabs);
+
+    //     if (x > 0)
+    //         possibleFruits.Remove(fruits[x - 1, y]);
+
+    //     if (x < xSize - 1)
+    //         possibleFruits.Remove(fruits[x + 1, y]);
+
+    //     if (y > 0)
+    //         possibleFruits.Remove(fruits[x, y - 1]);
+
+    //     return possibleFruits[Random.Range(0, possibleFruits.Count)];
+    // }
 }
