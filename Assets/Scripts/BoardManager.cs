@@ -158,7 +158,7 @@ public class BoardManager : MonoBehaviour
 
         for (int y = yStart; y < ySize; y++)
         {
-            if (fruits[x, y] != null)
+            if (fruits[x, y] != null && fruits[x, y].activeSelf)
             {
                 GameObject boardFruit = fruits[x, y];
 
@@ -173,33 +173,55 @@ public class BoardManager : MonoBehaviour
 
         for (int i = 0; i < disabledFruits; i++)
         {
-            yield return new WaitForSeconds(shiftDelay);    
-            // yield return new WaitForSeconds(timeChangePositionFruits);
+            int y = yStart; // Traverse the rows of the board
+
+            yield return new WaitForSeconds(shiftDelay);
 
             for (int j = 0; j < boardFruits.Count - 1; j++)
             {
-                boardFruits[j + 1].GetComponent<Fruit>().TargetPosition = boardFruits[j].transform.position;
-                // boardFruits[j + 1].SetActive(false);
+                //string nameFruit = fruits[x, y].name;
+                boardFruits[j + 1].GetComponent<Fruit>().TargetPosition = boardFruits[j].transform.position; // Move the fruit down
+                fruits[x, y] = fruits[x, y + 1]; // Change the previously moved fruit to the corresponding position in the array
+                //fruits[x, y].name = nameFruit;
+                if (j == boardFruits.Count - 2) 
+                    fruits[x, y + 1] = null; // Generates a new fruit
+
+                y++;
             }
         }
+
+        DisableFruits(boardFruits);
 
         isShifting = false;
     }
 
-    // GameObject GetNewFruit(int x, int y)
-    // {
-    //     List<GameObject> possibleFruits = new List<GameObject>();
-    //     possibleFruits.AddRange(prefabs);
+    // Deactivate the fruits that were eliminated
+    void DisableFruits(List<GameObject> fruits)
+    {
+        for (int i = 0; i < fruits.Count; i++)
+        {
+            if (fruits[i].GetComponentInChildren<SpriteRenderer>().enabled == false)
+            {
+                fruits[i].SetActive(false);
+            }
+        }
+    }
 
-    //     if (x > 0)
-    //         possibleFruits.Remove(fruits[x - 1, y]);
+    // Generates a new fruit
+    GameObject GetNewFruit(int x, int y)
+    {
+        List<GameObject> possibleFruits = new List<GameObject>();
+        possibleFruits.AddRange(prefabs);
 
-    //     if (x < xSize - 1)
-    //         possibleFruits.Remove(fruits[x + 1, y]);
+        if (x > 0)
+            possibleFruits.Remove(fruits[x - 1, y]);
 
-    //     if (y > 0)
-    //         possibleFruits.Remove(fruits[x, y - 1]);
+        if (x < xSize - 1)
+            possibleFruits.Remove(fruits[x + 1, y]);
 
-    //     return possibleFruits[Random.Range(0, possibleFruits.Count)];
-    // }
+        if (y > 0)
+            possibleFruits.Remove(fruits[x, y - 1]);
+
+        return possibleFruits[Random.Range(0, possibleFruits.Count)];
+    }
 }
