@@ -6,6 +6,8 @@ public class ObjectPooler : MonoBehaviour
 {
     public static ObjectPooler Instance;
 
+    public List<GameObject> FruitList { get { return fruitList; } set { fruitList = value; } }
+
     [Tooltip("All fruit prefabs")]
     [SerializeField] List<GameObject> fruitPrefabs;
     [Tooltip("Fruit list for object pooler")]
@@ -34,7 +36,6 @@ public class ObjectPooler : MonoBehaviour
         {
             for (int i = 0; i < fruitPrefabs.Count; i++)
             {
-                Debug.Log("Hi");
                 for (int j = 0; j < amount; j++)
                 {
                     GameObject fruit = Instantiate(fruitPrefabs[i], gameObject.transform);
@@ -55,11 +56,11 @@ public class ObjectPooler : MonoBehaviour
     }
 
     // Method in charge of delivering or returning a fruit from the grouper of objects.
-    public GameObject GetFruitToPool()
+    public GameObject GetFruitToPool(Sprite fruit)
     {
         for (int i = 0; i < fruitList.Count; i++)
         {
-            if (!fruitList[i].activeSelf)
+            if (!fruitList[i].activeSelf && fruitList[i].GetComponentInChildren<SpriteRenderer>().sprite == fruit)
             {
                 fruitList[i].SetActive(false);
                 return fruitList[i];
@@ -68,7 +69,7 @@ public class ObjectPooler : MonoBehaviour
 
         AddFruitToPool(1, true);
 
-        fruitList[fruitList.Count - 1].SetActive(true);
+        fruitList[fruitList.Count - 1].SetActive(false);
         return fruitList[fruitList.Count - 1];
     }
 }

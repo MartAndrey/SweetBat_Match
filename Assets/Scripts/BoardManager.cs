@@ -183,32 +183,43 @@ public class BoardManager : MonoBehaviour
                 boardFruits[j + 1].GetComponent<Fruit>().TargetPosition = boardFruits[j].transform.position; // Move the fruit down
                 fruits[x, y] = fruits[x, y + 1]; // Change the previously moved fruit to the corresponding position in the array
                 //fruits[x, y].name = nameFruit;
-                if (j == boardFruits.Count - 2) 
-                    fruits[x, y + 1] = null; // Generates a new fruit
+                if (j == boardFruits.Count - 2)
+                {
+                    fruits[x, y + 1] = GetNewFruit(x, ySize - 1); // Generates a new fruit
+
+                    yield return new WaitForSeconds(timeChangePositionFruits);
+
+                    fruits[x, y + 1].transform.position = new Vector2(fruits[x, y].transform.position.x, fruits[x, y].transform.position.y + 1);
+                    fruits[x, y + 1].SetActive(true);
+                } 
 
                 y++;
             }
         }
 
-        DisableFruits(boardFruits);
+        AddFruitsToPool(boardFruits);
 
         isShifting = false;
     }
 
-    // Deactivate the fruits that were eliminated
-    void DisableFruits(List<GameObject> fruits)
+    // Deactivate the fruits that were eliminated and add to object pooler
+    void AddFruitsToPool(List<GameObject> fruits)
     {
         for (int i = 0; i < fruits.Count; i++)
         {
             if (fruits[i].GetComponentInChildren<SpriteRenderer>().enabled == false)
             {
+                fruits[i].GetComponentInChildren<SpriteRenderer>().enabled = true;
                 fruits[i].SetActive(false);
+                // Add to object pooler
+                ObjectPooler.Instance.FruitList.Add(fruits[i]);
+                fruits[i].transform.parent = ObjectPooler.Instance.gameObject.transform;
             }
         }
     }
 
-    // Generates a new fruit
-    GameObject GetNewFruit(int x, int y)
+    // Generates a possible new fruit
+    Sprite GetPossibleNewFruit(int x, int y)
     {
         List<GameObject> possibleFruits = new List<GameObject>();
         possibleFruits.AddRange(prefabs);
@@ -222,6 +233,14 @@ public class BoardManager : MonoBehaviour
         if (y > 0)
             possibleFruits.Remove(fruits[x, y - 1]);
 
-        return possibleFruits[Random.Range(0, possibleFruits.Count)];
+        return possibleFruits[Random.Range(0, possibleFruits.Count)].GetComponentInChildren<SpriteRenderer>().sprite;
+    }
+
+    // Generates a new fruit
+    GameObject GetNewFruit(int x, int y)
+    {
+        Sprite newFruit = GetPossibleNewFruit(x, y);
+
+        return ObjectPooler.Instance.GetFruitToPool(newFruit);
     }
 }
