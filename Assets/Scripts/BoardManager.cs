@@ -171,6 +171,10 @@ public class BoardManager : MonoBehaviour
             }
         }
 
+        bool secondTime = false; // Indicates if it is the second fruit that appears
+        List<GameObject> listNewFruit = new List<GameObject>(); // Save the new fruits that appear
+        Vector2 positionNewFruit = new Vector2(); // Save the position of the new fruit
+
         for (int i = 0; i < disabledFruits; i++)
         {
             int y = yStart; // Traverse the rows of the board
@@ -186,13 +190,34 @@ public class BoardManager : MonoBehaviour
                 if (j == boardFruits.Count - 2)
                 {
                     fruits[x, y + 1] = GetNewFruit(x, ySize - 1); // Generates a new fruit
+                    listNewFruit.Add(fruits[x, y + 1]); // We add the new fruit to the list
 
                     yield return new WaitForSeconds(timeChangePositionFruits);
 
-                    fruits[x, y + 1].transform.position = new Vector2(fruits[x, y].transform.position.x, fruits[x, y].transform.position.y + 1);
-                    fruits[x, y + 1].SetActive(true);
-                } 
+                    // We save the position of the new fruit, where it always has to appear when instantiated
+                    if (positionNewFruit == Vector2.zero)
+                    {
+                        positionNewFruit = new Vector2(fruits[x, y].transform.position.x, fruits[x, y].transform.position.y + offset);
+                        fruits[x, y + 1].transform.position = positionNewFruit;
+                    }
+                    else
+                    {
+                        fruits[x, y + 1].transform.position = positionNewFruit;
+                    }
 
+                    fruits[x, y + 1].SetActive(true);
+
+                    // If it is the second fruit that appears, we start by moving the new fruits one position down
+                    // In case it is just a new fruit that appears, we simply leave it in the same position
+                    if (secondTime)
+                    {
+                        for (int k = 0; k < listNewFruit.Count - 1; k++)
+                        {
+                            listNewFruit[k].transform.position = new Vector2(listNewFruit[k].transform.position.x, listNewFruit[k].transform.position.y - offset);
+                        }
+                    }
+                    secondTime = true;
+                }
                 y++;
             }
         }

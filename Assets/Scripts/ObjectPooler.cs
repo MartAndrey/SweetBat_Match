@@ -62,14 +62,12 @@ public class ObjectPooler : MonoBehaviour
         {
             if (!fruitList[i].activeSelf && fruitList[i].GetComponentInChildren<SpriteRenderer>().sprite == fruit)
             {
-                fruitList[i].SetActive(false);
                 return fruitList[i];
             }
         }
 
         AddFruitToPool(1, true);
 
-        fruitList[fruitList.Count - 1].SetActive(false);
         return fruitList[fruitList.Count - 1];
     }
 }
