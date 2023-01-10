@@ -26,7 +26,7 @@ public class Fruit : MonoBehaviour
     float time = 38;
 
     // Time it takes to change the positions of the fruits when they are moved
-    float timeChangePositionFruits  = 0.2f;
+    float timeChangePositionFruits = 0.2f;
 
     void Awake()
     {
@@ -127,7 +127,7 @@ public class Fruit : MonoBehaviour
                 if (fruit == previousFruits)
                 {
                     // Change the position and name of the previously selected fruit to the currently selected 
-                    BoardManager.Instance.Fruits[x, y] = currentFruit; 
+                    BoardManager.Instance.Fruits[x, y] = currentFruit;
                     BoardManager.Instance.Fruits[x, y].name = previousFruits.name;
                 }
                 else if (fruit == currentFruit)
@@ -151,7 +151,7 @@ public class Fruit : MonoBehaviour
         }
         else
         {
-            return null;    
+            return null;
         }
     }
 
@@ -211,14 +211,17 @@ public class Fruit : MonoBehaviour
         return false;
     }
 
-
     // Method in charge of looking for the fruits horizontally and vertically 
-    void FindAllMatches()
+    public void FindAllMatches()
     {
         bool hMatch = ClearMatch(new Vector2[2] { Vector2.left, Vector2.right });
         bool vMatch = ClearMatch(new Vector2[2] { Vector2.up, Vector2.down });
 
         if (hMatch || vMatch)
+        {
             gameObject.GetComponentInChildren<SpriteRenderer>().enabled = false;
+            // StopCoroutine(BoardManager.Instance.FindDisableFruits());
+            // StartCoroutine(BoardManager.Instance.FindDisableFruits());
+        }
     }
 }

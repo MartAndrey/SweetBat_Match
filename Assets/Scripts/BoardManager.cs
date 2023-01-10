@@ -146,6 +146,15 @@ public class BoardManager : MonoBehaviour
                 }
             }
         }
+        // yield return new WaitForSeconds(1);
+        // for (int x = 0; x < xSize; x++)
+        // {
+        //     for (int y = 0; y < ySize; y++)
+        //     {
+        //         Debug.Log("Hi");
+        //         fruits[x, y].GetComponent<Fruit>().FindAllMatches();
+        //     }
+        // }
     }
 
     // Makes the fruits fall to occupy an empty position
@@ -190,6 +199,7 @@ public class BoardManager : MonoBehaviour
                 if (j == boardFruits.Count - 2)
                 {
                     fruits[x, y + 1] = GetNewFruit(x, ySize - 1); // Generates a new fruit
+                    fruits[x, y + 1].GetComponent<Fruit>().Id = SetFruitId(fruits[x, y + 1]);
                     listNewFruit.Add(fruits[x, y + 1]); // We add the new fruit to the list
 
                     yield return new WaitForSeconds(timeChangePositionFruits);
@@ -225,6 +235,21 @@ public class BoardManager : MonoBehaviour
         AddFruitsToPool(boardFruits);
 
         isShifting = false;
+    }
+
+    int SetFruitId(GameObject fruit)
+    {
+        for (int i = 0; i < prefabs.Count; i++)
+        {
+            GameObject newFruit = prefabs[i];
+
+            if (fruit.GetComponentInChildren<SpriteRenderer>().sprite == newFruit.GetComponentInChildren<SpriteRenderer>().sprite)
+            {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     // Deactivate the fruits that were eliminated and add to object pooler

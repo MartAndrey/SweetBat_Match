@@ -74,7 +74,7 @@ MonoBehaviour:
   m_MinSize: {x: 400, y: 200}
   m_MaxSize: {x: 32384, y: 16192}
   vertical: 0
-  controlID: 51
+  controlID: 110
 --- !u!114 &4
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -450,7 +450,7 @@ MonoBehaviour:
       oldMaxSizes: 
       oldSplitSize: 0
     m_HorizontalSplitter:
-      ID: 177
+      ID: 206
       splitterInitialOffset: 0
       currentActiveSplitter: -1
       realSizes:
@@ -533,8 +533,8 @@ MonoBehaviour:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 0e620000
-    m_LastClickedID: 25102
+    m_SelectedIDs: ba780000
+    m_LastClickedID: 30906
     m_ExpandedIDs: 00000000d261000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -588,8 +588,8 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 
-    m_LastClickedInstanceID: 0
+    m_SelectedInstanceIDs: 24eeffff
+    m_LastClickedInstanceID: -4572
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: c6230000
     m_RenameOverlay:
@@ -691,9 +691,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 
-      m_LastClickedID: 0
-      m_ExpandedIDs: 4ce6feff4efdfeff5efdfeff8c57ffff0c58ffff089cffffdae0ffff26fbffffb4600000b8600000c2600000d8600000
+      m_SelectedIDs: ce600000
+      m_LastClickedID: 24782
+      m_ExpandedIDs: a673ffff827bffff927bffff027cffff427dffff327effffd27effff0ce1ffff2eeeffff26fbffffb4600000b8600000c2600000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -975,9 +975,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: -0.3972355, y: -2.3871448, z: -0.07378008}
+    m_Target: {x: 1.7188274, y: -0.66096926, z: -0.054563213}
     speed: 2
-    m_Value: {x: -0.3972355, y: -2.3871448, z: -0.07378008}
+    m_Value: {x: 1.7188274, y: -0.66096926, z: -0.054563213}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1027,9 +1027,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 7.0060554
+    m_Target: 5.5006595
     speed: 2
-    m_Value: 7.0060554
+    m_Value: 5.5006595
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -1120,7 +1120,7 @@ MonoBehaviour:
     m_HSlider: 0
     m_VSlider: 0
     m_IgnoreScrollWheelUntilClicked: 0
-    m_EnableMouseInput: 0
+    m_EnableMouseInput: 1
     m_EnableSliderZoomHorizontal: 0
     m_EnableSliderZoomVertical: 0
     m_UniformScale: 1
