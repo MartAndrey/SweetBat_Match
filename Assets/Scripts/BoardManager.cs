@@ -133,8 +133,6 @@ public class BoardManager : MonoBehaviour
     // Search in each row and column what space there is, that is, what fruit is deactivated
     public IEnumerator FindDisableFruits()
     {
-        yield return new WaitForSeconds(timeChangePositionFruits); // Time that waits for it to finish changing the position of the fruits
-
         for (int x = 0; x < xSize; x++)
         {
             for (int y = 0; y < ySize; y++)
@@ -146,15 +144,18 @@ public class BoardManager : MonoBehaviour
                 }
             }
         }
-        // yield return new WaitForSeconds(1);
-        // for (int x = 0; x < xSize; x++)
-        // {
-        //     for (int y = 0; y < ySize; y++)
-        //     {
-        //         Debug.Log("Hi");
-        //         fruits[x, y].GetComponent<Fruit>().FindAllMatches();
-        //     }
-        // }
+
+        // Debug.Log("Hi");
+        for (int x = 0; x < xSize; x++)
+        {
+            for (int y = 0; y < ySize; y++)
+            {
+                if (fruits[x, y] != null)
+                {
+                    fruits[x, y].GetComponent<Fruit>().FindAllMatches();
+                }
+            }
+        }
     }
 
     // Makes the fruits fall to occupy an empty position
@@ -167,7 +168,7 @@ public class BoardManager : MonoBehaviour
 
         for (int y = yStart; y < ySize; y++)
         {
-            if (fruits[x, y] != null && fruits[x, y].activeSelf)
+            if (fruits[x, y] != null)
             {
                 GameObject boardFruit = fruits[x, y];
 
@@ -188,8 +189,6 @@ public class BoardManager : MonoBehaviour
         {
             int y = yStart; // Traverse the rows of the board
 
-            yield return new WaitForSeconds(shiftDelay);
-
             for (int j = 0; j < boardFruits.Count - 1; j++)
             {
                 //string nameFruit = fruits[x, y].name;
@@ -199,7 +198,6 @@ public class BoardManager : MonoBehaviour
                 if (j == boardFruits.Count - 2)
                 {
                     fruits[x, y + 1] = GetNewFruit(x, ySize - 1); // Generates a new fruit
-                    fruits[x, y + 1].GetComponent<Fruit>().Id = SetFruitId(fruits[x, y + 1]);
                     listNewFruit.Add(fruits[x, y + 1]); // We add the new fruit to the list
 
                     yield return new WaitForSeconds(timeChangePositionFruits);
@@ -235,21 +233,6 @@ public class BoardManager : MonoBehaviour
         AddFruitsToPool(boardFruits);
 
         isShifting = false;
-    }
-
-    int SetFruitId(GameObject fruit)
-    {
-        for (int i = 0; i < prefabs.Count; i++)
-        {
-            GameObject newFruit = prefabs[i];
-
-            if (fruit.GetComponentInChildren<SpriteRenderer>().sprite == newFruit.GetComponentInChildren<SpriteRenderer>().sprite)
-            {
-                return i;
-            }
-        }
-
-        return -1;
     }
 
     // Deactivate the fruits that were eliminated and add to object pooler

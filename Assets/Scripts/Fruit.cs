@@ -5,7 +5,7 @@ using UnityEngine;
 public class Fruit : MonoBehaviour
 {
     // Unique fruit identifier
-    public int Id { get; set; }
+    public int Id;
 
     public Vector3 TargetPosition { get { return targetPosition; } set { targetPosition = value; } }
 
@@ -23,10 +23,10 @@ public class Fruit : MonoBehaviour
     Vector3 targetPosition;
 
     // Time it takes to move to the target
-    float time = 38;
+    float time = 30;
 
     // Time it takes to change the positions of the fruits when they are moved
-    float timeChangePositionFruits = 0.2f;
+    float timeChangePositionFruits = 0.4f;
 
     void Awake()
     {
@@ -84,13 +84,7 @@ public class Fruit : MonoBehaviour
             {
                 if (CanSwipe())
                 {
-                    SwapFruit(previousSelected.gameObject);
-                    previousSelected.Invoke("FindAllMatches", timeChangePositionFruits);
-                    previousSelected.DeselectFruit();
-                    Invoke("FindAllMatches", timeChangePositionFruits);
-
-                    StopCoroutine(BoardManager.Instance.FindDisableFruits());
-                    StartCoroutine(BoardManager.Instance.FindDisableFruits());
+                    StartCoroutine(CanBeSwapFruit());
                 }
                 else
                 {
@@ -99,6 +93,20 @@ public class Fruit : MonoBehaviour
                 }
             }
         }
+    }
+
+    IEnumerator CanBeSwapFruit()
+    {
+        SwapFruit(previousSelected.gameObject);
+
+        yield return new WaitForSeconds(timeChangePositionFruits);
+
+        previousSelected.FindAllMatches();
+        previousSelected.DeselectFruit();
+        FindAllMatches();
+
+        StopCoroutine(BoardManager.Instance.FindDisableFruits());
+        StartCoroutine(BoardManager.Instance.FindDisableFruits());
     }
 
     // Method in charge of changing the position of two fruits
@@ -220,8 +228,6 @@ public class Fruit : MonoBehaviour
         if (hMatch || vMatch)
         {
             gameObject.GetComponentInChildren<SpriteRenderer>().enabled = false;
-            // StopCoroutine(BoardManager.Instance.FindDisableFruits());
-            // StartCoroutine(BoardManager.Instance.FindDisableFruits());
         }
     }
 }

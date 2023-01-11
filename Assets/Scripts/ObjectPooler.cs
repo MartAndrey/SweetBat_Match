@@ -41,6 +41,7 @@ public class ObjectPooler : MonoBehaviour
                     GameObject fruit = Instantiate(fruitPrefabs[i], gameObject.transform);
 
                     fruit.SetActive(false);
+                    fruit.GetComponent<Fruit>().Id = i;
                     fruitList.Add(fruit);
                 }
             }
@@ -51,6 +52,7 @@ public class ObjectPooler : MonoBehaviour
 
             GameObject fruit = Instantiate(fruitPrefabs[rn], gameObject.transform);
             fruit.SetActive(false);
+            fruit.GetComponent<Fruit>().Id = rn;
             fruitList.Add(fruit);
         }
     }
