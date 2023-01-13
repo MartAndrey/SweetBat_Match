@@ -58,15 +58,12 @@ public class ObjectPooler : MonoBehaviour
     }
 
     // Method in charge of delivering or returning a fruit from the grouper of objects.
-    public GameObject GetFruitToPool(Sprite fruit)
+    public GameObject GetFruitToPool(int fruit)
     {
-        for (int i = 0; i < fruitList.Count; i++)
-        {
-            if (!fruitList[i].activeSelf && fruitList[i].GetComponentInChildren<SpriteRenderer>().sprite == fruit)
-            {
-                return fruitList[i];
-            }
-        }
+        GameObject newFruit = fruitList.Find(x => x.GetComponent<Fruit>().Id == fruit && !x.activeSelf);
+        
+        if(newFruit != null)
+            return newFruit;
 
         AddFruitToPool(1, true);
 

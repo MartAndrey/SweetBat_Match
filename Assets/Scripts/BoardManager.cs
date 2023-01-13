@@ -28,6 +28,7 @@ public class BoardManager : MonoBehaviour
 
     // All the fruits on the board
     GameObject[,] fruits;
+    // List<GameObject> check = new List<GameObject>();
     Collider2D boardCollider;
 
     Fruit selectedFruit;
@@ -137,7 +138,7 @@ public class BoardManager : MonoBehaviour
         {
             for (int y = 0; y < ySize; y++)
             {
-                if (fruits[x, y] != null && fruits[x, y].GetComponentInChildren<SpriteRenderer>().enabled == false)
+                if (fruits[x, y] != null && !fruits[x, y].activeSelf)
                 {
                     yield return StartCoroutine(MakeFruitsFall(x, y));
                     break;
@@ -145,21 +146,11 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-        // Debug.Log("Hi");
-        for (int x = 0; x < xSize; x++)
-        {
-            for (int y = 0; y < ySize; y++)
-            {
-                if (fruits[x, y] != null)
-                {
-                    fruits[x, y].GetComponent<Fruit>().FindAllMatches();
-                }
-            }
-        }
+        // CheckMatch(check);
     }
 
     // Makes the fruits fall to occupy an empty position
-    IEnumerator MakeFruitsFall(int x, int yStart, float shiftDelay = 0.1f)
+    IEnumerator MakeFruitsFall(int x, int yStart)
     {
         isShifting = true;
 
@@ -172,9 +163,10 @@ public class BoardManager : MonoBehaviour
             {
                 GameObject boardFruit = fruits[x, y];
 
-                if (boardFruit.GetComponentInChildren<SpriteRenderer>().enabled == false)
+                if (!boardFruit.activeSelf)
                 {
                     disabledFruits++;
+                    AddFruitsToPool(boardFruit);
                 }
 
                 boardFruits.Add(boardFruit);
@@ -192,7 +184,7 @@ public class BoardManager : MonoBehaviour
             for (int j = 0; j < boardFruits.Count - 1; j++)
             {
                 //string nameFruit = fruits[x, y].name;
-                boardFruits[j + 1].GetComponent<Fruit>().TargetPosition = boardFruits[j].transform.position; // Move the fruit down
+                boardFruits[j + 1].GetComponent<Fruit>().TargetPosition = new Vector2(boardFruits[j + 1].transform.position.x, boardFruits[j + 1].transform.position.y - offset);
                 fruits[x, y] = fruits[x, y + 1]; // Change the previously moved fruit to the corresponding position in the array
                 //fruits[x, y].name = nameFruit;
                 if (j == boardFruits.Count - 2)
@@ -230,49 +222,38 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-        AddFruitsToPool(boardFruits);
+        // check.AddRange(boardFruits);
+        // check.AddRange(listNewFruit);
 
         isShifting = false;
     }
 
+    // void CheckMatch(List<GameObject> fruit)
+    // {
+    //     for (int i = 0; i < fruit.Count; i++)
+    //     {
+    //         if (fruit[i].activeSelf)
+    //         {
+    //             Debug.Log("Hi");
+    //             fruit[i].GetComponent<Fruit>().FindAllMatches();
+    //         }
+    //     }
+
+    //     check.Clear();
+    // }
+
     // Deactivate the fruits that were eliminated and add to object pooler
-    void AddFruitsToPool(List<GameObject> fruits)
+    void AddFruitsToPool(GameObject fruits)
     {
-        for (int i = 0; i < fruits.Count; i++)
-        {
-            if (fruits[i].GetComponentInChildren<SpriteRenderer>().enabled == false)
-            {
-                fruits[i].GetComponentInChildren<SpriteRenderer>().enabled = true;
-                fruits[i].SetActive(false);
-                // Add to object pooler
-                ObjectPooler.Instance.FruitList.Add(fruits[i]);
-                fruits[i].transform.parent = ObjectPooler.Instance.gameObject.transform;
-            }
-        }
-    }
-
-    // Generates a possible new fruit
-    Sprite GetPossibleNewFruit(int x, int y)
-    {
-        List<GameObject> possibleFruits = new List<GameObject>();
-        possibleFruits.AddRange(prefabs);
-
-        if (x > 0)
-            possibleFruits.Remove(fruits[x - 1, y]);
-
-        if (x < xSize - 1)
-            possibleFruits.Remove(fruits[x + 1, y]);
-
-        if (y > 0)
-            possibleFruits.Remove(fruits[x, y - 1]);
-
-        return possibleFruits[Random.Range(0, possibleFruits.Count)].GetComponentInChildren<SpriteRenderer>().sprite;
+        // Add to object pooler
+        ObjectPooler.Instance.FruitList.Add(fruits);
+        fruits.transform.parent = ObjectPooler.Instance.gameObject.transform;
     }
 
     // Generates a new fruit
     GameObject GetNewFruit(int x, int y)
     {
-        Sprite newFruit = GetPossibleNewFruit(x, y);
+        int newFruit = Random.Range(0, prefabs.Count);
 
         return ObjectPooler.Instance.GetFruitToPool(newFruit);
     }

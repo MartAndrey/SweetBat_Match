@@ -210,7 +210,7 @@ public class Fruit : MonoBehaviour
         {
             foreach (GameObject fruit in matchingFruits)
             {
-                fruit.GetComponentInChildren<SpriteRenderer>().enabled = false;
+                fruit.SetActive(false);
             }
 
             return true;
@@ -227,7 +227,7 @@ public class Fruit : MonoBehaviour
 
         if (hMatch || vMatch)
         {
-            gameObject.GetComponentInChildren<SpriteRenderer>().enabled = false;
+            gameObject.SetActive(false);
         }
     }
 }
