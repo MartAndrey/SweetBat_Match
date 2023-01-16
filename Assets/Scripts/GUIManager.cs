@@ -10,10 +10,10 @@ public class GUIManager : MonoBehaviour
     public int MoveCounter { get { return moveCounter; } set { moveCounter = value; movesText.text = moveCounter.ToString(); } }
     public int Score { get { return score; } set { score = value; scoreText.text = score.ToString(); } }
 
+    [SerializeField] TMP_Text movesText, scoreText;
+
     int moveCounter;
     int score;
-
-    [SerializeField] TMP_Text movesText, scoreText;
 
     void Start()
     {
@@ -28,7 +28,7 @@ public class GUIManager : MonoBehaviour
 
         score = 0;
         scoreText.text = score.ToString();
-        
+
         moveCounter = 30;
         movesText.text = moveCounter.ToString();
     }

@@ -105,6 +105,8 @@ public class Fruit : MonoBehaviour
         previousSelected.DeselectFruit();
         FindAllMatches();
 
+        GUIManager.Instance.MoveCounter--;
+
         StopCoroutine(BoardManager.Instance.FindDisableFruits());
         StartCoroutine(BoardManager.Instance.FindDisableFruits());
     }

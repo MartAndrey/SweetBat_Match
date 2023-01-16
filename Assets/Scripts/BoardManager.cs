@@ -25,6 +25,7 @@ public class BoardManager : MonoBehaviour
     [SerializeField] int xSize, ySize; // Board size
     [Tooltip("Where the first fruit appears")]
     [SerializeField] Transform spawnFruit;
+    [SerializeField] int score;
 
     // All the fruits on the board
     GameObject[,] fruits;
@@ -179,6 +180,8 @@ public class BoardManager : MonoBehaviour
 
         for (int i = 0; i < disabledFruits; i++)
         {
+            GUIManager.Instance.Score += score;
+
             int y = yStart; // Traverse the rows of the board
 
             for (int j = 0; j < boardFruits.Count - 1; j++)

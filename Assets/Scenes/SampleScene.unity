@@ -2067,6 +2067,7 @@ MonoBehaviour:
   xSize: 8
   ySize: 8
   spawnFruit: {fileID: 702544634}
+  score: 10
 --- !u!1 &1237095859
 GameObject:
   m_ObjectHideFlags: 0
@@ -2874,6 +2875,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 391b0d05418c07042a26f1ec04d377e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  movesText: {fileID: 749055035}
+  scoreText: {fileID: 1280290898}
 --- !u!4 &1486905756
 Transform:
   m_ObjectHideFlags: 0
