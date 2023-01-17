@@ -7,7 +7,6 @@ public class GUIManager : MonoBehaviour
 {
     public static GUIManager Instance;
 
-    public int MoveCounter { get { return moveCounter; } set { moveCounter = value; movesText.text = moveCounter.ToString(); } }
     public int Score
     {
         get { return score; }
@@ -15,6 +14,15 @@ public class GUIManager : MonoBehaviour
         {
             score = value;
             scoreText.text = score.ToString();
+        }
+    }
+
+    public int MoveCounter
+    {
+        get { return moveCounter; }
+        set
+        {
+            moveCounter = value; movesText.text = moveCounter.ToString();
             if (moveCounter <= 0)
             {
                 moveCounter = 0;
@@ -24,6 +32,9 @@ public class GUIManager : MonoBehaviour
     }
 
     [SerializeField] TMP_Text movesText, scoreText;
+
+    [Header("Screens")]
+    [SerializeField] GameObject gameOverScreen;
 
     int moveCounter;
     int score;
@@ -42,7 +53,7 @@ public class GUIManager : MonoBehaviour
         score = 0;
         scoreText.text = score.ToString();
 
-        moveCounter = 30;
+        moveCounter = 25;
         movesText.text = moveCounter.ToString();
     }
 
@@ -50,5 +61,6 @@ public class GUIManager : MonoBehaviour
     {
         yield return new WaitUntil(() => !BoardManager.Instance.isShifting);
         yield return new WaitForSeconds(0.25f);
+        gameOverScreen.SetActive(true);
     }
 }
