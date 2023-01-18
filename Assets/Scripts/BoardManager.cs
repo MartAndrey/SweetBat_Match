@@ -40,9 +40,6 @@ public class BoardManager : MonoBehaviour
     // Time it takes to change the positions of the fruits when they are moved
     float timeChangePositionFruits = 0.2f;
 
-    // Variable in charge of returning true when all the fruits on the board are reviewed 
-    bool checkFruits = false;
-
     void Awake()
     {
         if (Instance == null)
@@ -60,15 +57,8 @@ public class BoardManager : MonoBehaviour
     void Start()
     {
         CreateInitialBoard();
-    }
 
-    void Update()
-    {
-        if (!checkFruits)
-        {
-            IsFruitTouchingTheBoard(fruits);
-            boardCollider.enabled = false;
-        }
+        StartCoroutine(IsFruitTouchingTheBoard(fruits));
     }
 
     // Create the initial elements or fruits of the board
@@ -110,8 +100,9 @@ public class BoardManager : MonoBehaviour
     }
 
     // Check if the fruit is on the table, if not, destroy it.
-    void IsFruitTouchingTheBoard(GameObject[,] fruits)
+    IEnumerator IsFruitTouchingTheBoard(GameObject[,] fruits)
     {
+        yield return new WaitForSeconds(0.00f);
         for (int x = 0; x < xSize; x++)
         {
             for (int y = 0; y < ySize; y++)
@@ -120,12 +111,14 @@ public class BoardManager : MonoBehaviour
 
                 if (!boardCollider.IsTouching(currentFruit))
                 {
-                    Destroy(currentFruit.gameObject);
+                    currentFruit.gameObject.SetActive(false);
+                    AddFruitsToPool(currentFruit.gameObject);
+                    fruits[x, y] = null;
                 }
             }
         }
 
-        checkFruits = true;
+        boardCollider.enabled = false;
     }
 
     // Method in charge of verifying if the fruit is repeated in said column and row
