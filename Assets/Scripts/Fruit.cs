@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -42,6 +43,7 @@ public class Fruit : MonoBehaviour
 
             if (transform.position == targetPosition)
             {
+                transform.position = targetPosition;
                 targetPosition = Vector3.zero;
             }
         }
@@ -97,7 +99,7 @@ public class Fruit : MonoBehaviour
 
     IEnumerator CanBeSwapFruit()
     {
-        SwapFruit(previousSelected.gameObject);
+        SwapFruit(previousSelected);
 
         yield return new WaitForSeconds(timeChangePositionFruits);
 
@@ -112,40 +114,58 @@ public class Fruit : MonoBehaviour
     }
 
     // Method in charge of changing the position of two fruits
-    public void SwapFruit(GameObject newFruit)
+    public void SwapFruit(Fruit newFruit)
     {
         if (spriteRenderer.sprite == newFruit.GetComponentInChildren<SpriteRenderer>().sprite)
             return;
 
-        this.targetPosition = newFruit.transform.position;
-        newFruit.GetComponent<Fruit>().targetPosition = this.transform.position;
+        Vector3 previewPosition = transform.position; // Save the position of the second selected fruit
 
-        MoveFruitsPositionOfFruits(newFruit, this.gameObject);
+        this.targetPosition = newFruit.transform.position;
+        newFruit.targetPosition = this.transform.position;
+
+        // preview and Target refers to the second selected fruit and anotherFruit is the first selected fruit
+        MoveFruitsPositionOfArray(previewPosition, targetPosition, newFruit.gameObject);
     }
 
     // Method that changes the position of the 2 fruits in the "fruit" array
-    void MoveFruitsPositionOfFruits(GameObject previousFruits, GameObject currentFruit)
+    void MoveFruitsPositionOfArray(Vector3 previewPosition, Vector3 currentPosition, GameObject anotherFruit)
     {
-        string name = currentFruit.name; // Saves the name of the second selected fruit
+        // We take advantage of changing the fruits in the array guiding us from the position since 
+        // in these cases they are equivalent to the same
 
-        for (int x = 0; x < BoardManager.Instance.XSize; x++)
+        // If the fruit is moved horizontally
+        if (currentPosition.x != previewPosition.x)
         {
-            for (int y = 0; y < BoardManager.Instance.YSize; y++)
+            if (currentPosition.x > previewPosition.x)
             {
-                GameObject fruit = BoardManager.Instance.Fruits[x, y];
+                BoardManager.Instance.Fruits[(int)transform.localPosition.x + 1, (int)transform.localPosition.y] = this.gameObject;
+                BoardManager.Instance.Fruits[(int)transform.localPosition.x, (int)transform.localPosition.y] = anotherFruit;
+                return;
+            }
+            else if (currentPosition.x < previewPosition.x)
+            {
+                BoardManager.Instance.Fruits[(int)transform.localPosition.x - 1, (int)transform.localPosition.y] = this.gameObject;
+                BoardManager.Instance.Fruits[(int)transform.localPosition.x, (int)transform.localPosition.y] = anotherFruit;
+                return;
+            }
 
-                if (fruit == previousFruits)
-                {
-                    // Change the position and name of the previously selected fruit to the currently selected 
-                    BoardManager.Instance.Fruits[x, y] = currentFruit;
-                    BoardManager.Instance.Fruits[x, y].name = previousFruits.name;
-                }
-                else if (fruit == currentFruit)
-                {
-                    // Change the position and name of the fruit currently selected to the previously selected
-                    BoardManager.Instance.Fruits[x, y] = previousFruits;
-                    BoardManager.Instance.Fruits[x, y].name = name;
-                }
+        }
+
+        // If the fruit is moved vertically
+        if (currentPosition.y != previewPosition.y)
+        {
+            if (currentPosition.y > previewPosition.y)
+            {
+                BoardManager.Instance.Fruits[(int)transform.localPosition.x, (int)transform.localPosition.y + 1] = this.gameObject;
+                BoardManager.Instance.Fruits[(int)transform.localPosition.x, (int)transform.localPosition.y] = anotherFruit;
+                return;
+            }
+            else if (currentPosition.y < previewPosition.y)
+            {
+                BoardManager.Instance.Fruits[(int)transform.localPosition.x, (int)transform.localPosition.y - 1] = this.gameObject;
+                BoardManager.Instance.Fruits[(int)transform.localPosition.x, (int)transform.localPosition.y] = anotherFruit;
+                return;
             }
         }
     }
