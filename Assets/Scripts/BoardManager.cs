@@ -102,7 +102,10 @@ public class BoardManager : MonoBehaviour
     // Check if the fruit is on the table, if not, destroy it.
     IEnumerator IsFruitTouchingTheBoard(GameObject[,] fruits)
     {
+        List<GameObject> noTouchingFruits = new List<GameObject>();
+
         yield return new WaitForSeconds(0.00f);
+
         for (int x = 0; x < xSize; x++)
         {
             for (int y = 0; y < ySize; y++)
@@ -111,13 +114,14 @@ public class BoardManager : MonoBehaviour
 
                 if (!boardCollider.IsTouching(currentFruit))
                 {
-                    currentFruit.gameObject.SetActive(false);
-                    AddFruitsToPool(currentFruit.gameObject);
+                    currentFruit.gameObject.GetComponentInChildren<SpriteRenderer>().enabled = false;
+                    noTouchingFruits.Add(currentFruit.gameObject);
                     fruits[x, y] = null;
                 }
             }
         }
 
+        AddFruitsToPool(noTouchingFruits);
         boardCollider.enabled = false;
     }
 
@@ -132,15 +136,13 @@ public class BoardManager : MonoBehaviour
         {
             for (int y = 0; y < ySize; y++)
             {
-                if (fruits[x, y] != null && !fruits[x, y].activeSelf)
+                if (fruits[x, y] != null && fruits[x, y].GetComponentInChildren<SpriteRenderer>().enabled == false)
                 {
                     yield return StartCoroutine(MakeFruitsFall(x, y));
                     break;
                 }
             }
         }
-
-        // CheckMatch(check);
     }
 
     // Makes the fruits fall to occupy an empty position
@@ -157,10 +159,9 @@ public class BoardManager : MonoBehaviour
             {
                 GameObject boardFruit = fruits[x, y];
 
-                if (!boardFruit.activeSelf)
+                if (boardFruit.GetComponentInChildren<SpriteRenderer>().enabled == false)
                 {
                     disabledFruits++;
-                    AddFruitsToPool(boardFruit);
                 }
 
                 boardFruits.Add(boardFruit);
@@ -218,6 +219,7 @@ public class BoardManager : MonoBehaviour
             }
         }
 
+        AddFruitsToPool(boardFruits);
         // check.AddRange(boardFruits);
         // check.AddRange(listNewFruit);
 
@@ -239,11 +241,17 @@ public class BoardManager : MonoBehaviour
     // }
 
     // Deactivate the fruits that were eliminated and add to object pooler
-    void AddFruitsToPool(GameObject fruits)
+    void AddFruitsToPool(List<GameObject> fruits)
     {
-        // Add to object pooler
-        ObjectPooler.Instance.FruitList.Add(fruits);
-        fruits.transform.parent = ObjectPooler.Instance.gameObject.transform;
+        fruits.ForEach(i =>
+        {
+            if (i.GetComponentInChildren<SpriteRenderer>().enabled == false)
+            {
+                i.SetActive(false);
+                ObjectPooler.Instance.FruitList.Add(i);
+                i.transform.parent = ObjectPooler.Instance.gameObject.transform;
+            }
+        });
     }
 
     // Generates a new fruit
@@ -251,6 +259,6 @@ public class BoardManager : MonoBehaviour
     {
         int newFruit = Random.Range(0, prefabs.Count);
 
-        return ObjectPooler.Instance.GetFruitToPool(newFruit);
+        return ObjectPooler.Instance.GetFruitToPool(newFruit, spawnFruit.transform);
     }
 }
