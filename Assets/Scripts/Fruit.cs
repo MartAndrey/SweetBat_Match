@@ -107,9 +107,6 @@ public class Fruit : MonoBehaviour
         FindAllMatches();
 
         GUIManager.Instance.MoveCounter--;
-
-        StopCoroutine(BoardManager.Instance.FindDisableFruits());
-        StartCoroutine(BoardManager.Instance.FindDisableFruits());
     }
 
     // Method in charge of changing the position of two fruits
@@ -247,6 +244,8 @@ public class Fruit : MonoBehaviour
         if (hMatch || vMatch)
         {
             gameObject.GetComponentInChildren<SpriteRenderer>().enabled = false;
+
+            BoardManager.OnBoardChanges.Invoke();
         }
     }
 }
