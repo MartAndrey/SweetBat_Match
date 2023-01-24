@@ -178,7 +178,6 @@ public class BoardManager : MonoBehaviour
 
         bool secondTime = false; // Indicates if it is the second fruit that appears
         List<GameObject> listNewFruit = new List<GameObject>(); // Save the new fruits that appear
-        Vector2 positionNewFruit = new Vector2(); // Save the position of the new fruit
 
         for (int i = 0; i < disabledFruits; i++)
         {
@@ -186,15 +185,41 @@ public class BoardManager : MonoBehaviour
 
             int y = yStart; // Traverse the rows of the board
 
-            for (int j = 0; j < boardFruits.Count - 1; j++)
+            if (disabledFruits <= 1 && y == YSize - 1) // If we're in the row 7 and There's one disable fruit
             {
-                //string nameFruit = fruits[x, y].name;
-                boardFruits[j + 1].GetComponent<Fruit>().TargetPosition = new Vector2(boardFruits[j + 1].transform.position.x, boardFruits[j + 1].transform.position.y - offset);
-                fruits[x, y] = fruits[x, y + 1]; // Change the previously moved fruit to the corresponding position in the array
-                                                 //fruits[x, y].name = nameFruit;
+                Vector3 fruitPosition =  fruits[x, y].transform.position;
+                fruits[x, y] = GetNewFruit();
+                fruits[x, y].transform.position = fruitPosition;
+                fruits[x, y].SetActive(true);
+            }
+            else // This is in case there are more fruits deactivated and they are in some row other than 7
+            {
+                for (int j = 0; j < boardFruits.Count - 1; j++)
+                {
+                    //string nameFruit = fruits[x, y].name;
+                    boardFruits[j + 1].GetComponent<Fruit>().TargetPosition = new Vector2(boardFruits[j + 1].transform.position.x, boardFruits[j + 1].transform.position.y - offset);
+                    fruits[x, y] = fruits[x, y + 1]; // Change the previously moved fruit to the corresponding position in the array
 
-                y++;
-                yield return new WaitForSeconds(timeChangePositionFruits);
+                    if (j == boardFruits.Count - 2)
+                    {
+                        fruits[x, y + 1] = GetNewFruit();
+                        fruits[x, y + 1].transform.position = new Vector3(fruits[x, y].transform.position.x, fruits[x, y].transform.position.y, 0);
+                        fruits[x, y + 1].SetActive(true);
+                        listNewFruit.Add(fruits[x, y + 1]);
+
+                        if (secondTime)
+                        {
+                            for (int k = 0; k < listNewFruit.Count - 1; k++)
+                            {
+                                listNewFruit[k].transform.position = new Vector2(listNewFruit[k].transform.position.x, listNewFruit[k].transform.position.y - offset);
+                            }
+                        }
+                        secondTime = true;
+                    }
+                    y++;
+                    yield return new WaitForSeconds(timeChangePositionFruits);
+                }
+
             }
         }
 
@@ -234,6 +259,7 @@ public class BoardManager : MonoBehaviour
             if (i.GetComponentInChildren<SpriteRenderer>().enabled == false)
             {
                 i.SetActive(false);
+                i.GetComponentInChildren<SpriteRenderer>().enabled = true;
                 ObjectPooler.Instance.FruitList.Add(i);
                 i.transform.parent = ObjectPooler.Instance.gameObject.transform;
             }
@@ -241,7 +267,7 @@ public class BoardManager : MonoBehaviour
     }
 
     // Generates a new fruit
-    GameObject GetNewFruit(int x, int y)
+    GameObject GetNewFruit()
     {
         int newFruit = UnityEngine.Random.Range(0, prefabs.Count);
 
