@@ -61,13 +61,17 @@ public class ObjectPooler : MonoBehaviour
     public GameObject GetFruitToPool(int fruit, Transform parent)
     {
         GameObject newFruit = fruitList.Find(x => x.GetComponent<Fruit>().Id == fruit && !x.activeSelf);
-        newFruit.transform.parent = parent;
         
-        if(newFruit != null)
+        if (newFruit != null)
+        {
+            newFruit.transform.parent = parent;
             return newFruit;
+        }
 
         AddFruitToPool(1, true);
 
-        return fruitList[fruitList.Count - 1];
+        newFruit = fruitList[fruitList.Count - 1];
+        newFruit.transform.parent = parent;
+        return newFruit;
     }
 }

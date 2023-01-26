@@ -51,7 +51,6 @@ public class BoardManager : MonoBehaviour
 
     void OnDisable()
     {
-
         OnBoardChanges -= StartCoroutineFindDisable;
     }
 
@@ -148,13 +147,15 @@ public class BoardManager : MonoBehaviour
     // Start the routine to find that the fruits are deactivated on the board
     void StartCoroutineFindDisable()
     {
-        StopCoroutine(FindDisableFruits());
+        StopAllCoroutines();
         StartCoroutine(FindDisableFruits());
     }
-
+    
     // Search in each row and column what space there is, that is, what fruit is deactivated
     public IEnumerator FindDisableFruits()
     {
+        yield return new WaitForEndOfFrame();
+
         for (int x = 0; x < xSize; x++)
         {
             for (int y = 0; y < ySize; y++)
@@ -166,6 +167,17 @@ public class BoardManager : MonoBehaviour
                 }
             }
         }
+
+        // for (int x = 0; x < xSize; x++)
+        // {
+        //     for (int y = 0; y < ySize; y++)
+        //     {
+        //         if (fruits[x, y] != null)
+        //         {
+        //             fruits[x, y].GetComponent<Fruit>().FindAllMatches();
+        //         }
+        //     }
+        // }
     }
 
     // Makes the fruits fall to occupy an empty position
@@ -185,9 +197,9 @@ public class BoardManager : MonoBehaviour
 
             int y = yStart; // Traverse the rows of the board
 
-            if (disabledFruits <= 1 && y == YSize - 1) // If we're in the row 7 and There's one disable fruit
+            if ((disabledFruits <= 1 && y == YSize - 1) || (x == 0 && y == 6) || (x == 7 && y == 6)) // If we're in the row 7 and There's one disable fruit
             {
-                Vector3 fruitPosition =  fruits[x, y].transform.position;
+                Vector3 fruitPosition = fruits[x, y].transform.position;
                 fruits[x, y] = GetNewFruit();
                 fruits[x, y].transform.position = fruitPosition;
                 fruits[x, y].SetActive(true);
@@ -196,7 +208,7 @@ public class BoardManager : MonoBehaviour
             {
                 for (int j = 0; j < boardFruits.Count - 1; j++)
                 {
-                    //string nameFruit = fruits[x, y].name;
+                    
                     boardFruits[j + 1].GetComponent<Fruit>().TargetPosition = new Vector2(boardFruits[j + 1].transform.position.x, boardFruits[j + 1].transform.position.y - offset);
                     fruits[x, y] = fruits[x, y + 1]; // Change the previously moved fruit to the corresponding position in the array
 
@@ -217,7 +229,7 @@ public class BoardManager : MonoBehaviour
                         secondTime = true;
                     }
                     y++;
-                    yield return new WaitForSeconds(timeChangePositionFruits);
+                    yield return new WaitForSeconds(0.1f);
                 }
 
             }

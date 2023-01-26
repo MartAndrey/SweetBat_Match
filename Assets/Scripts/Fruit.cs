@@ -40,6 +40,7 @@ public class Fruit : MonoBehaviour
         if (targetPosition != Vector3.zero)
         {
             this.transform.position = Vector3.Lerp(this.transform.position, targetPosition, time * Time.deltaTime);
+
             if (transform.position == targetPosition)
             {
                 transform.position = targetPosition;
