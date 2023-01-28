@@ -29,6 +29,12 @@ public class Fruit : MonoBehaviour
     // Time it takes to change the positions of the fruits when they are moved
     float timeChangePositionFruits = 0.4f;
 
+    // When the fruit activates, you reset its target position because sometimes it changes its position
+    void OnEnable()
+    {
+        targetPosition = Vector3.zero;
+    }
+
     void Awake()
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();

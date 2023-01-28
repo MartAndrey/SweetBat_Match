@@ -150,7 +150,7 @@ public class BoardManager : MonoBehaviour
         StopAllCoroutines();
         StartCoroutine(FindDisableFruits());
     }
-    
+
     // Search in each row and column what space there is, that is, what fruit is deactivated
     public IEnumerator FindDisableFruits()
     {
@@ -168,16 +168,17 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-        // for (int x = 0; x < xSize; x++)
-        // {
-        //     for (int y = 0; y < ySize; y++)
-        //     {
-        //         if (fruits[x, y] != null)
-        //         {
-        //             fruits[x, y].GetComponent<Fruit>().FindAllMatches();
-        //         }
-        //     }
-        // }
+        // We go through all the fruits to see if there is a match
+        for (int x = 0; x < xSize; x++)
+        {
+            for (int y = 0; y < ySize; y++)
+            {
+                if (fruits[x, y] != null)
+                {
+                    fruits[x, y].GetComponent<Fruit>().FindAllMatches();
+                }
+            }
+        }
     }
 
     // Makes the fruits fall to occupy an empty position
@@ -208,7 +209,6 @@ public class BoardManager : MonoBehaviour
             {
                 for (int j = 0; j < boardFruits.Count - 1; j++)
                 {
-                    
                     boardFruits[j + 1].GetComponent<Fruit>().TargetPosition = new Vector2(boardFruits[j + 1].transform.position.x, boardFruits[j + 1].transform.position.y - offset);
                     fruits[x, y] = fruits[x, y + 1]; // Change the previously moved fruit to the corresponding position in the array
 
