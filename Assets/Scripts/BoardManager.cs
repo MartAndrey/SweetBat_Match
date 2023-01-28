@@ -41,9 +41,6 @@ public class BoardManager : MonoBehaviour
     // Variable that gives the distance of each fruit on the board
     float offset = 1;
 
-    // Time it takes to change the positions of the fruits when they are moved
-    float timeChangePositionFruits = 0.2f;
-
     void OnEnable()
     {
         OnBoardChanges += StartCoroutineFindDisable;
@@ -182,7 +179,7 @@ public class BoardManager : MonoBehaviour
     }
 
     // Makes the fruits fall to occupy an empty position
-    IEnumerator MakeFruitsFall(int x, int yStart)
+    IEnumerator MakeFruitsFall(int x, int yStart, float shiftDelay = 0.1f)
     {
         List<GameObject> boardFruits;
         int disabledFruits;
@@ -198,12 +195,9 @@ public class BoardManager : MonoBehaviour
 
             int y = yStart; // Traverse the rows of the board
 
-            if ((disabledFruits <= 1 && y == YSize - 1) || (x == 0 && y == 6) || (x == 7 && y == 6)) // If we're in the row 7 and There's one disable fruit
+            if (IsLastRow(disabledFruits, x, y))
             {
-                Vector3 fruitPosition = fruits[x, y].transform.position;
-                fruits[x, y] = GetNewFruit();
-                fruits[x, y].transform.position = fruitPosition;
-                fruits[x, y].SetActive(true);
+                LastRowOfFruits(x, y);
             }
             else // This is in case there are more fruits deactivated and they are in some row other than 7
             {
@@ -223,15 +217,14 @@ public class BoardManager : MonoBehaviour
                         {
                             for (int k = 0; k < listNewFruit.Count - 1; k++)
                             {
-                                listNewFruit[k].transform.position = new Vector2(listNewFruit[k].transform.position.x, listNewFruit[k].transform.position.y - offset);
+                                listNewFruit[k].GetComponent<Fruit>().TargetPosition = new Vector2(listNewFruit[k].transform.position.x, listNewFruit[k].transform.position.y - offset);
                             }
                         }
                         secondTime = true;
                     }
                     y++;
-                    yield return new WaitForSeconds(0.1f);
+                    yield return new WaitForSeconds(shiftDelay);
                 }
-
             }
         }
 
@@ -240,7 +233,7 @@ public class BoardManager : MonoBehaviour
         isShifting = false;
     }
 
-    private void CountDisableFruits(int x, int yStart, out List<GameObject> boardFruits, out int disabledFruits)
+    void CountDisableFruits(int x, int yStart, out List<GameObject> boardFruits, out int disabledFruits)
     {
         isShifting = true;
 
@@ -261,6 +254,17 @@ public class BoardManager : MonoBehaviour
                 boardFruits.Add(boardFruit);
             }
         }
+    }
+
+    // The method returns true if it is in the last row of each column
+    bool IsLastRow(int disabledFruits, int x, int y) => (disabledFruits <= 1 && y == YSize - 1) || (x == 0 && y == 6) || (x == 7 && y == 6);
+
+    void LastRowOfFruits(int x, int y)
+    {
+        Vector3 fruitPosition = fruits[x, y].transform.position;
+        fruits[x, y] = GetNewFruit();
+        fruits[x, y].transform.position = fruitPosition;
+        fruits[x, y].SetActive(true);
     }
 
     // Deactivate the fruits that were eliminated and add to object pooler
