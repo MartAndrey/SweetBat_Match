@@ -30,6 +30,8 @@ public class BoardManager : MonoBehaviour
     [Tooltip("Where the first fruit appears")]
     [SerializeField] Transform spawnFruit;
     [SerializeField] int score;
+    [Tooltip("Probability of each fruit to appear")]
+    [SerializeField] int[] fruitsProbabilities;
 
     // All the fruits on the board
     GameObject[,] fruits;
@@ -40,6 +42,7 @@ public class BoardManager : MonoBehaviour
 
     // Variable that gives the distance of each fruit on the board
     float offset = 1;
+    int totalProbabilities;
 
     void OnEnable()
     {
@@ -62,6 +65,11 @@ public class BoardManager : MonoBehaviour
             Destroy(gameObject);
         }
 
+        foreach (int i in fruitsProbabilities)
+        {
+            totalProbabilities += i;
+        }
+
         boardCollider = GetComponent<Collider2D>();
     }
 
@@ -70,11 +78,30 @@ public class BoardManager : MonoBehaviour
         CreateInitialBoard();
 
         StartCoroutine(IsFruitTouchingTheBoard(fruits));
+    }
 
+    int SetFruitProbability()
+    {
+        int accumulatedProbability = 0;
+        int randomNumber = UnityEngine.Random.Range(0, totalProbabilities + 1);
+        int prefab = 0;
+
+        foreach (int i in fruitsProbabilities)
+        {
+            if (randomNumber < accumulatedProbability + i)
+            {
+                return prefab;
+            }
+
+            accumulatedProbability += i;
+            prefab++;
+        }
+
+        return 1;
     }
 
     // Create the initial elements or fruits of the board
-    void CreateInitialBoard()
+    void CreateInitialBoard(bool targetLevel = false)
     {
         fruits = new GameObject[xSize, ySize]; // Columns and rows of the board
 
@@ -87,11 +114,19 @@ public class BoardManager : MonoBehaviour
         {
             for (int y = 0; y < ySize; y++)
             {
-                do
+                if (!targetLevel)
                 {
-                    // Change the "currentFruit" to a prefab made fruit randomly
-                    idx = UnityEngine.Random.Range(0, prefabs.Count);
-                } while (NeighborsSameCandy(x, y, idx));
+                    do
+                    {
+                        // Change the "currentFruit" to a prefab made fruit randomly
+                        idx = UnityEngine.Random.Range(0, prefabs.Count);
+                    } while (NeighborsSameCandy(x, y, idx));
+
+                }
+                else
+                {
+                    idx = SetFruitProbability();
+                }
 
                 // int random = Random.Range(0, prefabs.Count);
                 currentFruit = prefabs[idx];

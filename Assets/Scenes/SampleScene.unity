@@ -2503,6 +2503,7 @@ MonoBehaviour:
   ySize: 8
   spawnFruit: {fileID: 702544634}
   score: 10
+  fruitsProbabilities: 04000000030000000300000002000000020000000200000001000000
 --- !u!1 &1237095859
 GameObject:
   m_ObjectHideFlags: 0
