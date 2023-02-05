@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Button : MonoBehaviour
 {
+    [Tooltip("Sound when touching and leaving")]
     [SerializeField] AudioClip popIn, popOut; 
 
     Animator animator;
@@ -17,17 +18,20 @@ public class Button : MonoBehaviour
         button = GetComponent<Button>();
     }
 
+    // Button normal state
     public void OnButtonNormal()
     {
         animator.SetTrigger(("Normal"));
     }
 
+    // When the button is pressed
     public void OnButtonPressed()
     {
         animator.SetTrigger(("Pressed"));
         audioSource.PlayOneShot(popIn);
     }
 
+    // When they stop touching the button
     public void OnButtonDisabled()
     {
         animator.SetTrigger(("Disabled"));
