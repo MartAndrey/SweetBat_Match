@@ -3,16 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MainMenuManager : MonoBehaviour
+public class MainMenuController : MonoBehaviour
 {
-    [SerializeField] GameObject boxSettings;
+    [Header("Box containing the other settings")]
     [SerializeField] Animator boxAnimator;
+    [SerializeField] GameObject boxSettings;
+
+    [Header("Setting button")]
     [SerializeField] Image imageSetting;
     [SerializeField] Sprite settingPurple;
     [SerializeField] Sprite SettingWhite;
 
+    bool isAnimationTransition = false;
+
+    // This method is called when the configure button is clicked     
     public void OnSetting()
     {
+        if (isAnimationTransition) return;
+
+        StartCoroutine(CheckTransition());
+
         if (!boxSettings.activeSelf)
         {
             boxSettings.SetActive(true);
@@ -21,7 +31,7 @@ public class MainMenuManager : MonoBehaviour
         else
         {
             boxAnimator.SetTrigger("Transition");
-            StartCoroutine(OffSetting());            
+            StartCoroutine(OffSetting());
             imageSetting.sprite = settingPurple;
         }
     }
@@ -30,5 +40,12 @@ public class MainMenuManager : MonoBehaviour
     {
         yield return new WaitForSeconds(1);
         boxSettings.SetActive(false);
+    }
+
+    IEnumerator CheckTransition()
+    {
+        isAnimationTransition = true;
+        yield return new WaitForSecondsRealtime(1);
+        isAnimationTransition = false;
     }
 }
