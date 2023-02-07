@@ -16,6 +16,11 @@ public class MainMenuController : MonoBehaviour
 
     bool isAnimationTransition = false;
 
+    public void Play()
+    {
+        StartCoroutine(ScreenChangeTransition.Instance.FadeOut("LevelMenu"));
+    }
+
     // This method is called when the configure button is clicked     
     public void OnSetting()
     {

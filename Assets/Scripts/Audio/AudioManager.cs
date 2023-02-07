@@ -6,21 +6,23 @@ using UnityEngine.UI;
 
 public class AudioManager : MonoBehaviour
 {
-    [SerializeField] AudioMixer sfxMixer;
+    [Header("Sound Music")]
     [SerializeField] AudioMixer musicMixer;
-
     [SerializeField] Image imageMusic;
     [SerializeField] Sprite imageMusicOn;
     [SerializeField] Sprite imageMusicOff;
 
-
+    [Header("Sound SFX")]
+    [SerializeField] AudioMixer sfxMixer;
     [SerializeField] Image imageSFX;
     [SerializeField] Sprite imageSFXOn;
     [SerializeField] Sprite imageSFXOff;
 
-    float currentValueSFX = 1;
-    float currentValueSMusic = 1;
+    // Current values ​​of each audio mixer
+    float currentValueSFX = 0;
+    float currentValueSMusic = 0;
 
+    // Minimum and maximum value of sound
     float minValue = -80.00f;
     float maxValue = 0.00f;
 
