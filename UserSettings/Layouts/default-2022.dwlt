@@ -94,8 +94,8 @@ MonoBehaviour:
     y: 0
     width: 374
     height: 939
-  m_MinSize: {x: 276, y: 71}
-  m_MaxSize: {x: 4001, y: 4021}
+  m_MinSize: {x: 275, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 17}
   m_Panes:
   - {fileID: 17}
@@ -155,7 +155,7 @@ MonoBehaviour:
   - {fileID: 14}
   - {fileID: 15}
   m_Selected: 0
-  m_LastSelected: 2
+  m_LastSelected: 1
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -685,22 +685,22 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Garbage/Saurabh Studio 1/Awesome Game UI pack 11
+    - Assets/Scenes
     m_Globs: []
     m_OriginalText: 
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Garbage/Saurabh Studio 1/Awesome Game UI pack 11
+  - Assets/Scenes
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\jeffe\OneDrive\Documentos\Unity\Projects\Hungry Bat
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 718}
-    m_SelectedIDs: eaa80000
-    m_LastClickedID: 43242
-    m_ExpandedIDs: 000000003c6500003e65000040650000426500004465000046650000486500004a650000446600004a6600004e66000050660000dc770000a2790000a07b0000868000006a8600001e870000d0890000ea8f0000f08f00000290000006900000549f00008ea80000a6a80000c0a80000c4a80000eaa8000000ca9a3b
+    scrollPos: {x: 0, y: 1214}
+    m_SelectedIDs: 6e670000
+    m_LastClickedID: 26478
+    m_ExpandedIDs: 00000000226600002466000026660000286600002a6600002c6600002e66000030660000326600003466000036660000386600003a6600003c6600003e66000040660000426600004466000046660000486600004a6600004c6600004e6600005066000060670000a2670000a4670000a66700006269000064690000906a0000f46a0000026b000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -728,7 +728,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 000000003c6500003e65000040650000426500004465000046650000486500004a650000
+    m_ExpandedIDs: 00000000226600002466000026660000286600002a6600002c6600002e66000030660000326600003466000036660000386600003a6600003c6600003e66000040660000426600004466000046660000486600004a6600004c6600004e66000050660000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -756,7 +756,7 @@ MonoBehaviour:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
     m_HadKeyboardFocusLastEvent: 1
-    m_ExpandedInstanceIDs: c62300008e160100
+    m_ExpandedInstanceIDs: c62300008e16010016770000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -856,9 +856,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: eaa80000
+      m_SelectedIDs: 5e6b0000
       m_LastClickedID: 0
-      m_ExpandedIDs: 32b9feff64c8feff3ec5ffffceeeffff6cf2fffff8f2ffff22fbffff0864000012640000de7000006a710000
+      m_ExpandedIDs: c273ffff4074ffffce74ffff1a80ffffc881ffff5082ffff9c8dffff3691ffff74aaffffeaaaffffa8aeffff2aafffffb2afffff50b3ffffccb3ffff58b4ffff4abaffff5ef3ffff22fbffff006400003e640000cc640000d07e0000ea7e0000147f0000387f00006a7f0000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1140,9 +1140,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 304.44876, y: 1238.4784, z: -10.830646}
+    m_Target: {x: 550.4391, y: 1385.0565, z: 11.256376}
     speed: 2
-    m_Value: {x: 258.93735, y: 1262.3546, z: -11.341784}
+    m_Value: {x: 550.4391, y: 1385.0565, z: 11.256376}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1192,9 +1192,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 1084.7565
+    m_Target: 1410.9913
     speed: 2
-    m_Value: 1135.8706
+    m_Value: 1410.9913
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -1308,7 +1308,7 @@ MonoBehaviour:
     - '{"m_SerializationStates":{"thermalFoldout":false,"performanceFoldout":false,"developerFoldout":false,"indexerFoldout":false,"scalersFoldout":false,"deviceSettingsFoldout":false}}'
     - '{}'
     - '{}'
-    scale: 20
+    scale: 22
     fitToScreenEnabled: 0
     rotationDegree: 0
     highlightSafeAreaEnabled: 0
