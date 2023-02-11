@@ -11,10 +11,9 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
 
     public Vector3 TargetPosition { get { return targetPosition; } set { targetPosition = value; } }
 
-    // Variables that refer to the "fruits" when is selected or which is the last one that was selected
+    // Variables that refer to the next fruit to select
     static Color selectedColor = new Color(.5f, .5f, .5f, 1);
-    static Fruit previousSelected = null;
-    bool isSelected = false;
+    static Fruit nextSelected = null;
 
     // Directions to the sides of the "fruit"
     Vector2[] adjacentDirections = new Vector2[] { Vector2.up, Vector2.down, Vector2.left, Vector2.right };
@@ -24,11 +23,11 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
     // Position to move 
     Vector3 targetPosition;
 
-    // Time it takes to move to the target
-    float time = 30;
+    // Movement speed
+    float speed = 20;
 
     // Time it takes to change the positions of the fruits when they are moved
-    float timeChangePositionFruits = 0.4f;
+    float timeChangePositionFruits = 0.56f;
 
     // This variable is in charge of telling us if there is a touch or a click on the screen or more exactly on a fruit
     bool hasTouched = false;
@@ -49,7 +48,7 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
     {
         if (targetPosition != Vector3.zero)
         {
-            this.transform.position = Vector3.Lerp(this.transform.position, targetPosition, time * Time.deltaTime);
+            this.transform.position = Vector3.Lerp(this.transform.position, targetPosition, speed * Time.deltaTime);
 
             if (transform.position == targetPosition)
             {
@@ -62,21 +61,33 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
     // Selected Fruit
     void SelectFruit()
     {
-        isSelected = true;
         spriteRenderer.color = selectedColor;
-        previousSelected = gameObject.GetComponent<Fruit>();
     }
 
     // Deselect fruit
     void DeselectFruit()
     {
-        isSelected = false;
         spriteRenderer.color = Color.white;
-        previousSelected = null;
     }
 
+    // Method in charge of detecting the mouse or the touch
+    void OnMouseDown()
+    {
+        SelectFruit();
+    }
+
+    // Method in charge of detecting when you release the mouse or touch
+    void OnMouseUp()
+    {
+        DeselectFruit();
+    }
+
+    // Method in charge of detecting when we are dragging the fruit
     public void OnDrag(PointerEventData eventData)
     {
+        if (BoardManager.Instance.isShifting)
+            return;
+
         // Calculate the drag direction
         Vector2 direction = eventData.position - eventData.pressPosition;
 
@@ -92,66 +103,37 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
         // Check if the method has not been called yet
         if (!hasTouched)
         {
-            SwapFruit(directionLabel);
+            StartCoroutine(CanBeSwapFruit(directionLabel));
             hasTouched = true;
             return;
         }
     }
 
+    // // Method in charge of detecting when we drop the fruit and therefore it stops dragging
     public void OnEndDrag(PointerEventData eventData)
     {
         hasTouched = false;
     }
 
-    // Method in charge of detecting the mouse or the touch
-    // void OnMouseDrag()
-    // {
-    //     if (spriteRenderer.sprite == null || BoardManager.Instance.isShifting)
-    //         return;
+    IEnumerator CanBeSwapFruit(Vector2 direction)
+    {
+        SwapFruit(direction);
+        DeselectFruit();
 
+        yield return new WaitForSeconds(timeChangePositionFruits);
 
-    //     if (isSelected) // If the fruit is selected
-    //     {
-    //         DeselectFruit();
-    //     }
-    //     else
-    //     {
-    //         if (previousSelected == null) // If there is no fruit selected
-    //         {
-    //             SelectFruit();
-    //         }
-    //         else // If there is fruit selected
-    //         {
-    //             if (CanSwipe())
-    //             {
-    //                 StartCoroutine(CanBeSwapFruit());
-    //             }
-    //             else
-    //             {
-    //                 previousSelected.DeselectFruit();
-    //                 SelectFruit();
-    //             }
-    //         }
-    //     }
-    // }
+        nextSelected.FindAllMatches();
+        FindAllMatches();
 
-    // IEnumerator CanBeSwapFruit()
-    // {
-    //     SwapFruit(previousSelected);
-
-    //     yield return new WaitForSeconds(timeChangePositionFruits);
-
-    //     previousSelected.FindAllMatches();
-    //     previousSelected.DeselectFruit();
-    //     FindAllMatches();
-
-    //     GUIManager.Instance.MoveCounter--;
-    // }
+        GUIManager.Instance.MoveCounter--;
+    }
 
     // Method in charge of changing the position of two fruits
     public void SwapFruit(Vector2 direction)
     {
         RaycastHit2D hit = Physics2D.Raycast(transform.position, direction);
+
+        nextSelected = hit.collider.gameObject.GetComponent<Fruit>();
 
         // If the 'hit' is the same fruit, leave the method
         if (spriteRenderer.sprite == hit.collider.gameObject.GetComponentInChildren<SpriteRenderer>().sprite)
