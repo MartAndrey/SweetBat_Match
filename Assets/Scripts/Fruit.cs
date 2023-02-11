@@ -2,8 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class Fruit : MonoBehaviour
+public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
 {
     // Unique fruit identifier
     public int Id;
@@ -28,6 +29,9 @@ public class Fruit : MonoBehaviour
 
     // Time it takes to change the positions of the fruits when they are moved
     float timeChangePositionFruits = 0.4f;
+
+    // This variable is in charge of telling us if there is a touch or a click on the screen or more exactly on a fruit
+    bool hasTouched = false;
 
     // When the fruit activates, you reset its target position because sometimes it changes its position
     void OnEnable()
@@ -71,64 +75,95 @@ public class Fruit : MonoBehaviour
         previousSelected = null;
     }
 
-    // Method in charge of detecting the mouse or the touch
-    void OnMouseDown()
+    public void OnDrag(PointerEventData eventData)
     {
-        if (spriteRenderer.sprite == null || BoardManager.Instance.isShifting)
+        // Calculate the drag direction
+        Vector2 direction = eventData.position - eventData.pressPosition;
+
+        // Initialize the direction label with the vertical direction
+        Vector2 directionLabel = direction.y > 0 ? Vector2.up : Vector2.down;
+
+        // If the horizontal direction is greater than the vertical direction, change the direction label to the horizontal direction
+        if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
+        {
+            directionLabel = direction.x > 0 ? Vector2.right : Vector2.left;
+        }
+
+        // Check if the method has not been called yet
+        if (!hasTouched)
+        {
+            SwapFruit(directionLabel);
+            hasTouched = true;
             return;
-
-
-        if (isSelected) // If the fruit is selected
-        {
-            DeselectFruit();
-        }
-        else
-        {
-            if (previousSelected == null) // If there is no fruit selected
-            {
-                SelectFruit();
-            }
-            else // If there is fruit selected
-            {
-                if (CanSwipe())
-                {
-                    StartCoroutine(CanBeSwapFruit());
-                }
-                else
-                {
-                    previousSelected.DeselectFruit();
-                    SelectFruit();
-                }
-            }
         }
     }
 
-    IEnumerator CanBeSwapFruit()
+    public void OnEndDrag(PointerEventData eventData)
     {
-        SwapFruit(previousSelected);
-
-        yield return new WaitForSeconds(timeChangePositionFruits);
-
-        previousSelected.FindAllMatches();
-        previousSelected.DeselectFruit();
-        FindAllMatches();
-
-        GUIManager.Instance.MoveCounter--;
+        hasTouched = false;
     }
+
+    // Method in charge of detecting the mouse or the touch
+    // void OnMouseDrag()
+    // {
+    //     if (spriteRenderer.sprite == null || BoardManager.Instance.isShifting)
+    //         return;
+
+
+    //     if (isSelected) // If the fruit is selected
+    //     {
+    //         DeselectFruit();
+    //     }
+    //     else
+    //     {
+    //         if (previousSelected == null) // If there is no fruit selected
+    //         {
+    //             SelectFruit();
+    //         }
+    //         else // If there is fruit selected
+    //         {
+    //             if (CanSwipe())
+    //             {
+    //                 StartCoroutine(CanBeSwapFruit());
+    //             }
+    //             else
+    //             {
+    //                 previousSelected.DeselectFruit();
+    //                 SelectFruit();
+    //             }
+    //         }
+    //     }
+    // }
+
+    // IEnumerator CanBeSwapFruit()
+    // {
+    //     SwapFruit(previousSelected);
+
+    //     yield return new WaitForSeconds(timeChangePositionFruits);
+
+    //     previousSelected.FindAllMatches();
+    //     previousSelected.DeselectFruit();
+    //     FindAllMatches();
+
+    //     GUIManager.Instance.MoveCounter--;
+    // }
 
     // Method in charge of changing the position of two fruits
-    public void SwapFruit(Fruit newFruit)
+    public void SwapFruit(Vector2 direction)
     {
-        if (spriteRenderer.sprite == newFruit.GetComponentInChildren<SpriteRenderer>().sprite)
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction);
+
+        // If the 'hit' is the same fruit, leave the method
+        if (spriteRenderer.sprite == hit.collider.gameObject.GetComponentInChildren<SpriteRenderer>().sprite)
             return;
 
         Vector3 previewPosition = transform.position; // Save the position of the second selected fruit
 
-        this.targetPosition = newFruit.transform.position;
-        newFruit.targetPosition = this.transform.position;
+        this.targetPosition = hit.collider.gameObject.transform.position;
+        hit.collider.gameObject.GetComponent<Fruit>().TargetPosition = this.transform.position;
 
         // preview and Target refers to the second selected fruit and anotherFruit is the first selected fruit
-        MoveFruitsPositionOfArray(previewPosition, targetPosition, newFruit.gameObject);
+        MoveFruitsPositionOfArray(previewPosition, targetPosition, hit.collider.gameObject);
     }
 
     // Method that changes the position of the 2 fruits in the "fruit" array
@@ -172,35 +207,6 @@ public class Fruit : MonoBehaviour
             }
         }
     }
-
-    // Returns the neighboring fruit in that specified direction
-    GameObject GetNeighbor(Vector2 direction)
-    {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction);
-
-        if (hit.collider != null)
-        {
-            return hit.collider.gameObject;
-        }
-
-        return null;
-    }
-
-    // Returns neighboring fruits in all directions
-    List<GameObject> GetAllNeighbors()
-    {
-        List<GameObject> neighbors = new List<GameObject>();
-
-        foreach (Vector2 direction in adjacentDirections)
-        {
-            neighbors.Add(GetNeighbor(direction));
-        }
-
-        return neighbors;
-    }
-
-    // Check if the fruit is a neighbor to be able to change the positions
-    bool CanSwipe() => GetAllNeighbors().Contains(previousSelected.gameObject);
 
     // Method returns the neighboring fruits that match
     List<GameObject> FindMatch(Vector2 direction)
