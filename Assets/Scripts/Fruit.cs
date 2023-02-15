@@ -48,12 +48,13 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
     {
         if (targetPosition != Vector3.zero)
         {
-            this.transform.position = Vector3.Lerp(this.transform.position, targetPosition, speed * Time.deltaTime);
+            this.transform.localPosition = Vector3.Lerp(this.transform.localPosition, targetPosition, speed * Time.deltaTime);
 
-            if (transform.position == targetPosition)
+            if (transform.localPosition == targetPosition)
             {
-                transform.position = targetPosition;
+                transform.localPosition = targetPosition;
                 targetPosition = Vector3.zero;
+                BoardManager.Instance.isShifting = false;
             }
         }
     }
@@ -85,6 +86,8 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
     // Method in charge of detecting when we are dragging the fruit
     public void OnDrag(PointerEventData eventData)
     {
+        StartCoroutine(ChangeOnTheBoard());
+
         if (BoardManager.Instance.isShifting)
             return;
 
@@ -109,6 +112,12 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
         }
     }
 
+    // If there are no more changes on the board, it exits the coroutine
+    IEnumerator ChangeOnTheBoard()
+    {
+        yield return new WaitUntil(() => !BoardManager.Instance.isShifting);
+    }
+
     // // Method in charge of detecting when we drop the fruit and therefore it stops dragging
     public void OnEndDrag(PointerEventData eventData)
     {
@@ -122,6 +131,9 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
 
         yield return new WaitForSeconds(timeChangePositionFruits);
 
+        if (nextSelected == null)
+            yield break;
+
         nextSelected.FindAllMatches();
         FindAllMatches();
 
@@ -131,21 +143,31 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
     // Method in charge of changing the position of two fruits
     public void SwapFruit(Vector2 direction)
     {
+        BoardManager.Instance.isShifting = true;
         RaycastHit2D hit = Physics2D.Raycast(transform.position, direction);
+
+        if (hit.collider == null)
+        {
+            BoardManager.Instance.isShifting = false;
+            return;
+        }
 
         nextSelected = hit.collider.gameObject.GetComponent<Fruit>();
 
         // If the 'hit' is the same fruit, leave the method
-        if (spriteRenderer.sprite == hit.collider.gameObject.GetComponentInChildren<SpriteRenderer>().sprite)
+        if (spriteRenderer.sprite == nextSelected.gameObject.GetComponentInChildren<SpriteRenderer>().sprite)
+        {
+            BoardManager.Instance.isShifting = false;
             return;
+        }
 
-        Vector3 previewPosition = transform.position; // Save the position of the second selected fruit
+        Vector3 previewPosition = transform.localPosition; // Save the position of the second selected fruit
 
-        this.targetPosition = hit.collider.gameObject.transform.position;
-        hit.collider.gameObject.GetComponent<Fruit>().TargetPosition = this.transform.position;
+        this.targetPosition = nextSelected.transform.localPosition;
+        nextSelected.TargetPosition = this.transform.localPosition;
 
         // preview and Target refers to the second selected fruit and anotherFruit is the first selected fruit
-        MoveFruitsPositionOfArray(previewPosition, targetPosition, hit.collider.gameObject);
+        MoveFruitsPositionOfArray(previewPosition, targetPosition, nextSelected.gameObject);
     }
 
     // Method that changes the position of the 2 fruits in the "fruit" array
@@ -169,7 +191,6 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
                 BoardManager.Instance.Fruits[(int)transform.localPosition.x, (int)transform.localPosition.y] = anotherFruit;
                 return;
             }
-
         }
 
         // If the fruit is moved vertically

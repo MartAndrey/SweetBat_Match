@@ -214,7 +214,7 @@ public class BoardManager : MonoBehaviour
     }
 
     // Makes the fruits fall to occupy an empty position
-    IEnumerator MakeFruitsFall(int x, int yStart, float shiftDelay = 0.1f)
+    IEnumerator MakeFruitsFall(int x, int yStart, float shiftDelay = 0.05f)
     {
         List<GameObject> boardFruits;
         int disabledFruits;
@@ -238,13 +238,13 @@ public class BoardManager : MonoBehaviour
             {
                 for (int j = 0; j < boardFruits.Count - 1; j++)
                 {
-                    boardFruits[j + 1].GetComponent<Fruit>().TargetPosition = new Vector2(boardFruits[j + 1].transform.position.x, boardFruits[j + 1].transform.position.y - offset);
+                    boardFruits[j + 1].GetComponent<Fruit>().TargetPosition = new Vector2(boardFruits[j + 1].transform.localPosition.x, boardFruits[j + 1].transform.localPosition.y - offset);
                     fruits[x, y] = fruits[x, y + 1]; // Change the previously moved fruit to the corresponding position in the array
-
+                
                     if (j == boardFruits.Count - 2)
                     {
                         fruits[x, y + 1] = GetNewFruit();
-                        fruits[x, y + 1].transform.position = new Vector3(fruits[x, y].transform.position.x, fruits[x, y].transform.position.y, 0);
+                        fruits[x, y + 1].transform.localPosition = new Vector3(x, y + 1, 0);
                         fruits[x, y + 1].SetActive(true);
                         listNewFruit.Add(fruits[x, y + 1]);
 
@@ -252,7 +252,7 @@ public class BoardManager : MonoBehaviour
                         {
                             for (int k = 0; k < listNewFruit.Count - 1; k++)
                             {
-                                listNewFruit[k].GetComponent<Fruit>().TargetPosition = new Vector2(listNewFruit[k].transform.position.x, listNewFruit[k].transform.position.y - offset);
+                                listNewFruit[k].GetComponent<Fruit>().TargetPosition = new Vector2(listNewFruit[k].transform.localPosition.x, listNewFruit[k].transform.localPosition.y - offset);
                             }
                         }
                         secondTime = true;
