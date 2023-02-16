@@ -1,0 +1,38 @@
+How to use Poligons Sounds’ Assets
+
+Files Name
+	The name follow this pattern:
+		“funccion_assetname_loop.format”
+	For example:
+		“track_name_longloop.mp3”
+		“stinger_popup.wav”
+
+No looped áudio
+These do not have description in the file name. They are called, “oneshot” audio. For example: 
+“track_music.wav”. 
+“sfx_sound.mp3”.
+These audio files have a beginning and an end, these two points are not interconnected, being necessary its retrigger. Then, just put in and use.
+
+Looped Track
+	Those that are looped, have three kinds of loops: loop, longloop and shortloop.
+	Loop File
+Looped files have a beginning and an end connected. So, they can be automatically looped.
+		Example: “track_name_loop.wav”	“sfx_shot_loop.mp3”
+	Long Loop and Short Loop
+		These kinds of loop are related, because long looped files can’t be looped alone. They, commonly have the introduction, if its a track, or have a reverb tail, if its a sound effect.
+		Then, the shortloop file is the looped section of the bigger file.
+		Then to use this files, you have to insert the longloop first, and at the end of the longloop, shot the shortloop. And every additional loop should be made with the short loop file.
+		Example: “track_name_longloop.wav”	“track_name_shortloop.wav”
+
+---
+
+Get in Touch with Poligons Sounds:
+Site - poligonssounds.wixsite.com/poligonssounds
+Youtube - www.youtube.com/channel/UCRptWHDz-QW7Q7YJd71cvlg
+Facebook - www.facebook.com/poligonssounds/
+Instagram - www.instagram.com/poligonssounds/
+
+Thanks for the purchase! :)
+Poligons Sounds
+
+Contact Us: poligonssounds@gmail.com

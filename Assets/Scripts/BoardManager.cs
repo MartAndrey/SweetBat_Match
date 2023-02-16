@@ -32,6 +32,7 @@ public class BoardManager : MonoBehaviour
     [SerializeField] int score;
     [Tooltip("Probability of each fruit to appear")]
     [SerializeField] int[] fruitsProbabilities;
+    [SerializeField] AudioClip endSwapFruitAudio;
 
     // All the fruits on the board
     GameObject[,] fruits;
@@ -39,6 +40,8 @@ public class BoardManager : MonoBehaviour
     Collider2D boardCollider;
 
     Fruit selectedFruit;
+
+    AudioSource audioSource;
 
     // Variable that gives the distance of each fruit on the board
     float offset = 1;
@@ -71,6 +74,7 @@ public class BoardManager : MonoBehaviour
         }
 
         boardCollider = GetComponent<Collider2D>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Start()
@@ -199,6 +203,8 @@ public class BoardManager : MonoBehaviour
                 }
             }
         }
+
+        audioSource.PlayOneShot(endSwapFruitAudio, 1);
 
         // We go through all the fruits to see if there is a match
         for (int x = 0; x < xSize; x++)

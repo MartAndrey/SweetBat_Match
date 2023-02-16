@@ -15,6 +15,11 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
     static Color selectedColor = new Color(.5f, .5f, .5f, 1);
     static Fruit nextSelected = null;
 
+    [SerializeField] AudioClip swapFruitAudio;
+    [SerializeField] AudioClip fruitDestroyAudio;
+
+    AudioSource audioSource;
+
     // Directions to the sides of the "fruit"
     Vector2[] adjacentDirections = new Vector2[] { Vector2.up, Vector2.down, Vector2.left, Vector2.right };
 
@@ -40,6 +45,7 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
 
     void Awake()
     {
+        audioSource = GetComponent<AudioSource>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         targetPosition = Vector3.zero;
     }
@@ -106,6 +112,7 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
         // Check if the method has not been called yet
         if (!hasTouched)
         {
+            audioSource.PlayOneShot(swapFruitAudio, 0.7f);
             StartCoroutine(CanBeSwapFruit(directionLabel));
             hasTouched = true;
             return;
@@ -259,6 +266,7 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
 
         if (hMatch || vMatch)
         {
+            audioSource.PlayOneShot(fruitDestroyAudio, 1);
             gameObject.GetComponentInChildren<SpriteRenderer>().enabled = false;
 
             BoardManager.OnBoardChanges.Invoke();
