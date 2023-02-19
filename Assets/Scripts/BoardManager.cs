@@ -18,7 +18,6 @@ public class BoardManager : MonoBehaviour
     public bool isShifting { get; set; }
     public int XSize { get { return xSize; } }
     public int YSize { get { return ySize; } }
-
     public GameObject[,] Fruits { get { return fruits; } set { fruits = value; } }
 
     [Tooltip("All prefabs fruits")]
@@ -45,7 +44,11 @@ public class BoardManager : MonoBehaviour
 
     // Variable that gives the distance of each fruit on the board
     float offset = 1;
+
     int totalProbabilities;
+
+    // List of fruits that were changed position when there was a match
+    List<GameObject> fruitsWereMoved;
 
     void OnEnable()
     {
@@ -190,6 +193,8 @@ public class BoardManager : MonoBehaviour
     // Search in each row and column what space there is, that is, what fruit is deactivated
     public IEnumerator FindDisableFruits()
     {
+        fruitsWereMoved = new List<GameObject>();
+
         yield return new WaitForEndOfFrame();
 
         for (int x = 0; x < xSize; x++)
@@ -207,16 +212,15 @@ public class BoardManager : MonoBehaviour
         audioSource.PlayOneShot(endSwapFruitAudio, 1);
 
         // We go through all the fruits to see if there is a match
-        for (int x = 0; x < xSize; x++)
+        for (int i = 0; i < fruitsWereMoved.Count; i++)
         {
-            for (int y = 0; y < ySize; y++)
+            if (fruitsWereMoved[i].activeSelf)
             {
-                if (fruits[x, y] != null)
-                {
-                    fruits[x, y].GetComponent<Fruit>().FindAllMatches();
-                }
+                fruitsWereMoved[i].GetComponent<Fruit>().FindAllMatches();
             }
         }
+
+        // GUIManager.Instance.ProbabilityFactor = 0;
     }
 
     // Makes the fruits fall to occupy an empty position
@@ -228,7 +232,7 @@ public class BoardManager : MonoBehaviour
         CountDisableFruits(x, yStart, out boardFruits, out disabledFruits);
 
         bool secondTime = false; // Indicates if it is the second fruit that appears
-        List<GameObject> listNewFruit = new List<GameObject>(); // Save the new fruits that appear
+        List<GameObject> listNewFruits = new List<GameObject>(); // Save the new fruits that appear
 
         for (int i = 0; i < disabledFruits; i++)
         {
@@ -246,19 +250,19 @@ public class BoardManager : MonoBehaviour
                 {
                     boardFruits[j + 1].GetComponent<Fruit>().TargetPosition = new Vector2(boardFruits[j + 1].transform.localPosition.x, boardFruits[j + 1].transform.localPosition.y - offset);
                     fruits[x, y] = fruits[x, y + 1]; // Change the previously moved fruit to the corresponding position in the array
-                
+
                     if (j == boardFruits.Count - 2)
                     {
                         fruits[x, y + 1] = GetNewFruit();
                         fruits[x, y + 1].transform.localPosition = new Vector3(x, y + 1, 0);
                         fruits[x, y + 1].SetActive(true);
-                        listNewFruit.Add(fruits[x, y + 1]);
+                        listNewFruits.Add(fruits[x, y + 1]);
 
                         if (secondTime)
                         {
-                            for (int k = 0; k < listNewFruit.Count - 1; k++)
+                            for (int k = 0; k < listNewFruits.Count - 1; k++)
                             {
-                                listNewFruit[k].GetComponent<Fruit>().TargetPosition = new Vector2(listNewFruit[k].transform.localPosition.x, listNewFruit[k].transform.localPosition.y - offset);
+                                listNewFruits[k].GetComponent<Fruit>().TargetPosition = new Vector2(listNewFruits[k].transform.localPosition.x, listNewFruits[k].transform.localPosition.y - offset);
                             }
                         }
                         secondTime = true;
@@ -268,6 +272,9 @@ public class BoardManager : MonoBehaviour
                 }
             }
         }
+
+        fruitsWereMoved.AddRange(boardFruits);
+        fruitsWereMoved.AddRange(listNewFruits);
 
         AddFruitsToPool(boardFruits);
 

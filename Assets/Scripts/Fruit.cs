@@ -266,6 +266,7 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
 
         if (hMatch || vMatch)
         {
+            // GUIManager.Instance.MultiplicationFactor++;
             audioSource.PlayOneShot(fruitDestroyAudio, 1);
             gameObject.GetComponentInChildren<SpriteRenderer>().enabled = false;
 

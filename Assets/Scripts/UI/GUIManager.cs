@@ -22,7 +22,8 @@ public class GUIManager : MonoBehaviour
         get { return moveCounter; }
         set
         {
-            moveCounter = value; movesText.text = moveCounter.ToString();
+            moveCounter = value;
+            movesText.text = moveCounter.ToString();
             if (moveCounter <= 0)
             {
                 moveCounter = 0;
@@ -31,13 +32,24 @@ public class GUIManager : MonoBehaviour
         }
     }
 
-    [SerializeField] TMP_Text movesText, scoreText;
+    // public int MultiplicationFactor
+    // {
+    //     get { return multiplicationFactor; }
+    //     set
+    //     {
+    //         multiplicationFactorGameObject.SetActive(true);
+    //         multiplicationFactor = value;
+    //         probabilityFactorText.text = multiplicationFactor.ToString();
+    //     }
+    // }
+
+    [SerializeField] TMP_Text movesText, scoreText, probabilityFactorText;
+    [SerializeField] GameObject multiplicationFactorGameObject;
 
     [Header("Screens")]
     [SerializeField] GameObject gameOverScreen;
 
-    int moveCounter;
-    int score;
+    int moveCounter, score/*, multiplicationFactor*/;
 
     void Start()
     {
@@ -55,6 +67,8 @@ public class GUIManager : MonoBehaviour
 
         moveCounter = 25;
         movesText.text = moveCounter.ToString();
+
+        // multiplicationFactor = 0;
     }
 
     IEnumerator GameOver()
