@@ -93,6 +93,8 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
     public void OnDrag(PointerEventData eventData)
     {
         StartCoroutine(ChangeOnTheBoard());
+        
+        MultiplicationFactor.Instance.ResetMultiplicationFactor();
 
         if (BoardManager.Instance.isShifting)
             return;
@@ -266,7 +268,7 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
 
         if (hMatch || vMatch)
         {
-            // GUIManager.Instance.MultiplicationFactor++;
+            MultiplicationFactor.Instance.SetMultiplicationFactor();
             audioSource.PlayOneShot(fruitDestroyAudio, 1);
             gameObject.GetComponentInChildren<SpriteRenderer>().enabled = false;
 

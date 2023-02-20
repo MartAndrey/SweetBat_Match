@@ -50,6 +50,9 @@ public class BoardManager : MonoBehaviour
     // List of fruits that were changed position when there was a match
     List<GameObject> fruitsWereMoved;
 
+    // Variable to which the score is added and then multiplied by the multiplication factor
+    public int SumScore { get; set; }
+
     void OnEnable()
     {
         OnBoardChanges += StartCoroutineFindDisable;
@@ -219,12 +222,10 @@ public class BoardManager : MonoBehaviour
                 fruitsWereMoved[i].GetComponent<Fruit>().FindAllMatches();
             }
         }
-
-        // GUIManager.Instance.ProbabilityFactor = 0;
     }
 
     // Makes the fruits fall to occupy an empty position
-    IEnumerator MakeFruitsFall(int x, int yStart, float shiftDelay = 0.05f)
+    IEnumerator MakeFruitsFall(int x, int yStart, float shiftDelay = 0.1f)
     {
         List<GameObject> boardFruits;
         int disabledFruits;
@@ -237,6 +238,7 @@ public class BoardManager : MonoBehaviour
         for (int i = 0; i < disabledFruits; i++)
         {
             GUIManager.Instance.Score += score;
+            SumScore += score;
 
             int y = yStart; // Traverse the rows of the board
 

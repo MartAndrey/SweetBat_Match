@@ -32,24 +32,14 @@ public class GUIManager : MonoBehaviour
         }
     }
 
-    // public int MultiplicationFactor
-    // {
-    //     get { return multiplicationFactor; }
-    //     set
-    //     {
-    //         multiplicationFactorGameObject.SetActive(true);
-    //         multiplicationFactor = value;
-    //         probabilityFactorText.text = multiplicationFactor.ToString();
-    //     }
-    // }
+    public int MultiplicationFactor { set { multiplicationFactorText.text = value.ToString(); } }
 
-    [SerializeField] TMP_Text movesText, scoreText, probabilityFactorText;
-    [SerializeField] GameObject multiplicationFactorGameObject;
+    [SerializeField] TMP_Text movesText, scoreText, multiplicationFactorText;
 
     [Header("Screens")]
     [SerializeField] GameObject gameOverScreen;
 
-    int moveCounter, score/*, multiplicationFactor*/;
+    int moveCounter, score;
 
     void Start()
     {
@@ -65,10 +55,8 @@ public class GUIManager : MonoBehaviour
         score = 0;
         scoreText.text = score.ToString();
 
-        moveCounter = 25;
+        moveCounter = 50;
         movesText.text = moveCounter.ToString();
-
-        // multiplicationFactor = 0;
     }
 
     IEnumerator GameOver()
