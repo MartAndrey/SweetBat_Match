@@ -14,7 +14,10 @@ public class MultiplicationFactor : MonoBehaviour
     [Tooltip("Multiplication Factor Container Animator")]
     [SerializeField] Animator animator;
     [SerializeField] int multiplicationFactor;
-    
+    [SerializeField] AudioClip[] combosAudio;
+
+    AudioSource audioSource;
+
     // Time in which the multiplication factor is active
     float timeToDisable;
 
@@ -28,6 +31,8 @@ public class MultiplicationFactor : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -40,7 +45,7 @@ public class MultiplicationFactor : MonoBehaviour
             {
                 if (multiplicationFactor > 1)
                 {
-                    GUIManager.Instance.Score += BoardManager.Instance.SumScore * (multiplicationFactor - 1); 
+                    GUIManager.Instance.Score += BoardManager.Instance.SumScore * (multiplicationFactor - 1);
                 }
 
                 boxMultiplicationFactor.SetActive(false);
@@ -60,9 +65,21 @@ public class MultiplicationFactor : MonoBehaviour
 
         GUIManager.Instance.MultiplicationFactor = multiplicationFactor;
 
-        if (multiplicationFactor > 1)
+        switch (multiplicationFactor)
         {
-            animator.SetTrigger("MultiplicationFactor");
+            case 1:
+                audioSource.PlayOneShot(combosAudio[0]);
+                break;
+
+            case 2:
+                audioSource.PlayOneShot(combosAudio[1]);
+                animator.SetTrigger("MultiplicationFactor");
+                break;
+
+            default:
+                audioSource.PlayOneShot(combosAudio[2]);
+                animator.SetTrigger("MultiplicationFactor");
+                break;
         }
     }
 
