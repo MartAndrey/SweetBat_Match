@@ -14,6 +14,7 @@ public class GUIManager : MonoBehaviour
         {
             score = value;
             scoreText.text = score.ToString();
+            ProgressBar.Instance.ChangeBarScore(score);
         }
     }
 
@@ -39,7 +40,7 @@ public class GUIManager : MonoBehaviour
     [Header("Screens")]
     [SerializeField] GameObject gameOverScreen;
 
-    int moveCounter, score;
+    [SerializeField] int moveCounter, score;
 
     void Start()
     {
@@ -52,10 +53,7 @@ public class GUIManager : MonoBehaviour
             Destroy(this.gameObject);
         }
 
-        score = 0;
         scoreText.text = score.ToString();
-
-        moveCounter = 50;
         movesText.text = moveCounter.ToString();
     }
 
