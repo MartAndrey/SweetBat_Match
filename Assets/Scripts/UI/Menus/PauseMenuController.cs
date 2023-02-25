@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PauseMenuController : MonoBehaviour
 {
@@ -9,8 +10,16 @@ public class PauseMenuController : MonoBehaviour
     [SerializeField] GameObject overlay;
     [SerializeField] GameObject particleSystemEnergy;
     [SerializeField] Animator boxAnimator;
+    [SerializeField] AudioClip popComplete;
+
+    AudioSource audioSource;
 
     // bool isAnimationTransition = false;
+
+    void Awake()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
 
     public void OnPause()
     {
@@ -36,6 +45,13 @@ public class PauseMenuController : MonoBehaviour
         overlay.SetActive(false);
     }
 
+    public void Replay()
+    {
+        audioSource.PlayOneShot(popComplete);
+        StartCoroutine(ScreenChangeTransition.Instance.FadeOut(SceneManager.GetActiveScene().name));
+        Time.timeScale = 1;
+    }
+    
     // IEnumerator CheckTransition()
     // {
     //     isAnimationTransition = true;

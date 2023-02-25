@@ -146,7 +146,7 @@ public class BoardManager : MonoBehaviour
                                                                 startY + (offset * y),
                                                                 0),
                                                                 currentFruit.transform.rotation, spawnFruit);
-
+                                                                
                 // Add name to each fruit where we indicate in which column and row it is located
                 newFruit.name = string.Format("Fruit[{0}] [{1}]", x, y);
                 newFruit.GetComponent<Fruit>().Id = idx;
