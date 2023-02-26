@@ -18,12 +18,9 @@ public class PauseMenuController : MonoBehaviour
 
     AudioSource audioSource;
 
-    // bool isAnimationTransition = false;
-
     void Awake()
     {
         audioSource = GetComponent<AudioSource>();
-        // particleSystemEnergy.GetComponent<ParticleSystem>().Stop();
     }
 
     public void OnPause()
@@ -31,7 +28,6 @@ public class PauseMenuController : MonoBehaviour
         Time.timeScale = 0;
         overlay.SetActive(true);
         boxPause.SetActive(true);
-        // particleSystemEnergy.GetComponent<ParticleSystem>().Play();
         particleSystemEnergy.SetActive(true);
     }
 
@@ -69,6 +65,21 @@ public class PauseMenuController : MonoBehaviour
         StartCoroutine(ConfirmationQuitOnRutiner());
     }
 
+    public void ConfirmationQuitOff()
+    {
+        audioSource.PlayOneShot(popComplete);
+        particleSystemEnergy.SetActive(false);
+        confirmationQuitAnimator.SetTrigger("Transition");
+        StartCoroutine(ConfirmationQuitOffRutiner());
+    }
+
+    public void QuitLevel()
+    {
+        audioSource.PlayOneShot(popComplete);
+        StartCoroutine(ScreenChangeTransition.Instance.FadeOut("LevelMenu"));
+        // TODO: Rest Life -1
+    }
+
     IEnumerator ConfirmationQuitOnRutiner()
     {
         yield return new WaitForSecondsRealtime(1);
@@ -79,14 +90,10 @@ public class PauseMenuController : MonoBehaviour
 
     IEnumerator ConfirmationQuitOffRutiner()
     {
-        yield return null;
+        yield return new WaitForSecondsRealtime(1);
 
+        overlay.SetActive(false);
+        confirmationQuit.SetActive(false);
+        Time.timeScale = 1;
     }
-
-    // IEnumerator CheckTransition()
-    // {
-    //     isAnimationTransition = true;
-    //     yield return new WaitForSecondsRealtime(1);
-    //     isAnimationTransition = false;
-    // }
 }

@@ -32,7 +32,7 @@ public class ScreenChangeTransition : MonoBehaviour
 
     public IEnumerator FadeIn()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSecondsRealtime(1);
         canvas.enabled = false;        
     }
 
@@ -40,7 +40,7 @@ public class ScreenChangeTransition : MonoBehaviour
     {
         canvas.enabled = true;
         animator.SetTrigger("Transition");
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSecondsRealtime(1);
         SceneManager.LoadScene(nameScene);
     }
 }
