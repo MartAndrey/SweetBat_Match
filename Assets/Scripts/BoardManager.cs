@@ -161,7 +161,7 @@ public class BoardManager : MonoBehaviour
     {
         List<GameObject> noTouchingFruits = new List<GameObject>();
 
-        yield return new WaitForSeconds(0.00f);
+        yield return new WaitForSecondsRealtime(0.00f);
 
         for (int x = 0; x < xSize; x++)
         {

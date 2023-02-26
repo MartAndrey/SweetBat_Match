@@ -11,6 +11,10 @@ public class PauseMenuController : MonoBehaviour
     [SerializeField] GameObject particleSystemEnergy;
     [SerializeField] Animator boxAnimator;
     [SerializeField] AudioClip popComplete;
+    
+    [Header("Button Confirmation Quit")]
+    [SerializeField] GameObject confirmationQuit;
+    [SerializeField] Animator confirmationQuitAnimator;
 
     AudioSource audioSource;
 
@@ -19,6 +23,7 @@ public class PauseMenuController : MonoBehaviour
     void Awake()
     {
         audioSource = GetComponent<AudioSource>();
+        // particleSystemEnergy.GetComponent<ParticleSystem>().Stop();
     }
 
     public void OnPause()
@@ -26,23 +31,28 @@ public class PauseMenuController : MonoBehaviour
         Time.timeScale = 0;
         overlay.SetActive(true);
         boxPause.SetActive(true);
+        // particleSystemEnergy.GetComponent<ParticleSystem>().Play();
         particleSystemEnergy.SetActive(true);
     }
 
     // It is called when I click the close button
-    public void OffPause()
+    public void OffPause(bool changeTimeScale)
     {
         particleSystemEnergy.SetActive(false);
         boxAnimator.SetTrigger("Transition");
-        StartCoroutine(OffPauseRutiner());
+        StartCoroutine(OffPauseRutiner(changeTimeScale));
     }
 
-    IEnumerator OffPauseRutiner()
+    IEnumerator OffPauseRutiner(bool changeTimeScale)
     {
         yield return new WaitForSecondsRealtime(1);
-        Time.timeScale = 1;
+
+        if (changeTimeScale)
+        {
+            Time.timeScale = 1;
+            overlay.SetActive(false);
+        }
         boxPause.SetActive(false);
-        overlay.SetActive(false);
     }
 
     public void Replay()
@@ -51,7 +61,28 @@ public class PauseMenuController : MonoBehaviour
         StartCoroutine(ScreenChangeTransition.Instance.FadeOut(SceneManager.GetActiveScene().name));
         Time.timeScale = 1;
     }
-    
+
+    public void Quit(bool changeTimeScale)
+    {
+        audioSource.PlayOneShot(popComplete);
+        OffPause(changeTimeScale);
+        StartCoroutine(ConfirmationQuitOnRutiner());
+    }
+
+    IEnumerator ConfirmationQuitOnRutiner()
+    {
+        yield return new WaitForSecondsRealtime(1);
+
+        confirmationQuit.SetActive(true);
+        particleSystemEnergy.SetActive(true);
+    }
+
+    IEnumerator ConfirmationQuitOffRutiner()
+    {
+        yield return null;
+
+    }
+
     // IEnumerator CheckTransition()
     // {
     //     isAnimationTransition = true;
