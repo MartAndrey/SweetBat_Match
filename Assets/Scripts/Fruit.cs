@@ -60,7 +60,6 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
             {
                 transform.localPosition = targetPosition;
                 targetPosition = Vector3.zero;
-                BoardManager.Instance.isShifting = false;
             }
         }
     }
@@ -93,10 +92,10 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
     public void OnDrag(PointerEventData eventData)
     {
         StartCoroutine(ChangeOnTheBoard());
-        
+
         MultiplicationFactor.Instance.ResetMultiplicationFactor();
 
-        if (BoardManager.Instance.isShifting)
+        if (BoardManager.Instance.IsShifting || GUIManager.Instance.MoveCounter <= 0)
             return;
 
         // Calculate the drag direction
@@ -124,7 +123,7 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
     // If there are no more changes on the board, it exits the coroutine
     IEnumerator ChangeOnTheBoard()
     {
-        yield return new WaitUntil(() => !BoardManager.Instance.isShifting);
+        yield return new WaitUntil(() => !BoardManager.Instance.IsShifting);
     }
 
     // // Method in charge of detecting when we drop the fruit and therefore it stops dragging
@@ -152,12 +151,12 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
     // Method in charge of changing the position of two fruits
     public void SwapFruit(Vector2 direction)
     {
-        BoardManager.Instance.isShifting = true;
+        BoardManager.Instance.IsShifting = true;
         RaycastHit2D hit = Physics2D.Raycast(transform.position, direction);
 
         if (hit.collider == null)
         {
-            BoardManager.Instance.isShifting = false;
+            BoardManager.Instance.IsShifting = false;
             return;
         }
 
@@ -166,7 +165,7 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
         // If the 'hit' is the same fruit, leave the method
         if (spriteRenderer.sprite == nextSelected.gameObject.GetComponentInChildren<SpriteRenderer>().sprite)
         {
-            BoardManager.Instance.isShifting = false;
+            BoardManager.Instance.IsShifting = false;
             return;
         }
 
@@ -273,6 +272,10 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
             gameObject.GetComponentInChildren<SpriteRenderer>().enabled = false;
 
             BoardManager.OnBoardChanges.Invoke();
+        }
+        else
+        {
+            BoardManager.Instance.IsShifting = false;
         }
     }
 }

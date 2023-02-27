@@ -59,8 +59,10 @@ public class GUIManager : MonoBehaviour
 
     IEnumerator GameOver()
     {
-        yield return new WaitUntil(() => !BoardManager.Instance.isShifting);
+        yield return new WaitForEndOfFrame();
+        yield return new WaitUntil(() => !BoardManager.Instance.IsShifting);
         yield return new WaitForSeconds(0.25f);
+        
         gameOverScreen.SetActive(true);
     }
 }

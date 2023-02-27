@@ -15,10 +15,12 @@ public class BoardManager : MonoBehaviour
     public const int MinFruitsToMatch = 2;
 
     // Check if a fruit is changing
-    public bool isShifting { get; set; }
+    public bool IsShifting { get; set; }
     public int XSize { get { return xSize; } }
     public int YSize { get { return ySize; } }
     public GameObject[,] Fruits { get { return fruits; } set { fruits = value; } }
+    // Variable to which the score is added and then multiplied by the multiplication factor
+    public int SumScore { get; set; }
 
     [Tooltip("All prefabs fruits")]
     [SerializeField] List<GameObject> prefabs = new List<GameObject>();
@@ -49,9 +51,6 @@ public class BoardManager : MonoBehaviour
 
     // List of fruits that were changed position when there was a match
     List<GameObject> fruitsWereMoved;
-
-    // Variable to which the score is added and then multiplied by the multiplication factor
-    public int SumScore { get; set; }
 
     void OnEnable()
     {
@@ -146,7 +145,7 @@ public class BoardManager : MonoBehaviour
                                                                 startY + (offset * y),
                                                                 0),
                                                                 currentFruit.transform.rotation, spawnFruit);
-                                                                
+
                 // Add name to each fruit where we indicate in which column and row it is located
                 newFruit.name = string.Format("Fruit[{0}] [{1}]", x, y);
                 newFruit.GetComponent<Fruit>().Id = idx;
@@ -280,12 +279,12 @@ public class BoardManager : MonoBehaviour
 
         AddFruitsToPool(boardFruits);
 
-        isShifting = false;
+        IsShifting = false;
     }
 
     void CountDisableFruits(int x, int yStart, out List<GameObject> boardFruits, out int disabledFruits)
     {
-        isShifting = true;
+        IsShifting = true;
 
         boardFruits = new List<GameObject>();
         disabledFruits = 0;
