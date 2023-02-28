@@ -38,7 +38,7 @@ public class GUIManager : MonoBehaviour
     [SerializeField] TMP_Text movesText, scoreText, multiplicationFactorText;
 
     [Header("Screens")]
-    [SerializeField] GameObject gameOverScreen;
+    [SerializeField] GameObject menuGameOver;
 
     [SerializeField] int moveCounter, score;
 
@@ -63,6 +63,6 @@ public class GUIManager : MonoBehaviour
         yield return new WaitUntil(() => !BoardManager.Instance.IsShifting);
         yield return new WaitForSeconds(0.25f);
         
-        gameOverScreen.SetActive(true);
+        menuGameOver.GetComponent<GameOverController>().OnGameOver();
     }
 }

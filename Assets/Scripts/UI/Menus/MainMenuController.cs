@@ -26,7 +26,7 @@ public class MainMenuController : MonoBehaviour
     {
         if (isAnimationTransition) return;
 
-        StartCoroutine(CheckTransition());
+        StartCoroutine(CheckTransitionRutiner());
 
         if (!boxSettings.activeSelf)
         {
@@ -36,18 +36,19 @@ public class MainMenuController : MonoBehaviour
         else
         {
             boxAnimator.SetTrigger("Transition");
-            StartCoroutine(OffSetting());
+            StartCoroutine(OffSettingRutiner());
             imageSetting.sprite = settingPurple;
         }
     }
 
-    IEnumerator OffSetting()
+
+    IEnumerator OffSettingRutiner()
     {
         yield return new WaitForSeconds(1);
         boxSettings.SetActive(false);
     }
 
-    IEnumerator CheckTransition()
+    IEnumerator CheckTransitionRutiner()
     {
         isAnimationTransition = true;
         yield return new WaitForSecondsRealtime(1);
