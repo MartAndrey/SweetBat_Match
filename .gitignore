@@ -72,3 +72,32 @@ crashlytics-build.properties
 # Built Visual Studio Code Extensions
 *.vsix
 .vscode
+
+
+.idea
+**/node_modules/*
+**/.firebase
+**/.firebaserc
+**/.runtimeconfig.json
+*/npm-debug.log
+lerna-debug.log
+*~
+service-account-credentials.json
+**/package-lock.json
+# keep the root package-lock so that tools are consistent
+!/package-lock.json
+**/ui-debug.log
+**/database-debug.log
+**/firebase-debug.log
+**/pubsub-debug.log
+**/tsconfig-compile.json
+yarn.lock
+/Assets/Firebase/
+/Assets/Plugins/
+/Assets/Editor Default Resources/
+/Assets/ExternalDependencyManager/
+/Assets/Scripts/Firebase/
+/Assets/google-services.json
+/ProjectSettings/AndroidResolverDependencies.xml
+/ProjectSettings/GvhProjectSettings.xml
+/Assets/StreamingAssets/
