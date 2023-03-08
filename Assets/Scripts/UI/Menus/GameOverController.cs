@@ -30,11 +30,6 @@ public class GameOverController : MonoBehaviour
         audioSourceBoxGameOver.PlayDelayed(1f);
     }
 
-    public void OffGameOver()
-    {
-
-    }
-
     public void Replay()
     {
         audioSource.PlayOneShot(popComplete);
@@ -46,10 +41,4 @@ public class GameOverController : MonoBehaviour
         Debug.Log("Ads");
         // TODO: Ads
     }
-
-    // IEnumerator OnGameOverRutiner()
-    // {
-    //     yield return new WaitForSeconds(1);
-    //     particleSystemBrokenHeart.SetActive(true);
-    // }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Button : MonoBehaviour
 {
     [Tooltip("Sound when touching and leaving")]
-    [SerializeField] AudioClip popIn, popOut; 
+    [SerializeField] AudioClip popIn, popOut;
 
     Animator animator;
     AudioSource audioSource;
@@ -35,6 +35,16 @@ public class Button : MonoBehaviour
     public void OnButtonDisabled()
     {
         animator.SetTrigger(("Disabled"));
+        audioSource.PlayOneShot(popOut);
+    }
+
+    public void PlayClickSound()
+    {
+        audioSource.PlayOneShot(popIn);
+    }
+
+    public void PlayReleaseSound()
+    {
         audioSource.PlayOneShot(popOut);
     }
 }

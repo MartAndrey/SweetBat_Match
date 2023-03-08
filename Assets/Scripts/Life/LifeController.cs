@@ -5,6 +5,11 @@ using TMPro;
 
 public class LifeController : MonoBehaviour
 {
+    public static LifeController Instance;
+
+    public int Lives { get { return lives; } set { lives = value; } }
+    public TMP_Text WaitTime { get { return timerLivesText; } set { timerLivesText = value; }  }
+
     [Header("Life")]
     [SerializeField] int lives;
     [SerializeField] TMP_Text livesText;
@@ -24,6 +29,18 @@ public class LifeController : MonoBehaviour
 
     int minutes;
     int seconds;
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     void Start()
     {
