@@ -5,6 +5,18 @@ using UnityEngine;
 
 public class LifeShop : MonoBehaviour
 {
+    public static LifeShop Instance;
+
+    public bool WarningText
+    {
+        get { return warningText.activeSelf; }
+        set
+        {
+            warningText.SetActive(value);
+            StartCoroutine(DeactivateWarningText());
+        }
+    }
+
     [Header("Life")]
     [SerializeField] TMP_Text livesText;
     [SerializeField] GameObject imageInfiniteLife;
@@ -14,6 +26,8 @@ public class LifeShop : MonoBehaviour
 
     [Header("Coins")]
     [SerializeField] TMP_Text coinsText;
+    [Space]
+    [SerializeField] GameObject warningText;
 
     void OnEnable()
     {
@@ -27,6 +41,17 @@ public class LifeShop : MonoBehaviour
         LifeController.OnInfiniteLife -= ChangeImageInfiniteLife;
     }
 
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     void Start()
     {
@@ -43,6 +68,24 @@ public class LifeShop : MonoBehaviour
         }
     }
 
+    // It sends us to the coin shop
+    public void SendCoinShop()
+    {
+        Debug.LogWarning("TODO: Send Coin Shop");
+    }
+
+    // It gives us a life in exchange for seeing an ad
+    public void PlusLifeAds()
+    {
+        Debug.LogWarning("TODO: Show Ads And Give Life");
+    }
+
+    // Method in charge of showing the UI to ask your friends to send us lives
+    public void AksFriend()
+    {
+        Debug.LogWarning("TODO: ASK FRIENDS");
+    }
+
     void SetLifeTimerCoins()
     {
         livesText.text = LifeController.Instance.Lives.ToString();
@@ -55,5 +98,11 @@ public class LifeShop : MonoBehaviour
     {
         livesText.enabled = !livesText.isActiveAndEnabled;
         imageInfiniteLife.SetActive(!imageInfiniteLife.activeSelf);
+    }
+
+    public IEnumerator DeactivateWarningText()
+    {
+        yield return new WaitForSeconds(2);
+        warningText.SetActive(false);
     }
 }

@@ -102,14 +102,14 @@ public class LifeController : MonoBehaviour
     }
 
     // Method responsible for diminishing or changing lives
-    public void ChangeLives(int amount)
+    public void ChangeLives(int amount, bool isBuy = false)
     {
         lives = Mathf.Clamp(lives + amount, minLives, maxLives);
         livesText.text = lives.ToString();
 
         if (CheckRestartTimer())
         {
-            SetTimer(waitTimeInMinutes);
+            if (!isBuy) SetTimer(waitTimeInMinutes);
             return;
         }
 

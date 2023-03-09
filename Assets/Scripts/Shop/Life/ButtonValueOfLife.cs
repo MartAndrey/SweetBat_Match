@@ -27,8 +27,7 @@ public class ButtonValueOfLife : MonoBehaviour
 
         if (LifeController.Instance.Lives + amountOfLife > LifeController.Instance.MaxLives)
         {
-            // TODO: Show in UI
-            Debug.Log("Choose another most recommended option");
+            if (!LifeShop.Instance.WarningText) LifeShop.Instance.WarningText = true;
             return;
         }
 
@@ -40,7 +39,7 @@ public class ButtonValueOfLife : MonoBehaviour
             return;
         }
 
-        LifeController.Instance.ChangeLives(amountOfLife);
+        LifeController.Instance.ChangeLives(amountOfLife, true);
         CoinController.Instance.ChangeCoins(-valueOfLife);
     }
 }
