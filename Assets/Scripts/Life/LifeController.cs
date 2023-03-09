@@ -2,20 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
+using System;
 
 public class LifeController : MonoBehaviour
 {
     public static LifeController Instance;
 
-    public int Lives { get { return lives; } set { lives = value; } }
-    public TMP_Text WaitTime { get { return timerLivesText; } set { timerLivesText = value; }  }
+    public static Action OnInfiniteLife;
+
+    public int Lives { get { return lives; } }
+    public TMP_Text WaitTime { get { return timerLivesText; } set { timerLivesText = value; } }
+    public bool InfiniteLife { get; set; }
+    public int MaxLives { get { return maxLives; } }
 
     [Header("Life")]
     [SerializeField] int lives;
     [SerializeField] TMP_Text livesText;
+    [SerializeField] GameObject imageInfiniteLife;
 
     [Header("Timer")]
-    [SerializeField] float waitTime;
+    [SerializeField] float waitTimeInMinutes;
     [SerializeField] TMP_Text timerLivesText;
 
     int maxLives = 5;
@@ -26,9 +33,19 @@ public class LifeController : MonoBehaviour
 
     // Boolean that tells us if the counter should be restarted
     bool restartTimer = false;
-
+    int hours;
     int minutes;
     int seconds;
+
+    void OnEnable()
+    {
+        OnInfiniteLife += ChangeInfiniteLife;
+    }
+
+    void OnDisable()
+    {
+        OnInfiniteLife -= ChangeInfiniteLife;
+    }
 
     void Awake()
     {
@@ -49,37 +66,70 @@ public class LifeController : MonoBehaviour
 
     void Update()
     {
+
         if (restartTimer)
         {
             timeRemainingInSeconds -= Time.deltaTime;
-            minutes = Mathf.FloorToInt(timeRemainingInSeconds / 60);
+
+            hours = Mathf.FloorToInt(timeRemainingInSeconds / 3600);
+            minutes = Mathf.FloorToInt((timeRemainingInSeconds - hours * 3600) / 60);
             seconds = Mathf.FloorToInt(timeRemainingInSeconds % 60);
 
-            timerLivesText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+            if (hours > 0)
+            {
+                timerLivesText.text = string.Format("{0:00}:{1:00}:{2:00}", hours, minutes, seconds);
+            }
+            else
+            {
+                timerLivesText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+            }
 
             if (timeRemainingInSeconds <= 0)
             {
-                timerLivesText.text = string.Format("00:00");
+                if (InfiniteLife)
+                {
+                    lives = maxLives;
+                    OnInfiniteLife?.Invoke();
+                    ChangeLives(maxLives);
+                    return;
+                }
+
+                if (hours > 0) timerLivesText.text = string.Format("00:00:00");
+                else timerLivesText.text = string.Format("00:00");
                 ChangeLives(1);
             }
         }
     }
 
     // Method responsible for diminishing or changing lives
-    void ChangeLives(int amount)
+    public void ChangeLives(int amount)
     {
         lives = Mathf.Clamp(lives + amount, minLives, maxLives);
         livesText.text = lives.ToString();
 
         if (CheckRestartTimer())
         {
-            restartTimer = true;
-            timeRemainingInSeconds = waitTime * 60;
+            SetTimer(waitTimeInMinutes);
             return;
         }
 
         timerLivesText.text = "FULL";
         restartTimer = false;
+    }
+
+    // Method in charge of configuring the timer
+    public void SetTimer(float time)
+    {
+        restartTimer = true;
+        timeRemainingInSeconds = time * 60;
+    }
+
+    // Method in charge of changing the UI to infinity and vice versa
+    void ChangeInfiniteLife()
+    {
+        livesText.enabled = !livesText.isActiveAndEnabled;
+        imageInfiniteLife.SetActive(!imageInfiniteLife.activeSelf);
+        InfiniteLife = !InfiniteLife;
     }
 
     // Method tells us if the counter needs to be reset
