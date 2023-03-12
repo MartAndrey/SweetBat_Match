@@ -5,25 +5,23 @@ using UnityEngine;
 public class LevelMenuController : MonoBehaviour
 {
     [SerializeField] GameObject overlay;
-    [SerializeField] GameObject plusLives;
 
-    public void OnPlusLives()
+    public void OnScreen(GameObject screen)
     {
         overlay.SetActive(true);
-        plusLives.SetActive(true);
+        screen.SetActive(true);
     }
 
-    public void OffPlusLives()
+    public void OffScreen(GameObject screen)
     {
-        plusLives.GetComponent<Animator>().SetTrigger("Transition");
-        StartCoroutine(OffPlusLivesRutiner());
+        screen.GetComponent<Animator>().SetTrigger("Transition");
+        StartCoroutine(OffPlusLivesRutiner(screen));
     }
 
-    IEnumerator OffPlusLivesRutiner()
+    IEnumerator OffPlusLivesRutiner(GameObject screen)
     {
         yield return new WaitForSeconds(1);
         overlay.SetActive(false);
-        plusLives.SetActive(false);
-        
+        screen.SetActive(false);
     }
 }

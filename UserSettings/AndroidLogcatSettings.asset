@@ -12,12 +12,18 @@
             "deviceId": "146268f60409",
             "name": "com.miui.home",
             "processId": 1952,
-            "exited": false
+            "exited": true
         },
         {
             "deviceId": "146268f60409",
             "name": "com.martandrey.hungrybat",
             "processId": 10960,
+            "exited": true
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.miui.home",
+            "processId": 1996,
             "exited": false
         }
     ],
