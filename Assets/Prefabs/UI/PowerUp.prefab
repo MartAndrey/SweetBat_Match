@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1611777742721509996}
   - component: {fileID: 1611777742721509994}
   - component: {fileID: 1611777742721509995}
+  - component: {fileID: -3176873032025371554}
   m_Layer: 5
   m_Name: PowerUp
   m_TagString: Untagged
@@ -80,6 +81,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &-3176873032025371554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1611777742721509997}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 001ff3cf008239147bb97be4b95035af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  typePowerUp: 0
+  textAmount: {fileID: 1611777743675511183}
 --- !u!1 &1611777742782200557
 GameObject:
   m_ObjectHideFlags: 0
@@ -402,10 +417,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 52
+  m_fontSize: 57
   m_fontSizeBase: 52
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
