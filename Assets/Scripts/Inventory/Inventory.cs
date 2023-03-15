@@ -8,18 +8,18 @@ public class Inventory : MonoBehaviour
     Dictionary<TypePowerUp, int> inventory = new Dictionary<TypePowerUp, int>();
 
     [SerializeField] GameObject inventoryPanel;
-    [SerializeField] GameObject inventoryPanelBosd;
 
     void Start()
     {
         foreach (TypePowerUp item in Enum.GetValues(typeof(TypePowerUp)))
         {
-            inventory.Add(item, 2);
+            inventory.Add(item, 0);
         }
+
+        UpdateInventoryUI();
     }
     
-    [ContextMenu("Hu")]
-    public void UpdateInventoryUI()
+    void UpdateInventoryUI()
     {
         foreach (Transform child in inventoryPanel.transform)
         {
