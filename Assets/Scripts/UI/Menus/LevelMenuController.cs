@@ -15,13 +15,18 @@ public class LevelMenuController : MonoBehaviour
     public void OffScreen(GameObject screen)
     {
         screen.GetComponent<Animator>().SetTrigger("Transition");
-        StartCoroutine(OffPlusLivesRutiner(screen));
+        StartCoroutine(OffScreenRutiner(screen));
     }
 
-    IEnumerator OffPlusLivesRutiner(GameObject screen)
+    IEnumerator OffScreenRutiner(GameObject screen)
     {
         yield return new WaitForSeconds(1);
         overlay.SetActive(false);
         screen.SetActive(false);
+    }
+
+    public void OnScreenCoinShop(GameObject screen)
+    {
+        screen.SetActive(true);
     }
 }
