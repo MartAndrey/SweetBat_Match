@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public enum TypePowerUp { InfiniteLife, Bomb, Lightning, Potion }
+public enum TypePowerUp { Bomb, Lightning, Potion }
 
 public class PowerUp : MonoBehaviour
 {

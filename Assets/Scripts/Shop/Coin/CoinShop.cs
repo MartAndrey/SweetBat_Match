@@ -24,4 +24,9 @@ public class CoinShop : MonoBehaviour
         boxMenu.SetActive(true);
         closeButton.SetActive(true);
     }
+
+    public void GetCoinAds()
+    {
+         Debug.LogWarning("TODO: Show Ads And Give Coin");
+    }
 }
