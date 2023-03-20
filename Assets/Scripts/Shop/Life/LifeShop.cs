@@ -32,8 +32,8 @@ public class LifeShop : MonoBehaviour
     void OnEnable()
     {
         LifeController.OnInfiniteLife += ChangeImageInfiniteLife;
-        imageInfiniteLife.SetActive(LifeController.Instance.InfiniteLife ? true : false);
-        livesText.enabled = LifeController.Instance.InfiniteLife ? false : true;
+        imageInfiniteLife.SetActive(LifeController.Instance.IsInfinite ? true : false);
+        livesText.enabled = LifeController.Instance.IsInfinite ? false : true;
     }
 
     void OnDisable()

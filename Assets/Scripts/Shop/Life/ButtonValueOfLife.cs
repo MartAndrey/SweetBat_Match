@@ -16,7 +16,7 @@ public class ButtonValueOfLife : MonoBehaviour
     // Method in charge of making the purchase and validating all the data
     public void Buy()
     {
-        if (LifeController.Instance.InfiniteLife) return;
+        if (LifeController.Instance.IsInfinite) return;
 
         if (CoinController.Instance.Coins < valueOfLife)
         {

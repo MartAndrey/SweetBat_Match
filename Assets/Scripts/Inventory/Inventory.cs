@@ -5,44 +5,45 @@ using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
-    Dictionary<TypePowerUp, int> inventory = new Dictionary<TypePowerUp, int>();
+    public static Inventory Instance;
+
+    public Dictionary<TypePowerUp, int> InventoryItems { get { return inventoryItems; } set { inventoryItems = value; } }
+
+    Dictionary<TypePowerUp, int> inventoryItems = new Dictionary<TypePowerUp, int>();
 
     [SerializeField] GameObject inventoryPanel;
+
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
 
     void Start()
     {
         foreach (TypePowerUp item in Enum.GetValues(typeof(TypePowerUp)))
         {
-            inventory.Add(item, 0);
+            inventoryItems.Add(item, 0);
         }
 
         UpdateInventoryUI();
     }
-    
-    void UpdateInventoryUI()
+
+    // Method in charge of updating the UI of powers up (Profile)
+    public void UpdateInventoryUI()
     {
         foreach (Transform child in inventoryPanel.transform)
         {
             PowerUp powerUp = child.GetComponent<PowerUp>();
 
-            if (inventory.ContainsKey(powerUp.TypePowerUp))
+            if (inventoryItems.ContainsKey(powerUp.TypePowerUp))
             {
-                powerUp.TextAmount.text = inventory[powerUp.TypePowerUp].ToString();
+                powerUp.TextAmount.text = inventoryItems[powerUp.TypePowerUp].ToString();
             }
             else
             {
                 powerUp.TextAmount.text = "0";
             }
         }
-    }
-
-    void AddPowerUp(TypePowerUp powerUp)
-    {
-
-    }
-
-    void RemovePowerUp(TypePowerUp powerUp)
-    {
-
     }
 }

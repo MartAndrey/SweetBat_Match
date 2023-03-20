@@ -5,6 +5,7 @@ using UnityEngine;
 public class ButtonValueOfCoin : MonoBehaviour
 {
     [SerializeField] TypePowerUp[] typePowerUp;
+    [SerializeField] PowerUp[] inventoryPowersUp;
     [SerializeField] int valueOfPPowerUp;
     [SerializeField] int amountOfPPowerUp;
     [SerializeField] AudioClip popEnter;
@@ -22,6 +23,26 @@ public class ButtonValueOfCoin : MonoBehaviour
     public void Buy()
     {
         audioSource.PlayOneShot(popEnter);
-        Debug.Log("Hi");
+
+        if (CoinController.Instance.Coins < valueOfPPowerUp) return;
+
+        foreach (TypePowerUp item in typePowerUp)
+        {
+            Inventory.Instance.InventoryItems[item] += amountOfPPowerUp;
+
+            if(infiniteTimePowerUp != 0)
+            {
+                foreach (PowerUp powerUp in inventoryPowersUp)
+                {
+                    if(powerUp.TypePowerUp == item )
+                    {
+                        powerUp.MakeInfinitePowerUp(infiniteTimePowerUp);
+                        break;
+                    }
+                }
+            }                    
+        }
+
+        CoinController.Instance.ChangeCoins(-valueOfPPowerUp);
     }
 }
