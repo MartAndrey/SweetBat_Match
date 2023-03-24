@@ -1,11 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
+using TMPro;
 
 public class Timer : MonoBehaviour
 {
+    // Property to check if the timer should run indefinitely or not
+    public bool IsInfinite { get; set; }
+     // Property to set the previously allotted time for the timer
+    public DateTime PreviouslyAllottedTime { set { previouslyAllottedTime = value; } }
+
     [Header("Timer")]
     [SerializeField] protected float waitTimeInMinutes;
     [SerializeField] protected TMP_Text timerText;
@@ -13,11 +18,13 @@ public class Timer : MonoBehaviour
     // remaining time in seconds left on the counter
     protected float timeRemainingInSeconds;
 
-    protected bool restartTimer = false;
-
     protected int hours;
     protected int minutes;
     protected int seconds;
+
+    // Variables to keep track of time
+    protected DateTime previouslyAllottedTime;
+    protected DateTime currentTime;
 
     // Method in charge of updating the timer, subtracting 1 every second
     protected void UpdateTimer(Action OnCountdownFinished)
@@ -41,5 +48,29 @@ public class Timer : MonoBehaviour
         {
             OnCountdownFinished();
         }
+    }
+
+    // Coroutine to wait for the current time from the internet and subtract it from the timer
+    protected IEnumerator WaitForGetCurrentTime()
+    {
+        yield return StartCoroutine(GetCurrentTime());
+
+        SubtractTimeTimer();
+    }
+
+     // Coroutine to get the current time from the internet
+    protected IEnumerator GetCurrentTime()
+    {
+        yield return StartCoroutine(InternetTime.Instance.GetInternetTime(currentTime =>
+        {
+            this.currentTime = currentTime;
+        }));
+    }
+
+     // Method to subtract the time difference between the previously allotted time and the current time
+    protected void SubtractTimeTimer()
+    {
+        float timeDifference = (float)(currentTime.Subtract(previouslyAllottedTime)).TotalSeconds;
+        timeRemainingInSeconds -= timeDifference;
     }
 }

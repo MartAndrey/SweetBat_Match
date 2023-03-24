@@ -13,7 +13,6 @@ public class LifeController : Timer
 
     public int Lives { get { return lives; } }
     public TMP_Text WaitTime { get { return timerText; } set { timerText = value; } }
-    public bool IsInfinite { get; set; }
     public int MaxLives { get { return maxLives; } }
 
     [Header("Life")]
@@ -23,6 +22,8 @@ public class LifeController : Timer
 
     int maxLives = 5;
     int minLives = 0;
+
+    bool restartTimer = false;
 
     void OnEnable()
     {
