@@ -53,10 +53,11 @@ public class PowerUp : Timer
     // This method is responsible for making ignition infinite for a certain time, it is also responsible for changing the UI in "Profile"
     public void MakeInfinitePowerUp(float time, DateTime currentTime)
     {
-        timeRemainingInSeconds = time * 60;
+        timeRemainingInSeconds += time * 60;
         previouslyAllottedTime = currentTime;
 
-        ChangeStatePowerUp();
+        if(!IsInfinite)
+            ChangeStatePowerUp();
     }
 
     // Changes the state of the power up and updates the UI
