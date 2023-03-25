@@ -128,11 +128,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb48bab7d147fb745bc384e89c26cfb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boxAnimator: {fileID: 3574998858289427558}
-  boxSettings: {fileID: 3574998858289427554}
   imageSetting: {fileID: 3574998858355867687}
   settingPurple: {fileID: 21300000, guid: 98522a77ef322784d8817160ac628ad2, type: 3}
   SettingWhite: {fileID: 21300000, guid: 77f24433b23835b4a85d9c7144f2f92f, type: 3}
+  boxAnimator: {fileID: 3574998858289427558}
+  boxSettings: {fileID: 3574998858289427554}
+  imageMusic: {fileID: 3574998858947814228}
+  imageSFX: {fileID: 3574998859219187107}
 --- !u!1 &3574998857406342699
 GameObject:
   m_ObjectHideFlags: 0
@@ -1739,7 +1741,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3574998858289427555
 RectTransform:
   m_ObjectHideFlags: 0

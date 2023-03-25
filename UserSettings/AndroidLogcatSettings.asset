@@ -1,19 +1,13 @@
 {
     "m_SelectedDeviceId": "146268f60409",
     "m_SelectedPackage": {
-        "deviceId": "",
-        "name": "",
-        "processId": 0,
+        "deviceId": "146268f60409",
+        "name": "com.martandrey.hungrybat",
+        "processId": 31736,
         "exited": false
     },
     "m_SelectedPriority": 0,
     "m_KnownPackagesForSerialization": [
-        {
-            "deviceId": "146268f60409",
-            "name": "com.miui.home",
-            "processId": 1952,
-            "exited": true
-        },
         {
             "deviceId": "146268f60409",
             "name": "com.martandrey.hungrybat",
@@ -24,6 +18,30 @@
             "deviceId": "146268f60409",
             "name": "com.miui.home",
             "processId": 1996,
+            "exited": true
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.miui.securitycenter",
+            "processId": 26708,
+            "exited": true
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 28903,
+            "exited": true
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.miui.home",
+            "processId": 1958,
+            "exited": false
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 31736,
             "exited": false
         }
     ],
