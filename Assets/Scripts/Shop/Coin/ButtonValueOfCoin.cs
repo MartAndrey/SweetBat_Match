@@ -10,12 +10,12 @@ public class ButtonValueOfCoin : MonoBehaviour
     [SerializeField] PowerUp[] inventoryPowersUp;
     // The value in coins of the power ups
     [SerializeField] int valueOfPPowerUp;
-     // The amount of power ups that will be added to the inventory
+    // The amount of power ups that will be added to the inventory
     [SerializeField] int amountOfPPowerUp;
     // The sound effect that will play when the button is pressed
     [SerializeField] AudioClip popEnter;
 
-     // The time that the power ups will be infinite, if applicable
+    // The time that the power ups will be infinite, if applicable
     [SerializeField, Tooltip("Insert the value in minutes only if the powers up are infinite for a certain time")]
     float infiniteTimePowerUp;
 
@@ -55,7 +55,7 @@ public class ButtonValueOfCoin : MonoBehaviour
             }
         }
 
-         // Subtract the value of the power ups from the player's coins
+        // Subtract the value of the power ups from the player's coins
         CoinController.Instance.ChangeCoins(-valueOfPPowerUp);
     }
 }

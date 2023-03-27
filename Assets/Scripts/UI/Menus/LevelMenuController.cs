@@ -25,7 +25,7 @@ public class LevelMenuController : MonoBehaviour
         screen.SetActive(false);
     }
 
-    public void OnScreenCoinShop(GameObject screen)
+    public void OnScreenAdvance(GameObject screen)
     {
         screen.SetActive(true);
     }

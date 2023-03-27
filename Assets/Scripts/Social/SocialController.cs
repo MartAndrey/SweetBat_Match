@@ -2,11 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CoinShop : MonoBehaviour
+public class SocialController : MonoBehaviour
 {
     [SerializeField] GameObject boxMenu;
-    [SerializeField] GameObject closeButton;
-    [SerializeField] GameObject overlay;
 
     public void HideMenu(GameObject screen)
     {
@@ -18,15 +16,8 @@ public class CoinShop : MonoBehaviour
     {
         yield return new WaitForSeconds(1.1f);
         boxMenu.SetActive(false);
-        closeButton.SetActive(false);
         yield return new WaitForSeconds(0.3f);
         screen.SetActive(false);
         boxMenu.SetActive(true);
-        closeButton.SetActive(true);
-    }
-
-    public void GetCoinAds()
-    {
-        Debug.LogWarning("TODO: Show Ads And Give Coin");
     }
 }
