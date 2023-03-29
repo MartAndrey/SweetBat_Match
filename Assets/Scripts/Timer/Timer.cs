@@ -8,7 +8,7 @@ public class Timer : MonoBehaviour
 {
     // Property to check if the timer should run indefinitely or not
     public bool IsInfinite { get; set; }
-     // Property to set the previously allotted time for the timer
+    // Property to set the previously allotted time for the timer
     public DateTime PreviouslyAllottedTime { set { previouslyAllottedTime = value; } }
 
     [Header("Timer")]
@@ -58,7 +58,7 @@ public class Timer : MonoBehaviour
         SubtractTimeTimer();
     }
 
-     // Coroutine to get the current time from the internet
+    // Coroutine to get the current time from the internet
     protected IEnumerator GetCurrentTime()
     {
         yield return StartCoroutine(InternetTime.Instance.GetInternetTime(currentTime =>
@@ -67,7 +67,7 @@ public class Timer : MonoBehaviour
         }));
     }
 
-     // Method to subtract the time difference between the previously allotted time and the current time
+    // Method to subtract the time difference between the previously allotted time and the current time
     protected void SubtractTimeTimer()
     {
         float timeDifference = (float)(currentTime.Subtract(previouslyAllottedTime)).TotalSeconds;
