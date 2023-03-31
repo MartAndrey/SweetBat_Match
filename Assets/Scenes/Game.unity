@@ -7462,7 +7462,7 @@ MonoBehaviour:
   scoreText: {fileID: 1280290898}
   multiplicationFactorText: {fileID: 737538029}
   menuGameOver: {fileID: 48206698457482138}
-  moveCounter: 4
+  moveCounter: 25
   score: 0
 --- !u!4 &1486905756
 Transform:
