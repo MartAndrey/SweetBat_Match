@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
 
     public int Level { get { return level; } }  // Public getter for the current level
 
-    int level = 1; // Private field for the current level
+    int level = 0; // Private field for the current level
 
     void Awake()
     {

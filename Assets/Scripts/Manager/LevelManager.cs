@@ -11,29 +11,33 @@ public class LevelManager : MonoBehaviour
     [SerializeField] GameObject levelPrefab;
     // The starting levels
     [SerializeField] int initialLevel = 100;
-    // The ScrollRect component that controls the scrolling of the level objects
-    // [SerializeField] ScrollRect scrollRect;
+
+    [SerializeField] RectTransform rectTransformLevels;
     // A game object that marks the player's progress on the level objects
     [SerializeField] GameObject profileMarker;
 
     // A list of the level objects in the scene
     List<GameObject> levelsList = new List<GameObject>();
 
+    // Get the width of the level prefab
+    float widthLevelPrefab; 
+
     void Start()
     {
+        widthLevelPrefab = levelPrefab.GetComponent<RectTransform>().sizeDelta.x;
         // Create the initial levels
         CreateLevel(initialLevel);
         // Unlock the first level
-        UnlockLevel(levelsList[GameManager.Instance.Level - 1]);
+        UnlockLevel(levelsList[GameManager.Instance.Level]);
     }
-
+    // [ContextMenu("SetLevels")] void SetLevels() => CreateLevel(10);
     // Creates the specified number of levels starting from the current level
     void CreateLevel(int amount)
     {
         int currentLevel = GameManager.Instance.Level;  // Get the current level from the GameManager
 
         // Create the specified number of levels
-        for (int i = 0; i < amount; i++)
+        for (int i = 1; i <= amount; i++)
         {
             // Instantiate a copy of the level prefab
             GameObject newLevel = Instantiate(levelPrefab, transform);
@@ -44,6 +48,13 @@ public class LevelManager : MonoBehaviour
 
             // Add the level to the levels list
             levelsList.Add(newLevel);
+
+            // Increase the size of the levels container if there are more than 4 levels and the current level is not 4
+            if (i > 4 && currentLevel < 4 || currentLevel > 4)
+            {
+                // Increase the width of the levels container by the width of the level prefab
+                rectTransformLevels.sizeDelta = new Vector2(rectTransformLevels.sizeDelta.x + widthLevelPrefab, rectTransformLevels.sizeDelta.y);
+            }
         }
     }
 
@@ -57,20 +68,12 @@ public class LevelManager : MonoBehaviour
     // Updates the position of the profile marker based on the current level
     void UpdatePositionProfileMarker()
     {
-        profileMarker.transform.position = new Vector2(levelsList[GameManager.Instance.Level - 1].transform.position.x, profileMarker.transform.position.y);
+        profileMarker.transform.position = new Vector2(levelsList[GameManager.Instance.Level].transform.position.x, profileMarker.transform.position.y);
     }
 
     // Unlocks a level by calling its UnlockLevel() method
     void UnlockLevel(GameObject level)
     {
         level.GetComponent<Level>().UnlockLevel();
-    }
-
-    // Restrict the scrolling of the level objects
-    void RestrictMovement()
-    {
-        // Vector2 contentPosition = GetComponent<RectTransform>().anchoredPosition
-        // Vector2 firstLevel = levelsList.First().GetComponent<RectTransform>().anchoredPosition;
-        // Vector2 lastLevel = levelsList.Last().GetComponent<RectTransform>().anchoredPosition;
     }
 }
