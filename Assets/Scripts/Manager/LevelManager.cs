@@ -20,15 +20,14 @@ public class LevelManager : MonoBehaviour
     List<GameObject> levelsList = new List<GameObject>();
 
     // Get the width of the level prefab
-    float widthLevelPrefab; 
+    float widthLevelPrefab;
 
     void Start()
     {
         widthLevelPrefab = levelPrefab.GetComponent<RectTransform>().sizeDelta.x;
-        // Create the initial levels
-        CreateLevel(initialLevel);
-        // Unlock the first level
-        UnlockLevel(levelsList[GameManager.Instance.Level]);
+
+        CreateLevel(initialLevel); // Create the initial levels
+        UnlockLevel(levelsList[GameManager.Instance.Level]); // Unlock the first level
     }
     // [ContextMenu("SetLevels")] void SetLevels() => CreateLevel(10);
     // Creates the specified number of levels starting from the current level
