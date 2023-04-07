@@ -10,7 +10,7 @@ public class LevelManager : MonoBehaviour
     // The prefab for the level objects
     [SerializeField] GameObject levelPrefab;
     // The starting levels
-    [SerializeField] int initialLevel = 100;
+    [SerializeField] int initialLevel = 50;
 
     [SerializeField] RectTransform rectTransformLevels;
     // A game object that marks the player's progress on the level objects

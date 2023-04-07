@@ -5990,7 +5990,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 198.3, y: 1}
+  m_Size: {x: 50, y: 50}
   m_EdgeRadius: 0
 --- !u!114 &439396334
 MonoBehaviour:
@@ -19965,7 +19965,6 @@ MonoBehaviour:
   initialLevel: 50
   rectTransformLevels: {fileID: 1715428525}
   profileMarker: {fileID: 520609742}
-  focusLevel: {fileID: 139279843}
 --- !u!1 &1728766468
 GameObject:
   m_ObjectHideFlags: 0
