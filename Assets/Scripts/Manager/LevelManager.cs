@@ -17,7 +17,7 @@ public class LevelManager : MonoBehaviour
     [SerializeField] GameObject profileMarker;
 
     // This line is marking the GameObject "returnLevel" as Serializable 
-    [SerializeField] GameObject returnLevel;
+    [SerializeField] ReturnLevel returnLevel;
 
     // This line is marking the GameObject "focusLevel" as Serializable
     [SerializeField] GameObject focusLevel;
@@ -95,19 +95,19 @@ public class LevelManager : MonoBehaviour
         // If the distance is greater than the maxDistanceToReturn, rotate the returnLevel to the right and set it to active.
         if (distance > maxDistanceToReturn)
         {
-            returnLevel.SetActive(true);
-            returnLevel.GetComponent<ReturnLevel>().Rotation(Vector2.right);
+            returnLevel.StatusChild(true);
+            returnLevel.Rotation(Vector2.right);
         }
         // If the distance is less than negative maxDistanceToReturn, rotate the returnLevel to the left and set it to active.
         else if (distance < -maxDistanceToReturn)
         {
-            returnLevel.GetComponent<ReturnLevel>().Rotation(Vector2.left);
-            returnLevel.SetActive(true);
+            returnLevel.StatusChild(true);
+            returnLevel.Rotation(Vector2.left);
         }
         // If the distance is within the acceptable range, set the returnLevel to inactive.
         else
         {
-            returnLevel.SetActive(false);
+            returnLevel.StatusChild(false);
         }
     }
 }
