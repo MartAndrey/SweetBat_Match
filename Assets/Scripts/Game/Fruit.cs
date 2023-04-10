@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
+public class Fruit : MonoBehaviour, IDragHandler
 {
     // Unique fruit identifier
     public int Id;
@@ -268,6 +268,7 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
         if (hMatch || vMatch)
         {
             MultiplicationFactor.Instance.SetMultiplicationFactor();
+            
             audioSource.PlayOneShot(fruitDestroyAudio, 1);
             gameObject.GetComponentInChildren<SpriteRenderer>().enabled = false;
 

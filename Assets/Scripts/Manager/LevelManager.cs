@@ -16,11 +16,20 @@ public class LevelManager : MonoBehaviour
     // A game object that marks the player's progress on the level objects
     [SerializeField] GameObject profileMarker;
 
+    // This line is marking the GameObject "returnLevel" as Serializable 
+    [SerializeField] GameObject returnLevel;
+
+    // This line is marking the GameObject "focusLevel" as Serializable
+    [SerializeField] GameObject focusLevel;
+
     // A list of the level objects in the scene
     List<GameObject> levelsList = new List<GameObject>();
 
     // Get the width of the level prefab
     float widthLevelPrefab;
+
+    // This integer variable defines the maximum distance between the focusLevel and profileMarker before the player is returned to the returnLevel.
+    int maxDistanceToReturn = 850;
 
     void Start()
     {
@@ -62,6 +71,7 @@ public class LevelManager : MonoBehaviour
     {
         // Update the position of the profile marker
         UpdatePositionProfileMarker();
+        ReturnToCurrentLevel();
     }
 
     // Updates the position of the profile marker based on the current level
@@ -74,5 +84,30 @@ public class LevelManager : MonoBehaviour
     void UnlockLevel(GameObject level)
     {
         level.GetComponent<Level>().UnlockLevel();
+    }
+
+    // This function returns the player to the returnLevel if they move too far away from the focus Level.
+    void ReturnToCurrentLevel()
+    {
+        // Calculate the distance between the focusLevel and profileMarker.
+        float distance = focusLevel.transform.position.x - profileMarker.transform.position.x;
+
+        // If the distance is greater than the maxDistanceToReturn, rotate the returnLevel to the right and set it to active.
+        if (distance > maxDistanceToReturn)
+        {
+            returnLevel.SetActive(true);
+            returnLevel.GetComponent<ReturnLevel>().Rotation(Vector2.right);
+        }
+        // If the distance is less than negative maxDistanceToReturn, rotate the returnLevel to the left and set it to active.
+        else if (distance < -maxDistanceToReturn)
+        {
+            returnLevel.GetComponent<ReturnLevel>().Rotation(Vector2.left);
+            returnLevel.SetActive(true);
+        }
+        // If the distance is within the acceptable range, set the returnLevel to inactive.
+        else
+        {
+            returnLevel.SetActive(false);
+        }
     }
 }
