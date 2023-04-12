@@ -37,6 +37,11 @@ public class LevelManager : MonoBehaviour
 
         CreateLevel(initialLevel); // Create the initial levels
         UnlockLevel(levelsList[GameManager.Instance.Level]); // Unlock the first level
+        UnlockLevel(levelsList[1]);
+        UnlockLevel(levelsList[2]);
+        UnlockLevel(levelsList[3]);
+        UnlockLevel(levelsList[4]);
+        UnlockLevel(levelsList[5]);
     }
     // [ContextMenu("SetLevels")] void SetLevels() => CreateLevel(10);
     // Creates the specified number of levels starting from the current level

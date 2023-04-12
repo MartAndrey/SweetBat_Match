@@ -11,8 +11,6 @@ public class Inventory : MonoBehaviour
 
     Dictionary<TypePowerUp, int> inventoryItems = new Dictionary<TypePowerUp, int>();
 
-    [SerializeField] GameObject inventoryPanel;
-
     void Awake()
     {
         if (Instance == null) Instance = this;
@@ -25,12 +23,10 @@ public class Inventory : MonoBehaviour
         {
             inventoryItems.Add(item, 0);
         }
-
-        UpdateInventoryUI();
     }
 
     // Method in charge of updating the UI of powers up (Profile)
-    public void UpdateInventoryUI()
+    public void UpdateInventoryUI(GameObject inventoryPanel)
     {
         foreach (Transform child in inventoryPanel.transform)
         {
