@@ -51,7 +51,7 @@ public class ButtonSetting : MonoBehaviour
         boxSettings.SetActive(false); // Deactivate the settings box
     }
 
-     // Coroutine to prevent multiple transitions at once
+    // Coroutine to prevent multiple transitions at once
     IEnumerator CheckTransitionRutiner()
     {
         isAnimationTransition = true; // Set the flag to true to indicate that a transition is in progress
@@ -59,7 +59,7 @@ public class ButtonSetting : MonoBehaviour
         isAnimationTransition = false; // Set the flag to false to indicate that the transition is complete
     }
 
-     // Method to update the references of the music and SFX toggle buttons in the AudioManager
+    // Method to update the references of the music and SFX toggle buttons in the AudioManager
     void AuxUpdateAudioUI()
     {
         AudioManager.Instance.UpdateAudioUI(imageMusic, imageSFX);

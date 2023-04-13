@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Fruit : MonoBehaviour, IDragHandler
+public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
 {
     // Unique fruit identifier
     public int Id;

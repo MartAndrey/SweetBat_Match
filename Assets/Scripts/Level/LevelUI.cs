@@ -14,6 +14,8 @@ public class LevelUI : MonoBehaviour
     [SerializeField] TMP_Text goal;
     [SerializeField] GameObject powerUpPanel;
 
+    [SerializeField] GameObject boxSelectPower;
+
     // Method to activate the level UI by setting the 'container' and 'overlay' game objects to active
     public void ActiveLevelUI()
     {
@@ -35,6 +37,7 @@ public class LevelUI : MonoBehaviour
         goal.text = goalText;  // Sets the goal text
 
         // Updates the power-up panel in the UI with the player's inventory
+        Inventory.Instance.SetTransformPowerUps(boxSelectPower.transform, new Vector3(.8f, .8f, .8f));
         Inventory.Instance.UpdateInventoryUI(powerUpPanel);
     }
 }

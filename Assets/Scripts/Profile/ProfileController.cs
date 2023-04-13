@@ -10,6 +10,7 @@ public class ProfileController : MonoBehaviour
     private void OnEnable()
     {
         // Updates the inventory UI using the 'UpdateInventoryUI' method from the 'Inventory' class
+        Inventory.Instance.SetTransformPowerUps(inventoryPanel.transform, new Vector3(1, 1, 1));
         Inventory.Instance.UpdateInventoryUI(inventoryPanel);
     }
 }

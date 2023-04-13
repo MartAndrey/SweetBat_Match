@@ -9,6 +9,8 @@ public class Inventory : MonoBehaviour
 
     public Dictionary<TypePowerUp, int> InventoryItems { get { return inventoryItems; } set { inventoryItems = value; } }
 
+    [SerializeField] List<GameObject> powerUpsObject;
+
     Dictionary<TypePowerUp, int> inventoryItems = new Dictionary<TypePowerUp, int>();
 
     void Awake()
@@ -41,5 +43,15 @@ public class Inventory : MonoBehaviour
                 powerUp.TextAmount.text = "0";
             }
         }
+    }
+
+    public void SetTransformPowerUps(Transform transformPosition, Vector3 scale)
+    {
+        powerUpsObject.ForEach(powerUp =>
+        {
+            powerUp.transform.SetParent(transformPosition, false);
+            powerUp.transform.localScale = scale;
+        }
+    );
     }
 }
