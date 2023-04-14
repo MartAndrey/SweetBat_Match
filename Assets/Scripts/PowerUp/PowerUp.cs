@@ -12,7 +12,7 @@ public class PowerUp : Timer
 {
     // Type of power up that this object represents
     public TypePowerUp TypePowerUp { get { return typePowerUp; } }
-     // Text component that displays the amount of this power up the player has
+    // Text component that displays the amount of this power up the player has
     public TMP_Text TextAmount { get { return textAmount; } set { textAmount = value; } }
 
     [SerializeField] TypePowerUp typePowerUp;
@@ -30,7 +30,7 @@ public class PowerUp : Timer
         }
     }
 
-     // Called when the script instance is being disabled
+    // Called when the script instance is being disabled
     void OnDisable()
     {
         InternetTime.Instance.UpdateInternetTime(this.gameObject);
@@ -38,7 +38,7 @@ public class PowerUp : Timer
 
     void Update()
     {
-         // If the power up is infinite, update the timer
+        // If the power up is infinite, update the timer
         if (IsInfinite)
             UpdateTimer(OnCountdownFinished);
     }
@@ -46,7 +46,7 @@ public class PowerUp : Timer
     // This method is called when the counter or timer reaches zero.
     void OnCountdownFinished()
     {
-         // Change the state of the power up
+        // Change the state of the power up
         ChangeStatePowerUp();
     }
 
@@ -56,7 +56,7 @@ public class PowerUp : Timer
         timeRemainingInSeconds += time * 60;
         previouslyAllottedTime = currentTime;
 
-        if(!IsInfinite)
+        if (!IsInfinite)
             ChangeStatePowerUp();
     }
 
