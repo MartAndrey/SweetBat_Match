@@ -84,14 +84,14 @@ public class Inventory : MonoBehaviour
     /// </summary>
     /// <param name="powerUps">The list of power-up game objects to set the parent and scale of</param>
     /// <param name="parent">The transform representing the parent object in the UI</param>
-    /// <param name="scale">The scale to set each power-up game object to</param>
-    public void SetAvailablePowerUps(List<GameObject> powerUps, Transform parent, Vector3 scale)
+    /// <param name="statePowerUp">The state of the power up that is going to change</param>
+    public void SetAvailablePowerUps(List<GameObject> powerUps, Transform parent, StatePowerUp statePowerUp)
     {
         // Set the parent and scale of each power-up game object in the list
         powerUps.ForEach(powerUp =>
         {
+            powerUp.GetComponent<PowerUp>().StatePowerUp = statePowerUp;
             powerUp.transform.SetParent(parent.transform, false);
-            powerUp.transform.localScale = scale;
         });
     }
 
