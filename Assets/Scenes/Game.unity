@@ -5365,6 +5365,7 @@ MonoBehaviour:
   xSize: 8
   ySize: 8
   spawnFruit: {fileID: 702544634}
+  delayToCreateFruit: 0.03
   score: 10
   fruitsProbabilities: 04000000030000000300000002000000020000000200000001000000
   endSwapFruitAudio: {fileID: 8300000, guid: d877b8000a882c743ab574d833604c29, type: 3}

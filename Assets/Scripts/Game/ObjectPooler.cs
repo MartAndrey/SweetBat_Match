@@ -26,11 +26,11 @@ public class ObjectPooler : MonoBehaviour
             Destroy(gameObject);
         }
 
-        AddFruitToPool(fruitSize);
+        AddNewFruitToPool(fruitSize);
     }
 
     // Method in charge of generating the fruits and adding it to the object pooler
-    void AddFruitToPool(int amount, bool random = false)
+    void AddNewFruitToPool(int amount, bool random = false)
     {
         if (!random)
         {
@@ -61,14 +61,14 @@ public class ObjectPooler : MonoBehaviour
     public GameObject GetFruitToPool(int fruit, Transform parent)
     {
         GameObject newFruit = fruitList.Find(x => x.GetComponent<Fruit>().Id == fruit && !x.activeSelf);
-        
+
         if (newFruit != null)
         {
             newFruit.transform.parent = parent;
             return newFruit;
         }
 
-        AddFruitToPool(1, true);
+        AddNewFruitToPool(1, true);
 
         newFruit = fruitList[fruitList.Count - 1];
         newFruit.transform.parent = parent;

@@ -33,7 +33,7 @@ public class ScreenChangeTransition : MonoBehaviour
     public IEnumerator FadeIn()
     {
         yield return new WaitForSecondsRealtime(1);
-        canvas.enabled = false;        
+        canvas.enabled = false;     
     }
 
     public IEnumerator FadeOut(string nameScene)

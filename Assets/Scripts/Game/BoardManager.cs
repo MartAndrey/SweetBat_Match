@@ -30,6 +30,7 @@ public class BoardManager : MonoBehaviour
     [SerializeField] int xSize, ySize; // Board size
     [Tooltip("Where the first fruit appears")]
     [SerializeField] Transform spawnFruit;
+    [SerializeField] float delayToCreateFruit;
     [SerializeField] int score;
     [Tooltip("Probability of each fruit to appear")]
     [SerializeField] int[] fruitsProbabilities;
@@ -80,13 +81,13 @@ public class BoardManager : MonoBehaviour
 
         boardCollider = GetComponent<Collider2D>();
         audioSource = GetComponent<AudioSource>();
+
+        Physics2D.simulationMode = SimulationMode2D.Script;
     }
 
     void Start()
     {
-        CreateInitialBoard();
-
-        StartCoroutine(IsFruitTouchingTheBoard(fruits));
+        StartCoroutine(CreateInitialBoard());
     }
 
     int SetFruitProbability()
@@ -110,7 +111,7 @@ public class BoardManager : MonoBehaviour
     }
 
     // Create the initial elements or fruits of the board
-    void CreateInitialBoard(bool targetLevel = false)
+    IEnumerator CreateInitialBoard(bool targetLevel = false)
     {
         fruits = new GameObject[xSize, ySize]; // Columns and rows of the board
 
@@ -123,6 +124,8 @@ public class BoardManager : MonoBehaviour
         {
             for (int y = 0; y < ySize; y++)
             {
+                yield return new WaitForSeconds(delayToCreateFruit);
+
                 if (!targetLevel)
                 {
                     do
@@ -137,7 +140,6 @@ public class BoardManager : MonoBehaviour
                     idx = SetFruitProbability();
                 }
 
-                // int random = Random.Range(0, prefabs.Count);
                 currentFruit = prefabs[idx];
 
                 GameObject newFruit = Instantiate(currentFruit, new Vector3(
@@ -150,40 +152,20 @@ public class BoardManager : MonoBehaviour
                 newFruit.name = string.Format("Fruit[{0}] [{1}]", x, y);
                 newFruit.GetComponent<Fruit>().Id = idx;
 
-                fruits[x, y] = newFruit; // Add fruit to the board
+
+                Physics2D.Simulate(1);
+                if (IsFruitTouchingTheBoard(newFruit)) fruits[x, y] = newFruit; // Add fruit to the board
+                else AddFruitToPool(newFruit);
             }
         }
     }
 
     // Check if the fruit is on the table, if not, destroy it.
-    IEnumerator IsFruitTouchingTheBoard(GameObject[,] fruits)
-    {
-        List<GameObject> noTouchingFruits = new List<GameObject>();
-
-        yield return new WaitForSecondsRealtime(0.00f);
-
-        for (int x = 0; x < xSize; x++)
-        {
-            for (int y = 0; y < ySize; y++)
-            {
-                Collider2D currentFruit = fruits[x, y].GetComponent<Collider2D>();
-
-                if (!boardCollider.IsTouching(currentFruit))
-                {
-                    currentFruit.gameObject.GetComponentInChildren<SpriteRenderer>().enabled = false;
-                    noTouchingFruits.Add(currentFruit.gameObject);
-                    fruits[x, y] = null;
-                }
-            }
-        }
-
-        AddFruitsToPool(noTouchingFruits);
-        boardCollider.enabled = false;
-    }
+    bool IsFruitTouchingTheBoard(GameObject fruits) => boardCollider.IsTouching(fruits.GetComponent<Collider2D>());
 
     // Method in charge of verifying if the fruit is repeated in said column and row
-    bool NeighborsSameCandy(int x, int y, int idx) => (x > 1 && idx == fruits[x - 2, y].GetComponent<Fruit>().Id) ||
-                                                        (y > 1 && idx == fruits[x, y - 2].GetComponent<Fruit>().Id);
+    bool NeighborsSameCandy(int x, int y, int idx) => (x > 1 && fruits[x - 2, y] != null && idx == fruits[x - 2, y].GetComponent<Fruit>().Id) ||
+                                                        (y > 1 && fruits[x, y - 2] != null && idx == fruits[x, y - 2].GetComponent<Fruit>().Id);
 
     // Start the routine to find that the fruits are deactivated on the board
     void StartCoroutineFindDisable()
@@ -314,6 +296,14 @@ public class BoardManager : MonoBehaviour
         fruits[x, y] = GetNewFruit();
         fruits[x, y].transform.position = fruitPosition;
         fruits[x, y].SetActive(true);
+    }
+
+    // Deactivate the fruit that were eliminated and add to object pooler
+    void AddFruitToPool(GameObject fruit)
+    {
+        fruit.SetActive(false);
+        ObjectPooler.Instance.FruitList.Add(fruit);
+        fruit.transform.SetParent(ObjectPooler.Instance.gameObject.transform);
     }
 
     // Deactivate the fruits that were eliminated and add to object pooler

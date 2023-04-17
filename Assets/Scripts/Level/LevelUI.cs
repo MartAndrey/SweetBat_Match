@@ -47,8 +47,8 @@ public class LevelUI : MonoBehaviour
         }
     }
 
-    public void PlayLevel()
+    public void PlayLevel(string nameScene)
     {
-        Debug.Log("Play");
+        StartCoroutine(ScreenChangeTransition.Instance.FadeOut(nameScene));
     }
 }
