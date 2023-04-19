@@ -51,6 +51,7 @@ MonoBehaviour:
   Id: 0
   swapFruitAudio: {fileID: 8300000, guid: 617ba310b8fc6ed4e8af0c91694f8b16, type: 3}
   fruitDestroyAudio: {fileID: 8300000, guid: b395de30e1885e64e9cfa35995b728f0, type: 3}
+  ease: 4
 --- !u!50 &1912864669799962994
 Rigidbody2D:
   serializedVersion: 4

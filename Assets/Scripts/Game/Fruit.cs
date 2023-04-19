@@ -3,13 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using DG.Tweening;
+using UnityEditor;
 
 public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
 {
     // Unique fruit identifier
     public int Id;
-
-    public Vector3 TargetPosition { get { return targetPosition; } set { targetPosition = value; } }
 
     // Variables that refer to the next fruit to select
     static Color selectedColor = new Color(.5f, .5f, .5f, 1);
@@ -17,6 +17,8 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
 
     [SerializeField] AudioClip swapFruitAudio;
     [SerializeField] AudioClip fruitDestroyAudio;
+    // Movement curve when moving the fruit
+    [SerializeField] Ease ease;
 
     AudioSource audioSource;
 
@@ -25,14 +27,11 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
 
     SpriteRenderer spriteRenderer;
 
-    // Position to move 
-    Vector3 targetPosition;
-
     // Movement speed
     float speed = 20;
 
     // Time it takes to change the positions of the fruits when they are moved
-    float timeChangePositionFruits = 0.56f;
+    float timeChangePositionFruits = 0.25f;
 
     // This variable is in charge of telling us if there is a touch or a click on the screen or more exactly on a fruit
     bool hasTouched = false;
@@ -40,28 +39,16 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
     // When the fruit activates, you reset its target position because sometimes it changes its position
     void OnEnable()
     {
-        targetPosition = Vector3.zero;
+        transform.localScale = Vector3.one * 0.3f;
+        transform.DOScale(Vector3.one, 0.35f);
+        transform.rotation = Quaternion.Euler(0, 0, 180);
+        transform.DORotate(Vector3.zero, 0.2f);
     }
 
     void Awake()
     {
         audioSource = GetComponent<AudioSource>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-        targetPosition = Vector3.zero;
-    }
-
-    void Update()
-    {
-        if (targetPosition != Vector3.zero)
-        {
-            this.transform.localPosition = Vector3.Lerp(this.transform.localPosition, targetPosition, speed * Time.deltaTime);
-
-            if (transform.localPosition == targetPosition)
-            {
-                transform.localPosition = targetPosition;
-                targetPosition = Vector3.zero;
-            }
-        }
     }
 
     // Selected Fruit
@@ -120,6 +107,25 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
         }
     }
 
+    /// <summary>
+    /// Moves a fruit to the specified position and updates its name and position in the BoardManager.
+    /// </summary>
+    /// <param name="position">The position to move the fruit to.</param>
+    public void MoveFruit(Vector3 position)
+    {
+        int x = (int)position.x;
+        int y = (int)position.y;
+
+        // Use the DOTween library to move the fruit to the new position with a specified ease and time.
+        this.transform.DOLocalMove(position, timeChangePositionFruits).SetEase(ease).OnComplete(() =>
+        {
+            // Set the name of the fruit to include its new position.
+            this.name = string.Format("Fruit[{0}] [{1}]", x, y);
+            // Update the BoardManager with the new position of the fruit.
+            BoardManager.Instance.Fruits[x, y] = this.gameObject;
+        });
+    }
+
     // If there are no more changes on the board, it exits the coroutine
     IEnumerator ChangeOnTheBoard()
     {
@@ -139,8 +145,7 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
 
         yield return new WaitForSeconds(timeChangePositionFruits);
 
-        if (nextSelected == null)
-            yield break;
+        if (nextSelected == null) yield break;
 
         nextSelected.FindAllMatches();
         FindAllMatches();
@@ -169,54 +174,8 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
             return;
         }
 
-        Vector3 previewPosition = transform.localPosition; // Save the position of the second selected fruit
-
-        this.targetPosition = nextSelected.transform.localPosition;
-        nextSelected.TargetPosition = this.transform.localPosition;
-
-        // preview and Target refers to the second selected fruit and anotherFruit is the first selected fruit
-        MoveFruitsPositionOfArray(previewPosition, targetPosition, nextSelected.gameObject);
-    }
-
-    // Method that changes the position of the 2 fruits in the "fruit" array
-    void MoveFruitsPositionOfArray(Vector3 previewPosition, Vector3 currentPosition, GameObject anotherFruit)
-    {
-        // We take advantage of changing the fruits in the array guiding us from the position since 
-        // in these cases they are equivalent to the same
-
-        // If the fruit is moved horizontally
-        if (currentPosition.x != previewPosition.x)
-        {
-            if (currentPosition.x > previewPosition.x)
-            {
-                BoardManager.Instance.Fruits[(int)transform.localPosition.x + 1, (int)transform.localPosition.y] = this.gameObject;
-                BoardManager.Instance.Fruits[(int)transform.localPosition.x, (int)transform.localPosition.y] = anotherFruit;
-                return;
-            }
-            else if (currentPosition.x < previewPosition.x)
-            {
-                BoardManager.Instance.Fruits[(int)transform.localPosition.x - 1, (int)transform.localPosition.y] = this.gameObject;
-                BoardManager.Instance.Fruits[(int)transform.localPosition.x, (int)transform.localPosition.y] = anotherFruit;
-                return;
-            }
-        }
-
-        // If the fruit is moved vertically
-        if (currentPosition.y != previewPosition.y)
-        {
-            if (currentPosition.y > previewPosition.y)
-            {
-                BoardManager.Instance.Fruits[(int)transform.localPosition.x, (int)transform.localPosition.y + 1] = this.gameObject;
-                BoardManager.Instance.Fruits[(int)transform.localPosition.x, (int)transform.localPosition.y] = anotherFruit;
-                return;
-            }
-            else if (currentPosition.y < previewPosition.y)
-            {
-                BoardManager.Instance.Fruits[(int)transform.localPosition.x, (int)transform.localPosition.y - 1] = this.gameObject;
-                BoardManager.Instance.Fruits[(int)transform.localPosition.x, (int)transform.localPosition.y] = anotherFruit;
-                return;
-            }
-        }
+        this.MoveFruit(nextSelected.transform.localPosition);
+        nextSelected.MoveFruit(this.transform.localPosition);
     }
 
     // Method returns the neighboring fruits that match
@@ -268,7 +227,7 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
         if (hMatch || vMatch)
         {
             MultiplicationFactor.Instance.SetMultiplicationFactor();
-            
+
             audioSource.PlayOneShot(fruitDestroyAudio, 1);
             gameObject.GetComponentInChildren<SpriteRenderer>().enabled = false;
 

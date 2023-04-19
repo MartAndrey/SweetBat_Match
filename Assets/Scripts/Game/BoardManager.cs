@@ -142,11 +142,8 @@ public class BoardManager : MonoBehaviour
 
                 currentFruit = prefabs[idx];
 
-                GameObject newFruit = Instantiate(currentFruit, new Vector3(
-                                                                startX + (offset * x),
-                                                                startY + (offset * y),
-                                                                0),
-                                                                currentFruit.transform.rotation, spawnFruit);
+                GameObject newFruit = Instantiate(currentFruit, spawnFruit);
+                newFruit.transform.localPosition = new Vector2(x, y);
 
                 // Add name to each fruit where we indicate in which column and row it is located
                 newFruit.name = string.Format("Fruit[{0}] [{1}]", x, y);
@@ -158,6 +155,8 @@ public class BoardManager : MonoBehaviour
                 else AddFruitToPool(newFruit);
             }
         }
+
+        boardCollider.enabled = false;
     }
 
     // Check if the fruit is on the table, if not, destroy it.
@@ -231,13 +230,13 @@ public class BoardManager : MonoBehaviour
             {
                 for (int j = 0; j < boardFruits.Count - 1; j++)
                 {
-                    boardFruits[j + 1].GetComponent<Fruit>().TargetPosition = new Vector2(boardFruits[j + 1].transform.localPosition.x, boardFruits[j + 1].transform.localPosition.y - offset);
+                    boardFruits[j + 1].GetComponent<Fruit>().MoveFruit(new Vector2(boardFruits[j + 1].transform.localPosition.x, boardFruits[j + 1].transform.localPosition.y - offset)); ;
                     fruits[x, y] = fruits[x, y + 1]; // Change the previously moved fruit to the corresponding position in the array
 
                     if (j == boardFruits.Count - 2)
                     {
                         fruits[x, y + 1] = GetNewFruit();
-                        fruits[x, y + 1].transform.localPosition = new Vector3(x, y + 1, 0);
+                        fruits[x, y + 1].transform.localPosition = new Vector2(x, y + 1);
                         fruits[x, y + 1].SetActive(true);
                         listNewFruits.Add(fruits[x, y + 1]);
 
@@ -245,7 +244,7 @@ public class BoardManager : MonoBehaviour
                         {
                             for (int k = 0; k < listNewFruits.Count - 1; k++)
                             {
-                                listNewFruits[k].GetComponent<Fruit>().TargetPosition = new Vector2(listNewFruits[k].transform.localPosition.x, listNewFruits[k].transform.localPosition.y - offset);
+                                listNewFruits[k].GetComponent<Fruit>().MoveFruit(new Vector2(listNewFruits[k].transform.localPosition.x, listNewFruits[k].transform.localPosition.y - offset));
                             }
                         }
                         secondTime = true;
