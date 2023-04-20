@@ -27,9 +27,6 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
 
     SpriteRenderer spriteRenderer;
 
-    // Movement speed
-    float speed = 20;
-
     // Time it takes to change the positions of the fruits when they are moved
     float timeChangePositionFruits = 0.25f;
 
@@ -39,10 +36,14 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
     // When the fruit activates, you reset its target position because sometimes it changes its position
     void OnEnable()
     {
-        transform.localScale = Vector3.one * 0.3f;
-        transform.DOScale(Vector3.one, 0.35f);
+        transform.localPosition = transform.localPosition + Vector3.up * 1;
+        MoveFruit(transform.localPosition - Vector3.up * 1, false);
+
         transform.rotation = Quaternion.Euler(0, 0, 180);
         transform.DORotate(Vector3.zero, 0.2f);
+
+        transform.localScale = Vector3.one * 0.3f;
+        transform.DOScale(Vector3.one, 0.35f);
     }
 
     void Awake()
@@ -111,7 +112,8 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
     /// Moves a fruit to the specified position and updates its name and position in the BoardManager.
     /// </summary>
     /// <param name="position">The position to move the fruit to.</param>
-    public void MoveFruit(Vector3 position)
+    /// <param name="setPositionFruits">Indicates if the fruit has to be updated on the board.</param>
+    public void MoveFruit(Vector3 position, bool setPositionFruits = true)
     {
         int x = (int)position.x;
         int y = (int)position.y;
@@ -119,10 +121,13 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
         // Use the DOTween library to move the fruit to the new position with a specified ease and time.
         this.transform.DOLocalMove(position, timeChangePositionFruits).SetEase(ease).OnComplete(() =>
         {
-            // Set the name of the fruit to include its new position.
-            this.name = string.Format("Fruit[{0}] [{1}]", x, y);
-            // Update the BoardManager with the new position of the fruit.
-            BoardManager.Instance.Fruits[x, y] = this.gameObject;
+            if (setPositionFruits)
+            {
+                // Set the name of the fruit to include its new position.
+                this.name = string.Format("Fruit[{0}] [{1}]", x, y);
+                // Update the BoardManager with the new position of the fruit.
+                BoardManager.Instance.Fruits[x, y] = this.gameObject;
+            }
         });
     }
 
@@ -209,7 +214,7 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
         {
             foreach (GameObject fruit in matchingFruits)
             {
-                fruit.GetComponentInChildren<SpriteRenderer>().enabled = false;
+                fruit.SetActive(false);
             }
 
             return true;
@@ -229,7 +234,7 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
             MultiplicationFactor.Instance.SetMultiplicationFactor();
 
             audioSource.PlayOneShot(fruitDestroyAudio, 1);
-            gameObject.GetComponentInChildren<SpriteRenderer>().enabled = false;
+            gameObject.SetActive(false);
 
             BoardManager.OnBoardChanges.Invoke();
         }

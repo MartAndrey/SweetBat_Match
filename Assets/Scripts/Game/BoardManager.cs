@@ -149,9 +149,14 @@ public class BoardManager : MonoBehaviour
                 newFruit.name = string.Format("Fruit[{0}] [{1}]", x, y);
                 newFruit.GetComponent<Fruit>().Id = idx;
 
-
                 Physics2D.Simulate(1);
-                if (IsFruitTouchingTheBoard(newFruit)) fruits[x, y] = newFruit; // Add fruit to the board
+
+                if (IsFruitTouchingTheBoard(newFruit))
+                {
+                    fruits[x, y] = newFruit; // Add fruit to the board
+                    newFruit.transform.localPosition = new Vector2(x, y + 1);
+                    newFruit.GetComponent<Fruit>().MoveFruit(new Vector2(x, y), false);
+                }
                 else AddFruitToPool(newFruit);
             }
         }
@@ -174,7 +179,7 @@ public class BoardManager : MonoBehaviour
     }
 
     // Search in each row and column what space there is, that is, what fruit is deactivated
-    public IEnumerator FindDisableFruits()
+    IEnumerator FindDisableFruits()
     {
         fruitsWereMoved = new List<GameObject>();
 
@@ -184,7 +189,7 @@ public class BoardManager : MonoBehaviour
         {
             for (int y = 0; y < ySize; y++)
             {
-                if (fruits[x, y] != null && fruits[x, y].GetComponentInChildren<SpriteRenderer>().enabled == false)
+                if (fruits[x, y] != null && !fruits[x, y].gameObject.activeSelf)
                 {
                     yield return StartCoroutine(MakeFruitsFall(x, y));
                     break;
