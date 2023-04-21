@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using DG.Tweening;
-using UnityEditor;
 
 public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
 {
@@ -13,7 +12,7 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
 
     // Variables that refer to the next fruit to select
     static Color selectedColor = new Color(.5f, .5f, .5f, 1);
-    static Fruit nextSelected = null;
+    // static Fruit nextSelected = null;
 
     [SerializeField] AudioClip swapFruitAudio;
     [SerializeField] AudioClip fruitDestroyAudio;
@@ -32,6 +31,8 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
 
     // This variable is in charge of telling us if there is a touch or a click on the screen or more exactly on a fruit
     bool hasTouched = false;
+
+    bool hasFruitDisable;
 
     // When the fruit activates, you reset its target position because sometimes it changes its position
     void OnEnable()
@@ -102,10 +103,16 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
         if (!hasTouched)
         {
             audioSource.PlayOneShot(swapFruitAudio, 0.7f);
-            StartCoroutine(CanBeSwapFruit(directionLabel));
+            BoardManager.Instance.SwapFruit(this.gameObject, directionLabel);
             hasTouched = true;
             return;
         }
+    }
+
+    // Method in charge of detecting when we drop the fruit and therefore it stops dragging
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        hasTouched = false;
     }
 
     /// <summary>
@@ -131,116 +138,100 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
         });
     }
 
+    void DisableFruit()
+    {
+        transform.DORotate(new Vector3(0, 0, -120f), 0.12f);
+        transform.DOScale(Vector3.one * 1.2f, 0.085f).OnComplete(() =>
+        {
+            transform.DOScale(Vector3.zero, 0.1f).onComplete = () =>
+            {
+                gameObject.SetActive(false);
+                hasFruitDisable = true;
+            };
+        });
+    }
+
     // If there are no more changes on the board, it exits the coroutine
     IEnumerator ChangeOnTheBoard()
     {
         yield return new WaitUntil(() => !BoardManager.Instance.IsShifting);
     }
 
-    // // Method in charge of detecting when we drop the fruit and therefore it stops dragging
-    public void OnEndDrag(PointerEventData eventData)
-    {
-        hasTouched = false;
-    }
+    // IEnumerator CanBeSwapFruit(Vector2 direction)
+    // {
+    //     SwapFruit(direction);
+    //     DeselectFruit();
 
-    IEnumerator CanBeSwapFruit(Vector2 direction)
-    {
-        SwapFruit(direction);
-        DeselectFruit();
+    //     yield return new WaitForSeconds(timeChangePositionFruits + 1f);
 
-        yield return new WaitForSeconds(timeChangePositionFruits);
+    //     if (nextSelected == null) yield break;
 
-        if (nextSelected == null) yield break;
+    //     nextSelected.StartCoroutine(FindAllMatches());
+    //     StartCoroutine(FindAllMatches());
 
-        nextSelected.FindAllMatches();
-        FindAllMatches();
+    //     GUIManager.Instance.MoveCounter--;
+    // }
 
-        GUIManager.Instance.MoveCounter--;
-    }
+    // // Method returns the neighboring fruits that match
+    // List<GameObject> FindMatch(Vector2 direction)
+    // {
+    //     List<GameObject> matchingFruits = new List<GameObject>();
 
-    // Method in charge of changing the position of two fruits
-    public void SwapFruit(Vector2 direction)
-    {
-        BoardManager.Instance.IsShifting = true;
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction);
+    //     // Query the neighbors in the direction of the parameter
+    //     RaycastHit2D hit = Physics2D.Raycast(this.transform.position, direction);
 
-        if (hit.collider == null)
-        {
-            BoardManager.Instance.IsShifting = false;
-            return;
-        }
+    //     while (hit.collider != null && hit.collider.GetComponent<Fruit>().Id == Id)
+    //     {
+    //         matchingFruits.Add(hit.collider.gameObject);
+    //         hit = Physics2D.Raycast(hit.collider.transform.position, direction);
+    //     }
 
-        nextSelected = hit.collider.gameObject.GetComponent<Fruit>();
+    //     return matchingFruits;
+    // }
 
-        // If the 'hit' is the same fruit, leave the method
-        if (spriteRenderer.sprite == nextSelected.gameObject.GetComponentInChildren<SpriteRenderer>().sprite)
-        {
-            BoardManager.Instance.IsShifting = false;
-            return;
-        }
+    // // Method in charge of cleaning the fruits and returns true if it is the case
+    // bool ClearMatch(Vector2[] directions)
+    // {
+    //     List<GameObject> matchingFruits = new List<GameObject>();
 
-        this.MoveFruit(nextSelected.transform.localPosition);
-        nextSelected.MoveFruit(this.transform.localPosition);
-    }
+    //     foreach (Vector2 direction in directions)
+    //     {
+    //         matchingFruits.AddRange(FindMatch(direction));
+    //     }
 
-    // Method returns the neighboring fruits that match
-    List<GameObject> FindMatch(Vector2 direction)
-    {
-        List<GameObject> matchingFruits = new List<GameObject>();
+    //     if (matchingFruits.Count >= BoardManager.MinFruitsToMatch)
+    //     {
+    //         foreach (GameObject fruit in matchingFruits)
+    //         {
+    //             fruit.GetComponent<Fruit>().DisableFruit();
+    //         }
 
-        // Query the neighbors in the direction of the parameter
-        RaycastHit2D hit = Physics2D.Raycast(this.transform.position, direction);
+    //         return true;
+    //     }
 
-        while (hit.collider != null && hit.collider.GetComponent<Fruit>().Id == Id)
-        {
-            matchingFruits.Add(hit.collider.gameObject);
-            hit = Physics2D.Raycast(hit.collider.transform.position, direction);
-        }
+    //     return false;
+    // }
 
-        return matchingFruits;
-    }
+    // // Method in charge of looking for the fruits horizontally and vertically 
+    // public IEnumerator FindAllMatches()
+    // {
+    //     bool hMatch = ClearMatch(new Vector2[2] { Vector2.left, Vector2.right });
+    //     bool vMatch = ClearMatch(new Vector2[2] { Vector2.up, Vector2.down });
+    //     Debug.Log(hMatch + " " + vMatch);
+    //     if (hMatch || vMatch)
+    //     {
+    //         MultiplicationFactor.Instance.SetMultiplicationFactor();
 
-    // Method in charge of cleaning the fruits and returns true if it is the case
-    bool ClearMatch(Vector2[] directions)
-    {
-        List<GameObject> matchingFruits = new List<GameObject>();
+    //         audioSource.PlayOneShot(fruitDestroyAudio, 1);
 
-        foreach (Vector2 direction in directions)
-        {
-            matchingFruits.AddRange(FindMatch(direction));
-        }
-
-        if (matchingFruits.Count >= BoardManager.MinFruitsToMatch)
-        {
-            foreach (GameObject fruit in matchingFruits)
-            {
-                fruit.SetActive(false);
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    // Method in charge of looking for the fruits horizontally and vertically 
-    public void FindAllMatches()
-    {
-        bool hMatch = ClearMatch(new Vector2[2] { Vector2.left, Vector2.right });
-        bool vMatch = ClearMatch(new Vector2[2] { Vector2.up, Vector2.down });
-
-        if (hMatch || vMatch)
-        {
-            MultiplicationFactor.Instance.SetMultiplicationFactor();
-
-            audioSource.PlayOneShot(fruitDestroyAudio, 1);
-            gameObject.SetActive(false);
-
-            BoardManager.OnBoardChanges.Invoke();
-        }
-        else
-        {
-            BoardManager.Instance.IsShifting = false;
-        }
-    }
+    //         DisableFruit();
+    //         yield return new WaitUntil(() => hasFruitDisable);
+    //         BoardManager.Instance.IsShifting = false;
+    //         // BoardManager.OnBoardChanges.Invoke();
+    //     }
+    //     else
+    //     {
+    //         BoardManager.Instance.IsShifting = false;
+    //     }
+    // }
 }
