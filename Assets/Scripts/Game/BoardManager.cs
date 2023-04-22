@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BoardManager : MonoBehaviour
@@ -12,7 +13,7 @@ public class BoardManager : MonoBehaviour
     public static Action OnBoardChanges;
 
     // minimum number of fruits to combine including the current one
-    public const int MinFruitsToMatch = 2;
+    public const int MinFruitsToMatch = 3;
 
     // Check if a fruit is changing
     public bool IsShifting { get; set; }
@@ -88,6 +89,10 @@ public class BoardManager : MonoBehaviour
     void Start()
     {
         StartCoroutine(CreateInitialBoard());
+        Debug.Log(Vector2.up);
+        Debug.Log(Vector2.down);
+        Debug.Log(Vector2.left);
+        Debug.Log(Vector2.right);
     }
 
     int SetFruitProbability()
@@ -206,6 +211,71 @@ public class BoardManager : MonoBehaviour
         GUIManager.Instance.MoveCounter--;
         // Set IsShifting to false to indicate that the swap is complete
         BoardManager.Instance.IsShifting = false;
+    }
+
+    /// <summary>
+    /// Returns a list of matching fruits in the specified direction from the given fruit.
+    /// </summary>
+    /// <param name="fruit">The fruit to start the search from.</param>
+    /// <param name="direction">The direction in which to search for matching fruits.</param>
+    /// <returns>A list of matching fruits found in the specified direction.</returns>
+    List<GameObject> GetMatchByDirection(GameObject fruit, Vector2 direction)
+    {
+        List<GameObject> fruitMatches = new List<GameObject>();
+        fruitMatches.Add(fruit);
+
+        Fruit currentFruit = fruit.GetComponent<Fruit>();
+        RaycastHit2D hit = Physics2D.Raycast(fruit.transform.position, direction);
+
+        while (hit.collider != null && hit.collider.gameObject.GetComponent<Fruit>().Id == currentFruit.Id)
+        {
+            fruitMatches.Add(hit.collider.gameObject);
+
+            hit = Physics2D.Raycast(hit.collider.transform.position, direction);
+        }
+
+        return fruitMatches;
+    }
+
+    /// <summary>
+    /// Returns a list of matching fruits in all specified directions from the given fruit.
+    /// </summary>
+    /// <param name="fruit">The fruit to start the search from.</param>
+    /// <param name="directions">An array of directions in which to search for matching fruits.</param>
+    /// <returns>A list of all matching fruits found in the specified directions.</returns>
+    List<GameObject> GetMatchesByDirections(GameObject fruit, Vector2[] directions)
+    {
+        List<GameObject> fruitList = new List<GameObject>();
+
+        foreach (Vector2 direction in directions)
+        {
+            fruitList.Union(GetMatchByDirection(fruit, direction));
+        }
+
+        return fruitList;
+    }
+
+    /// <summary>
+    /// Determines if there are any matching fruits adjacent to the given fruit.
+    /// </summary>
+    /// <param name="fruit">The fruit to search for matches around.</param>
+    /// <returns>A list of all matching fruits found adjacent to the given fruit.</returns>
+    List<GameObject> ThereAreFoundMatches(GameObject fruit)
+    {
+        List<GameObject> hMatches = new List<GameObject>();
+        List<GameObject> vMatches = new List<GameObject>();
+
+        // Search for horizontal matches
+        hMatches = GetMatchesByDirections(fruit, new Vector2[2] { Vector2.left, Vector2.right });
+        // Search for vertical matches
+        vMatches = GetMatchesByDirections(fruit, new Vector2[2] { Vector2.up, Vector2.down });
+
+        List<GameObject> foundMatches = new List<GameObject>();
+        // Combine the matches found in both directions
+        if (hMatches.Count >= MinFruitsToMatch) foundMatches = foundMatches.Union(hMatches).ToList();
+        if (vMatches.Count >= MinFruitsToMatch) foundMatches = foundMatches.Union(vMatches).ToList();
+
+        return foundMatches;
     }
 
     // // Start the routine to find that the fruits are deactivated on the board
@@ -364,6 +434,7 @@ public class BoardManager : MonoBehaviour
     // }
 
     // Deactivate the fruit that were eliminated and add to object pooler
+
     void AddFruitToPool(GameObject fruit)
     {
         fruit.SetActive(false);
