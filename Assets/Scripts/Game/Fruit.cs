@@ -103,7 +103,7 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
         if (!hasTouched)
         {
             audioSource.PlayOneShot(swapFruitAudio, 0.7f);
-            BoardManager.Instance.SwapFruit(this.gameObject, directionLabel);
+            StartCoroutine(BoardManager.Instance.SwapFruit(this.gameObject, directionLabel));
             hasTouched = true;
             return;
         }
@@ -138,13 +138,14 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
         });
     }
 
-    void DisableFruit()
+    public void DisableFruit()
     {
         transform.DORotate(new Vector3(0, 0, -120f), 0.12f);
         transform.DOScale(Vector3.one * 1.2f, 0.085f).OnComplete(() =>
         {
             transform.DOScale(Vector3.zero, 0.1f).onComplete = () =>
             {
+                audioSource.PlayOneShot(fruitDestroyAudio, 1); //TODO:
                 gameObject.SetActive(false);
                 hasFruitDisable = true;
             };
@@ -156,82 +157,4 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
     {
         yield return new WaitUntil(() => !BoardManager.Instance.IsShifting);
     }
-
-    // IEnumerator CanBeSwapFruit(Vector2 direction)
-    // {
-    //     SwapFruit(direction);
-    //     DeselectFruit();
-
-    //     yield return new WaitForSeconds(timeChangePositionFruits + 1f);
-
-    //     if (nextSelected == null) yield break;
-
-    //     nextSelected.StartCoroutine(FindAllMatches());
-    //     StartCoroutine(FindAllMatches());
-
-    //     GUIManager.Instance.MoveCounter--;
-    // }
-
-    // // Method returns the neighboring fruits that match
-    // List<GameObject> FindMatch(Vector2 direction)
-    // {
-    //     List<GameObject> matchingFruits = new List<GameObject>();
-
-    //     // Query the neighbors in the direction of the parameter
-    //     RaycastHit2D hit = Physics2D.Raycast(this.transform.position, direction);
-
-    //     while (hit.collider != null && hit.collider.GetComponent<Fruit>().Id == Id)
-    //     {
-    //         matchingFruits.Add(hit.collider.gameObject);
-    //         hit = Physics2D.Raycast(hit.collider.transform.position, direction);
-    //     }
-
-    //     return matchingFruits;
-    // }
-
-    // // Method in charge of cleaning the fruits and returns true if it is the case
-    // bool ClearMatch(Vector2[] directions)
-    // {
-    //     List<GameObject> matchingFruits = new List<GameObject>();
-
-    //     foreach (Vector2 direction in directions)
-    //     {
-    //         matchingFruits.AddRange(FindMatch(direction));
-    //     }
-
-    //     if (matchingFruits.Count >= BoardManager.MinFruitsToMatch)
-    //     {
-    //         foreach (GameObject fruit in matchingFruits)
-    //         {
-    //             fruit.GetComponent<Fruit>().DisableFruit();
-    //         }
-
-    //         return true;
-    //     }
-
-    //     return false;
-    // }
-
-    // // Method in charge of looking for the fruits horizontally and vertically 
-    // public IEnumerator FindAllMatches()
-    // {
-    //     bool hMatch = ClearMatch(new Vector2[2] { Vector2.left, Vector2.right });
-    //     bool vMatch = ClearMatch(new Vector2[2] { Vector2.up, Vector2.down });
-    //     Debug.Log(hMatch + " " + vMatch);
-    //     if (hMatch || vMatch)
-    //     {
-    //         MultiplicationFactor.Instance.SetMultiplicationFactor();
-
-    //         audioSource.PlayOneShot(fruitDestroyAudio, 1);
-
-    //         DisableFruit();
-    //         yield return new WaitUntil(() => hasFruitDisable);
-    //         BoardManager.Instance.IsShifting = false;
-    //         // BoardManager.OnBoardChanges.Invoke();
-    //     }
-    //     else
-    //     {
-    //         BoardManager.Instance.IsShifting = false;
-    //     }
-    // }
 }
