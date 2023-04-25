@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 public class BoardManager : MonoBehaviour
@@ -133,7 +134,7 @@ public class BoardManager : MonoBehaviour
                     {
                         // Change the "currentFruit" to a prefab made fruit randomly
                         idx = UnityEngine.Random.Range(0, prefabs.Count);
-                    } while (NeighborsSameCandy(x, y, idx));
+                    } while (NeighborsSameFruit(x, y, idx));
 
                 }
                 else
@@ -154,22 +155,23 @@ public class BoardManager : MonoBehaviour
 
                 if (IsFruitTouchingTheBoard(newFruit))
                 {
-                    fruits[x, y] = newFruit; // Add fruit to the board
                     newFruit.transform.localPosition = new Vector2(x, y + 1);
                     newFruit.GetComponent<Fruit>().MoveFruit(new Vector2(x, y), false);
                 }
-                else AddFruitToPool(newFruit);
+                else newFruit.SetActive(false);
+                fruits[x, y] = newFruit; // Add fruit to the board
             }
         }
 
         boardCollider.enabled = false;
+        yield return null;
     }
 
     // Check if the fruit is on the table, if not, destroy it.
     bool IsFruitTouchingTheBoard(GameObject fruits) => boardCollider.IsTouching(fruits.GetComponent<Collider2D>());
 
     // Method in charge of verifying if the fruit is repeated in said column and row
-    bool NeighborsSameCandy(int x, int y, int idx) => (x > 1 && fruits[x - 2, y] != null && idx == fruits[x - 2, y].GetComponent<Fruit>().Id) ||
+    bool NeighborsSameFruit(int x, int y, int idx) => (x > 1 && fruits[x - 2, y] != null && idx == fruits[x - 2, y].GetComponent<Fruit>().Id) ||
                                                         (y > 1 && fruits[x, y - 2] != null && idx == fruits[x, y - 2].GetComponent<Fruit>().Id);
 
     /// <summary>
@@ -207,8 +209,8 @@ public class BoardManager : MonoBehaviour
         GUIManager.Instance.MoveCounter--;
 
         yield return new WaitForSeconds(timeChangePositionFruits);
-        // Boolean that tells us if there was a match or not
-        bool matchesFound = ClearMatches(fruit, nextFruit);
+
+        FoundMatches(fruit, nextFruit);
 
         // MultiplicationFactor.Instance.SetMultiplicationFactor(); TODO:
 
@@ -216,6 +218,7 @@ public class BoardManager : MonoBehaviour
 
         // Set IsShifting to false to indicate that the swap is complete
         IsShifting = false;
+        yield return null;
     }
 
     /// <summary>
@@ -264,10 +267,9 @@ public class BoardManager : MonoBehaviour
     /// Determines if there are any matching fruits adjacent to the given fruit in both horizontal and vertical directions.
     /// </summary>
     /// <param name="fruit">The fruit to search for matches around.</param>
-    /// <returns>A tuple containing a list of all matching fruits found adjacent to the given fruit and a boolean indicating whether matches were found.</returns>
-    (List<GameObject> foundMatches, bool isMatchFound) ThereAreFoundMatches(GameObject fruit)
+    /// <returns>A list of GameObjects representing the matching fruits found.</returns>
+    List<GameObject> ThereAreFoundMatches(GameObject fruit)
     {
-        bool isMatchFound = false;
         List<GameObject> hMatches = new List<GameObject>();
         List<GameObject> vMatches = new List<GameObject>();
 
@@ -278,19 +280,11 @@ public class BoardManager : MonoBehaviour
 
         List<GameObject> combinedMatches = new List<GameObject>();
         // Combine the matches found in both directions
-        if (hMatches.Count >= MinFruitsToMatch)
-        {
-            combinedMatches = combinedMatches.Union(hMatches).ToList();
-            isMatchFound = true;
-        }
+        if (hMatches.Count >= MinFruitsToMatch) combinedMatches = combinedMatches.Union(hMatches).ToList();
 
-        if (vMatches.Count >= MinFruitsToMatch)
-        {
-            combinedMatches = combinedMatches.Union(vMatches).ToList();
-            isMatchFound = true;
-        }
+        if (vMatches.Count >= MinFruitsToMatch) combinedMatches = combinedMatches.Union(vMatches).ToList();
 
-        return (combinedMatches, isMatchFound);
+        return combinedMatches;
     }
 
     /// <summary>
@@ -298,164 +292,124 @@ public class BoardManager : MonoBehaviour
     /// </summary>
     /// <param name="firstFruit">The first fruit to check for matches.</param>
     /// <param name="secondFruit">The second fruit to check for matches.</param>
-    /// <returns>A boolean indicating whether any matches were found and cleared.</returns>
-    bool ClearMatches(GameObject firstFruit, GameObject secondFruit)
+    /// <returns>A list of GameObjects representing the fruits that were cleared.</returns>
+    List<GameObject> ClearMatches(GameObject firstFruit, GameObject secondFruit)
     {
-        (List<GameObject> firstMatches, bool isFirstMatchFound) = ThereAreFoundMatches(firstFruit);
-        (List<GameObject> secondMatches, bool isSecondMatchFound) = ThereAreFoundMatches(secondFruit);
+        List<GameObject> firstMatches = ThereAreFoundMatches(firstFruit);
+        List<GameObject> secondMatches = ThereAreFoundMatches(secondFruit);
 
-        if (isFirstMatchFound)
+        List<GameObject> allMatches = firstMatches.Union(secondMatches).ToList();
+
+        if (allMatches.Count >= MinFruitsToMatch)
         {
-            firstMatches.ForEach(matchedFruit =>
+            allMatches.ForEach(matchedFruit =>
             {
+                // Set the corresponding index in the array to null
+                fruits[(int)matchedFruit.transform.localPosition.x, (int)matchedFruit.transform.localPosition.y] = null;
+                // Disable the game object
                 matchedFruit.GetComponent<Fruit>().DisableFruit();
             });
         }
 
-        if (isSecondMatchFound)
-        {
-            secondMatches.ForEach(matchedFruit =>
-            {
-                matchedFruit.GetComponent<Fruit>().DisableFruit();
-            });
-        }
-
-        return isFirstMatchFound || isSecondMatchFound;
+        return allMatches;
     }
 
-    // // Start the routine to find that the fruits are deactivated on the board
-    // void StartCoroutineFindDisable()
-    // {
-    //     StopAllCoroutines();
-    //     StartCoroutine(FindDisableFruits());
-    // }
+    /// <summary>
+    /// Coroutine that handles the animation of clearing matches and collapsing fruits.
+    /// </summary>
+    /// <param name="clearMatches">A list of GameObjects representing the fruits to be cleared.</param>
+    IEnumerator FoundMatchesRutiner(List<GameObject> clearMatches)
+    {
+        yield return new WaitForSeconds(0.3f);
 
-    // // Search in each row and column what space there is, that is, what fruit is deactivated
-    // IEnumerator FindDisableFruits()
-    // {
-    //     // fruitsWereMoved = new List<GameObject>();
+        List<int> columnMatches = GetColumns(clearMatches);
+        List<GameObject> collapsedFruits = CollapseFruits(columnMatches, 0.1f);
+    }
 
-    //     yield return new WaitForEndOfFrame();
+    /// <summary>
+    /// Determines if there are any matches between two given fruits, clears the matches, and triggers the animation coroutine if necessary.
+    /// </summary>
+    /// <param name="firstFruit">The first fruit to check for matches.</param>
+    /// <param name="secondFruit">The second fruit to check for matches.</param>
+    /// <returns>A boolean indicating whether any matches were found and cleared.</returns>
+    bool FoundMatches(GameObject firstFruit, GameObject secondFruit)
+    {
+        bool foundMatches = false;
 
-    //     for (int x = 0; x < xSize; x++)
-    //     {
-    //         for (int y = 0; y < ySize; y++)
-    //         {
-    //             if (fruits[x, y] != null && !fruits[x, y].gameObject.activeSelf)
-    //             {
-    //                 yield return StartCoroutine(CollapseFruits(x, y));
-    //                 break;
-    //             }
-    //         }
-    //     }
+        List<GameObject> clearMatches = ClearMatches(firstFruit, secondFruit);
 
-    //     audioSource.PlayOneShot(endSwapFruitAudio, 1);
+        if (clearMatches.Count >= 3)
+        {
+            StartCoroutine(FoundMatchesRutiner(clearMatches));
+            foundMatches = true;
+        }
 
-    //     // We go through all the fruits to see if there is a match
-    //     for (int i = 0; i < fruitsWereMoved.Count; i++)
-    //     {
-    //         if (fruitsWereMoved[i].activeSelf)
-    //         {
-    //             fruitsWereMoved[i].GetComponent<Fruit>().FindAllMatches();
-    //         }
-    //     }
-    // }
+        return foundMatches;
+    }
 
-    // // Makes the fruits fall to occupy an empty position
-    // IEnumerator MakeFruitsFall(int x, int yStart, float shiftDelay = 0.1f)
-    // {
-    //     List<GameObject> boardFruits;
-    //     int disabledFruits;
+    /// <summary>
+    /// Given a list of cleared matches, this method returns a list of their corresponding columns.
+    /// </summary>
+    /// <param name="clearMatches">The list of cleared matches.</param>
+    /// <returns>The list of columns.</returns>
+    List<int> GetColumns(List<GameObject> clearMatches)
+    {
+        List<int> columnMatches = new List<int>();
 
-    //     CountDisableFruits(x, yStart, out boardFruits, out disabledFruits);
+        // Loop through each cleared match and get the column it belongs to.
+        clearMatches.ForEach(fruit =>
+        {
+            int x = (int)fruit.transform.localPosition.x;
+            if (!columnMatches.Contains(x))
+                columnMatches.Add(x);
+        });
 
-    //     bool secondTime = false; // Indicates if it is the second fruit that appears
-    //     List<GameObject> listNewFruits = new List<GameObject>(); // Save the new fruits that appear
+        return columnMatches;
+    }
 
-    //     for (int i = 0; i < disabledFruits; i++)
-    //     {
-    //         GUIManager.Instance.Score += score;
-    //         SumScore += score;
+    /// <summary>
+    /// This method collapses the fruits in the specified columns and returns a list of the fruits that have been moved.
+    /// </summary>
+    /// <param name="columns">The columns to collapse.</param>
+    /// <param name="timeToCollapse">The time it takes for the fruits to collapse.</param>
+    /// <returns>The list of fruits that have been moved.</returns>
+    List<GameObject> CollapseFruits(List<int> columns, float timeToCollapse)
+    {
+        List<GameObject> movingFruits = new List<GameObject>();
+        // Loop through each column.
+        for (int i = 0; i < columns.Count; i++)
+        {
+            int column = columns[i];
+            // Loop through each row in the column.
+            for (int y = 0; y < ySize; y++)
+            {
+                // If there is a null fruit, move the next non-null fruit down to fill the gap.
+                if (fruits[column, y] == null)
+                {
+                    // Iterates through each row above the current position
+                    for (int yPlus = y + 1; yPlus < ySize; yPlus++)
+                    {
+                        // If a fruit is found above the current position, moves it down to the current position
+                        if (fruits[column, yPlus] != null && fruits[column, yPlus].activeSelf)
+                        {
+                            // Moves the fruit to the current position
+                            fruits[column, yPlus].GetComponent<Fruit>().MoveFruit(new Vector2(column, y));
+                            fruits[column, y] = fruits[column, yPlus];
+                            // Adds the fruit to the movingFruits list if it is not already there
+                            if (!movingFruits.Contains(fruits[column, y])) movingFruits.Add(fruits[column, y]);
+                            // Empties the previous position of the fruit
+                            fruits[column, yPlus] = null;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
 
-    //         int y = yStart; // Traverse the rows of the board
-
-    //         if (IsLastRow(disabledFruits, x, y))
-    //         {
-    //             LastRowOfFruits(x, y);
-    //         }
-    //         else // This is in case there are more fruits deactivated and they are in some row other than 7
-    //         {
-    //             for (int j = 0; j < boardFruits.Count - 1; j++)
-    //             {
-    //                 boardFruits[j + 1].GetComponent<Fruit>().MoveFruit(new Vector2(boardFruits[j + 1].transform.localPosition.x, boardFruits[j + 1].transform.localPosition.y - offset)); ;
-    //                 fruits[x, y] = fruits[x, y + 1]; // Change the previously moved fruit to the corresponding position in the array
-
-    //                 if (j == boardFruits.Count - 2)
-    //                 {
-    //                     fruits[x, y + 1] = GetNewFruit();
-    //                     fruits[x, y + 1].transform.localPosition = new Vector2(x, y + 1);
-    //                     fruits[x, y + 1].SetActive(true);
-    //                     listNewFruits.Add(fruits[x, y + 1]);
-
-    //                     if (secondTime)
-    //                     {
-    //                         for (int k = 0; k < listNewFruits.Count - 1; k++)
-    //                         {
-    //                             listNewFruits[k].GetComponent<Fruit>().MoveFruit(new Vector2(listNewFruits[k].transform.localPosition.x, listNewFruits[k].transform.localPosition.y - offset));
-    //                         }
-    //                     }
-    //                     secondTime = true;
-    //                 }
-    //                 y++;
-    //                 yield return new WaitForSeconds(shiftDelay);
-    //             }
-    //         }
-    //     }
-
-    //     fruitsWereMoved.AddRange(boardFruits);
-    //     fruitsWereMoved.AddRange(listNewFruits);
-
-    //     AddFruitsToPool(boardFruits);
-
-    //     IsShifting = false;
-    // }
-
-    // void CountDisableFruits(int x, int yStart, out List<GameObject> boardFruits, out int disabledFruits)
-    // {
-    //     IsShifting = true;
-
-    //     boardFruits = new List<GameObject>();
-    //     disabledFruits = 0;
-
-    //     for (int y = yStart; y < ySize; y++)
-    //     {
-    //         if (fruits[x, y] != null)
-    //         {
-    //             GameObject boardFruit = fruits[x, y];
-
-    //             if (boardFruit.GetComponentInChildren<SpriteRenderer>().enabled == false)
-    //             {
-    //                 disabledFruits++;
-    //             }
-
-    //             boardFruits.Add(boardFruit);
-    //         }
-    //     }
-    // }
-
-    // // The method returns true if it is in the last row of each column
-    // bool IsLastRow(int disabledFruits, int x, int y) => (disabledFruits <= 1 && y == YSize - 1) || (x == 0 && y == 6) || (x == 7 && y == 6);
-
-    // void LastRowOfFruits(int x, int y)
-    // {
-    //     Vector3 fruitPosition = fruits[x, y].transform.position;
-    //     fruits[x, y] = GetNewFruit();
-    //     fruits[x, y].transform.position = fruitPosition;
-    //     fruits[x, y].SetActive(true);
-    // }
+        return movingFruits;
+    }
 
     // Deactivate the fruit that were eliminated and add to object pooler
-
     void AddFruitToPool(GameObject fruit)
     {
         fruit.SetActive(false);

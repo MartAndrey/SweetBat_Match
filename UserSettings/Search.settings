@@ -7,6 +7,9 @@ onBoardingDoNotAskAgain = true
 showPackageIndexes = false
 showStatusBar = false
 scopes = {
+	"last_search.8BEC98E7" = "Fruit[1] [1]"
+	"OpenInspectorPreview.8BEC98E7" = "0"
+	"currentGroup.8BEC98E7" = "scene"
 }
 providers = {
 	adb = {
@@ -53,6 +56,7 @@ providers = {
 objectSelectors = {
 }
 recentSearches = [
+	"Fruit[6] [6]"
 ]
 searchItemFavorites = [
 ]

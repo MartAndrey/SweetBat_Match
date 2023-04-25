@@ -147,7 +147,7 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
             {
                 audioSource.PlayOneShot(fruitDestroyAudio, 1); //TODO:
                 gameObject.SetActive(false);
-                hasFruitDisable = true;
+                // hasFruitDisable = true;
             };
         });
     }
