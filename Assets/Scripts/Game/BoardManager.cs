@@ -293,7 +293,7 @@ public class BoardManager : MonoBehaviour
     /// <param name="firstFruit">The first fruit to check for matches.</param>
     /// <param name="secondFruit">The second fruit to check for matches.</param>
     /// <returns>A list of GameObjects representing the fruits that were cleared.</returns>
-    List<GameObject> ClearMatches(GameObject firstFruit, GameObject secondFruit)
+    List<GameObject> ClearAllFruitMatches(GameObject firstFruit, GameObject secondFruit)
     {
         List<GameObject> firstMatches = ThereAreFoundMatches(firstFruit);
         List<GameObject> secondMatches = ThereAreFoundMatches(secondFruit);
@@ -302,16 +302,25 @@ public class BoardManager : MonoBehaviour
 
         if (allMatches.Count >= MinFruitsToMatch)
         {
-            allMatches.ForEach(matchedFruit =>
-            {
-                // Set the corresponding index in the array to null
-                fruits[(int)matchedFruit.transform.localPosition.x, (int)matchedFruit.transform.localPosition.y] = null;
-                // Disable the game object
-                matchedFruit.GetComponent<Fruit>().DisableFruit();
-            });
+            ClearSingleFruitMatch(allMatches);
         }
 
         return allMatches;
+    }
+
+    /// <summary>
+    /// Clear all matched fruits from the grid and disable them.
+    /// </summary>
+    /// <param name="fruitToClear">List of matched fruits to be cleared.</param>
+    void ClearSingleFruitMatch(List<GameObject> fruitToClear)
+    {
+        fruitToClear.ForEach(matchedFruit =>
+        {
+            // Set the corresponding index in the array to null
+            fruits[(int)matchedFruit.transform.localPosition.x, (int)matchedFruit.transform.localPosition.y] = null;
+            // Disable the game object
+            matchedFruit.GetComponent<Fruit>().DisableFruit();
+        });
     }
 
     /// <summary>
@@ -322,8 +331,9 @@ public class BoardManager : MonoBehaviour
     {
         yield return new WaitForSeconds(0.3f);
 
-        List<int> columnMatches = GetColumns(clearMatches);
-        List<GameObject> collapsedFruits = CollapseFruits(columnMatches, 0.1f);
+        List<GameObject> collapsedFruits = CollapseFruits(GetColumns(clearMatches), 0.3f);
+
+        FindMatchesRecursively(collapsedFruits);
     }
 
     /// <summary>
@@ -336,7 +346,7 @@ public class BoardManager : MonoBehaviour
     {
         bool foundMatches = false;
 
-        List<GameObject> clearMatches = ClearMatches(firstFruit, secondFruit);
+        List<GameObject> clearMatches = ClearAllFruitMatches(firstFruit, secondFruit);
 
         if (clearMatches.Count >= 3)
         {
@@ -407,6 +417,47 @@ public class BoardManager : MonoBehaviour
         }
 
         return movingFruits;
+    }
+
+    /// <summary>
+    /// Recursively find and clear all matched fruits in the grid.
+    /// </summary>
+    /// <param name="collapsedFruits">List of fruits to check for matches.</param>
+    void FindMatchesRecursively(List<GameObject> collapsedFruits)
+    {
+        StartCoroutine(FindMatchesRecursivelyCoroutine(collapsedFruits));
+    }
+
+    /// <summary>
+    /// Coroutine that recursively finds and clears all matched fruits in the grid.
+    /// </summary>
+    /// <param name="collapsedFruits">List of fruits to check for matches.</param>
+    IEnumerator FindMatchesRecursivelyCoroutine(List<GameObject> collapsedFruits)
+    {
+        yield return new WaitForSeconds(1f);
+
+        List<GameObject> newMatches = new List<GameObject>();
+
+        collapsedFruits.ForEach(fruit =>
+        {
+            // Check for matches with the current fruit
+            List<GameObject> matches = ThereAreFoundMatches(fruit);
+            if (matches.Count >= MinFruitsToMatch)
+            {
+                // Add new matches to the list of matches
+                newMatches = newMatches.Union(matches).ToList();
+                // Clear the matched fruits from the grid
+                ClearSingleFruitMatch(matches);
+            }
+        });
+
+        if (newMatches.Count >= MinFruitsToMatch)
+        {
+            // Collapse the columns where new matches were found
+            FindMatchesRecursively(CollapseFruits(GetColumns(newMatches), 3f));
+        }
+
+        yield return null;
     }
 
     // Deactivate the fruit that were eliminated and add to object pooler
