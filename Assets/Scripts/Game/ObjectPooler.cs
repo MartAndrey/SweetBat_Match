@@ -38,11 +38,7 @@ public class ObjectPooler : MonoBehaviour
             {
                 for (int j = 0; j < amount; j++)
                 {
-                    GameObject fruit = Instantiate(fruitPrefabs[i], gameObject.transform);
-
-                    fruit.SetActive(false);
-                    fruit.GetComponent<Fruit>().Id = i;
-                    fruitList.Add(fruit);
+                    CreateFruit(i);
                 }
             }
         }
@@ -50,10 +46,7 @@ public class ObjectPooler : MonoBehaviour
         {
             int rn = Random.Range(0, fruitPrefabs.Count);
 
-            GameObject fruit = Instantiate(fruitPrefabs[rn], gameObject.transform);
-            fruit.SetActive(false);
-            fruit.GetComponent<Fruit>().Id = rn;
-            fruitList.Add(fruit);
+            CreateFruit(rn);
         }
     }
 
@@ -61,7 +54,6 @@ public class ObjectPooler : MonoBehaviour
     public GameObject GetFruitToPool(int fruit, Transform parent)
     {
         GameObject newFruit = fruitList.Find(x => x.GetComponent<Fruit>().Id == fruit && !x.activeSelf);
-
         if (newFruit != null)
         {
             newFruit.transform.parent = parent;
@@ -73,5 +65,14 @@ public class ObjectPooler : MonoBehaviour
         newFruit = fruitList[fruitList.Count - 1];
         newFruit.transform.parent = parent;
         return newFruit;
+    }
+
+    void CreateFruit(int id)
+    {
+        GameObject fruit = Instantiate(fruitPrefabs[id], gameObject.transform);
+
+        fruit.SetActive(false);
+        fruit.GetComponent<Fruit>().Id = id;
+        fruitList.Add(fruit);
     }
 }

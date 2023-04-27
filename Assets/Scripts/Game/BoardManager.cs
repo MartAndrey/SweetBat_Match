@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 public class BoardManager : MonoBehaviour
@@ -49,6 +48,9 @@ public class BoardManager : MonoBehaviour
 
     // Time it takes to change the positions of the fruits when they are moved
     float timeChangePositionFruits = 0.6f;
+
+    // Time it takes for fruits to deactivate
+    float timeToDisableFruit = 0.3f;
 
     int totalProbabilities;
 
@@ -210,14 +212,15 @@ public class BoardManager : MonoBehaviour
 
         yield return new WaitForSeconds(timeChangePositionFruits);
 
-        FoundMatches(fruit, nextFruit);
+        bool HasFoundMatches = FoundMatches(fruit, nextFruit);
 
         // MultiplicationFactor.Instance.SetMultiplicationFactor(); TODO:
 
-        // TODO: If there are no matches found, return the fruits to their old position.
+        if (!HasFoundMatches)
+            // TODO: If there are no matches found, return the fruits to their old position.
+            // Set IsShifting to false to indicate that the swap is complete
+            IsShifting = false;
 
-        // Set IsShifting to false to indicate that the swap is complete
-        IsShifting = false;
         yield return null;
     }
 
@@ -329,9 +332,11 @@ public class BoardManager : MonoBehaviour
     /// <param name="clearMatches">A list of GameObjects representing the fruits to be cleared.</param>
     IEnumerator FoundMatchesRutiner(List<GameObject> clearMatches)
     {
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(timeToDisableFruit);
 
-        List<GameObject> collapsedFruits = CollapseFruits(GetColumns(clearMatches), 0.3f);
+        List<GameObject> collapsedFruits = CollapseFruits(GetColumns(clearMatches));
+
+        AddFruitsToPool(clearMatches);
 
         FindMatchesRecursively(collapsedFruits);
     }
@@ -383,7 +388,7 @@ public class BoardManager : MonoBehaviour
     /// <param name="columns">The columns to collapse.</param>
     /// <param name="timeToCollapse">The time it takes for the fruits to collapse.</param>
     /// <returns>The list of fruits that have been moved.</returns>
-    List<GameObject> CollapseFruits(List<int> columns, float timeToCollapse)
+    List<GameObject> CollapseFruits(List<int> columns)
     {
         List<GameObject> movingFruits = new List<GameObject>();
         // Loop through each column.
@@ -405,8 +410,10 @@ public class BoardManager : MonoBehaviour
                             // Moves the fruit to the current position
                             fruits[column, yPlus].GetComponent<Fruit>().MoveFruit(new Vector2(column, y));
                             fruits[column, y] = fruits[column, yPlus];
+
                             // Adds the fruit to the movingFruits list if it is not already there
                             if (!movingFruits.Contains(fruits[column, y])) movingFruits.Add(fruits[column, y]);
+
                             // Empties the previous position of the fruit
                             fruits[column, yPlus] = null;
                             break;
@@ -416,7 +423,36 @@ public class BoardManager : MonoBehaviour
             }
         }
 
+
+        FillBoard();
+
         return movingFruits;
+    }
+
+    /// <summary>
+    /// Fills the game board with new fruits if any slot is empty.
+    /// </summary>
+    void FillBoard()
+    {
+        // List to store the newly generated fruits
+        List<GameObject> newFruits = new List<GameObject>();
+
+        // List to store the newly generated fruits
+        for (int x = 0; x < xSize; x++)
+        {
+            for (int y = 0; y < ySize; y++)
+            {
+                // If the slot is empty, generate a new fruit and add it to the list
+                if (fruits[x, y] == null)
+                {
+                    fruits[x, y] = GetNewFruit(x, y);
+                    newFruits.Add(fruits[x, y]);
+                }
+            }
+        }
+
+        // Check for any matches with the newly generated fruits
+        FindMatchesRecursively(newFruits);
     }
 
     /// <summary>
@@ -434,7 +470,7 @@ public class BoardManager : MonoBehaviour
     /// <param name="collapsedFruits">List of fruits to check for matches.</param>
     IEnumerator FindMatchesRecursivelyCoroutine(List<GameObject> collapsedFruits)
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(.8f);
 
         List<GameObject> newMatches = new List<GameObject>();
 
@@ -451,43 +487,61 @@ public class BoardManager : MonoBehaviour
             }
         });
 
-        if (newMatches.Count >= MinFruitsToMatch)
+
+        if (!(newMatches.Count >= MinFruitsToMatch))
         {
-            // Collapse the columns where new matches were found
-            FindMatchesRecursively(CollapseFruits(GetColumns(newMatches), 3f));
+            IsShifting = false;
+            yield break;
         }
+
+        // Collapse the columns where new matches were found
+        yield return new WaitForSeconds(timeToDisableFruit);
+        List<GameObject> newCollapsedFruits = CollapseFruits(GetColumns(newMatches));
+        AddFruitsToPool(newMatches);
+        FindMatchesRecursively(newCollapsedFruits);
 
         yield return null;
     }
 
-    // Deactivate the fruit that were eliminated and add to object pooler
+    /// <summary>
+    /// Deactivates a single fruit and adds it to the object pooler.
+    /// </summary>
+    /// <param name="fruit">The fruit to add to the pool.</param>
     void AddFruitToPool(GameObject fruit)
     {
-        fruit.SetActive(false);
-        ObjectPooler.Instance.FruitList.Add(fruit);
-        fruit.transform.SetParent(ObjectPooler.Instance.gameObject.transform);
+        ObjectPooler.Instance.FruitList.Add(fruit); // Add the fruit to the object pooler list
+        fruit.transform.SetParent(ObjectPooler.Instance.gameObject.transform); // Set the parent object of the fruit
     }
 
-    // Deactivate the fruits that were eliminated and add to object pooler
+    // <summary>
+    /// Deactivates a list of fruits and adds them to the object pooler.
+    /// </summary>
+    /// <param name="fruits">The list of fruits to add to the pool.</param>
     void AddFruitsToPool(List<GameObject> fruits)
     {
-        fruits.ForEach(i =>
+        fruits.ForEach(fruit =>
         {
-            if (i.GetComponentInChildren<SpriteRenderer>().enabled == false)
-            {
-                i.SetActive(false);
-                i.GetComponentInChildren<SpriteRenderer>().enabled = true;
-                ObjectPooler.Instance.FruitList.Add(i);
-                i.transform.parent = ObjectPooler.Instance.gameObject.transform;
-            }
+            // If the fruit is not active, add it to the pool
+            if (!fruit.activeSelf) AddFruitToPool(fruit);
         });
     }
 
-    // Generates a new fruit
-    GameObject GetNewFruit()
+    /// <summary>
+    /// Generates a new fruit at the given coordinates.
+    /// </summary>
+    /// <param name="x">The x coordinate of the new fruit.</param>
+    /// <param name="y">The y coordinate of the new fruit.</param>
+    /// <returns>The newly generated fruit.</returns>
+    GameObject GetNewFruit(int x, int y)
     {
-        int newFruit = UnityEngine.Random.Range(0, prefabs.Count);
+        // Randomly select a fruit prefab from the list
+        int indexFruit = UnityEngine.Random.Range(0, prefabs.Count);
 
-        return ObjectPooler.Instance.GetFruitToPool(newFruit, spawnFruit.transform);
+        GameObject newFruit = ObjectPooler.Instance.GetFruitToPool(indexFruit, spawnFruit.transform);
+        newFruit.transform.localPosition = new Vector2(x, y);
+        newFruit.name = string.Format("Fruit[{0}] [{1}]", x, y);
+        newFruit.SetActive(true);
+
+        return newFruit;
     }
 }
