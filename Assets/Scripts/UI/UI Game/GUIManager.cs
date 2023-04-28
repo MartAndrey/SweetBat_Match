@@ -2,7 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System;
 
+/// <summary>
+/// Manages the graphical user interface (GUI) of the game.
+/// </summary>
 public class GUIManager : MonoBehaviour
 {
     public static GUIManager Instance;
@@ -13,7 +17,7 @@ public class GUIManager : MonoBehaviour
         set
         {
             score = value;
-            scoreText.text = score.ToString();
+            StartCoroutine(UpdateScore());
             ProgressBar.Instance.ChangeBarScore(score);
         }
     }
@@ -57,12 +61,31 @@ public class GUIManager : MonoBehaviour
         movesText.text = moveCounter.ToString();
     }
 
+    /// <summary>
+    /// Waits until the board has finished shifting before showing the game over menu.
+    /// </summary>
     IEnumerator GameOver()
     {
         yield return new WaitForEndOfFrame();
         yield return new WaitUntil(() => !BoardManager.Instance.IsShifting);
         yield return new WaitForSeconds(0.25f);
-        
+
         menuGameOver.GetComponent<GameOverController>().OnGameOver();
+    }
+
+    /// <summary>
+    /// Updates the score display with a smooth animation.
+    /// </summary>
+    IEnumerator UpdateScore()
+    {
+        int scoreDisplay = Convert.ToInt32(scoreText.text);
+
+        while (scoreDisplay < score)
+        {
+            scoreDisplay++;
+            scoreText.text = scoreDisplay.ToString();
+            yield return new WaitForSeconds(0.01f);
+        }
+        yield return null;
     }
 }

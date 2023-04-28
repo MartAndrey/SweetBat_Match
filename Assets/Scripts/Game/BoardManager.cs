@@ -336,6 +336,7 @@ public class BoardManager : MonoBehaviour
 
         List<GameObject> collapsedFruits = CollapseFruits(GetColumns(clearMatches));
 
+        GUIManager.Instance.Score += (clearMatches.Count * score);
         AddFruitsToPool(clearMatches);
 
         FindMatchesRecursively(collapsedFruits);
@@ -497,6 +498,7 @@ public class BoardManager : MonoBehaviour
         // Collapse the columns where new matches were found
         yield return new WaitForSeconds(timeToDisableFruit);
         List<GameObject> newCollapsedFruits = CollapseFruits(GetColumns(newMatches));
+        GUIManager.Instance.Score += (newMatches.Count * score);
         AddFruitsToPool(newMatches);
         FindMatchesRecursively(newCollapsedFruits);
 
