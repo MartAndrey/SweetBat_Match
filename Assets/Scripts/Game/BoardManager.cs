@@ -166,6 +166,9 @@ public class BoardManager : MonoBehaviour
         }
 
         boardCollider.enabled = false;
+        if (GUIManager.Instance.GamePlayMode == GamePlayMode.TimedMatch)
+            StartCoroutine(GUIManager.Instance.TimeToMatchCoroutine());
+
         yield return null;
     }
 
@@ -207,19 +210,29 @@ public class BoardManager : MonoBehaviour
         // Move the two fruits to each other's positions
         fruit.GetComponent<Fruit>().MoveFruit(nextFruit.transform.localPosition);
         nextFruit.GetComponent<Fruit>().MoveFruit(fruit.transform.localPosition);
-        // Decrement the MoveCounter variable in the GUIManager instance
-        GUIManager.Instance.MoveCounter--;
+
+        // Decrement the MoveCounter variable in the Manager instance
+        if (GUIManager.Instance.GamePlayMode == GamePlayMode.MovesLimited) GUIManager.Instance.MoveCounter--;
 
         yield return new WaitForSeconds(timeChangePositionFruits);
-
+        // Check if any matches are found
         bool HasFoundMatches = FoundMatches(fruit, nextFruit);
 
         // MultiplicationFactor.Instance.SetMultiplicationFactor(); TODO:
 
         if (!HasFoundMatches)
-            // TODO: If there are no matches found, return the fruits to their old position.
+        {
+            if (GUIManager.Instance.GamePlayMode == GamePlayMode.TimedMatch)
+            {
+                // If there are no matches found, return the fruits to their old position.
+                fruit.GetComponent<Fruit>().MoveFruit(nextFruit.transform.localPosition);
+                nextFruit.GetComponent<Fruit>().MoveFruit(fruit.transform.localPosition);
+
+                yield return new WaitForSeconds(timeChangePositionFruits);
+            }
             // Set IsShifting to false to indicate that the swap is complete
             IsShifting = false;
+        }
 
         yield return null;
     }
