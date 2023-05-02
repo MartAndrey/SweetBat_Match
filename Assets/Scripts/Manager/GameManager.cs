@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     // Serialized game mode field
     [SerializeField] GameMode typeOfGame;
 
-    int level = 0; // Private field for the current level
+    [SerializeField] int level = 0; // Private field for the current level
 
     void Awake()
     {

@@ -35,7 +35,10 @@ public class BoardManager : MonoBehaviour
     [SerializeField] int score;
     [Tooltip("Probability of each fruit to appear")]
     [SerializeField] int[] fruitsProbabilities;
-    [SerializeField] AudioClip endSwapFruitAudio;
+    [Header("Audio")]
+    [SerializeField] AudioClip swapFruitAudio;
+    [SerializeField] AudioClip fruitCrackAudio;
+    [SerializeField] AudioClip missMove;
 
     // All the fruits on the board
     GameObject[,] fruits;
@@ -50,7 +53,7 @@ public class BoardManager : MonoBehaviour
     float timeChangePositionFruits = 0.6f;
 
     // Time it takes for fruits to deactivate
-    float timeToDisableFruit = 0.3f;
+    float timeToDisableFruit = 0.32f;
 
     int totalProbabilities;
 
@@ -117,6 +120,8 @@ public class BoardManager : MonoBehaviour
     // Create the initial elements or fruits of the board
     IEnumerator CreateInitialBoard(bool targetLevel = false)
     {
+        IsShifting = true;
+
         fruits = new GameObject[xSize, ySize]; // Columns and rows of the board
 
         float startX = spawnFruit.position.x;
@@ -169,6 +174,8 @@ public class BoardManager : MonoBehaviour
         if (GUIManager.Instance.GamePlayMode == GamePlayMode.TimedMatch)
             StartCoroutine(GUIManager.Instance.TimeToMatchCoroutine());
 
+        IsShifting = false;
+
         yield return null;
     }
 
@@ -194,6 +201,7 @@ public class BoardManager : MonoBehaviour
         // If no fruit is found in the given direction, set IsShifting to false and return
         if (hit.collider == null)
         {
+            audioSource.PlayOneShot(missMove);
             BoardManager.Instance.IsShifting = false;
             yield break;
         }
@@ -203,9 +211,12 @@ public class BoardManager : MonoBehaviour
         // If the two fruits have the same ID, set IsShifting to false and return
         if (fruit.GetComponent<Fruit>().Id == nextFruit.GetComponent<Fruit>().Id)
         {
+            audioSource.PlayOneShot(missMove);
             BoardManager.Instance.IsShifting = false;
             yield break;
         }
+
+        audioSource.PlayOneShot(swapFruitAudio, 0.7f);
 
         // Move the two fruits to each other's positions
         fruit.GetComponent<Fruit>().MoveFruit(nextFruit.transform.localPosition);
@@ -224,6 +235,7 @@ public class BoardManager : MonoBehaviour
         {
             if (GUIManager.Instance.GamePlayMode == GamePlayMode.TimedMatch)
             {
+                audioSource.PlayOneShot(missMove);
                 // If there are no matches found, return the fruits to their old position.
                 fruit.GetComponent<Fruit>().MoveFruit(nextFruit.transform.localPosition);
                 nextFruit.GetComponent<Fruit>().MoveFruit(fruit.transform.localPosition);
@@ -330,6 +342,7 @@ public class BoardManager : MonoBehaviour
     /// <param name="fruitToClear">List of matched fruits to be cleared.</param>
     void ClearSingleFruitMatch(List<GameObject> fruitToClear)
     {
+        audioSource.PlayOneShot(fruitCrackAudio);
         fruitToClear.ForEach(matchedFruit =>
         {
             // Set the corresponding index in the array to null
@@ -466,23 +479,23 @@ public class BoardManager : MonoBehaviour
         }
 
         // Check for any matches with the newly generated fruits
-        FindMatchesRecursively(newFruits);
+        FindMatchesRecursively(newFruits, true);
     }
 
     /// <summary>
     /// Recursively find and clear all matched fruits in the grid.
     /// </summary>
     /// <param name="collapsedFruits">List of fruits to check for matches.</param>
-    void FindMatchesRecursively(List<GameObject> collapsedFruits)
+    void FindMatchesRecursively(List<GameObject> collapsedFruits, bool isCreatedNewFruits = false)
     {
-        StartCoroutine(FindMatchesRecursivelyCoroutine(collapsedFruits));
+        StartCoroutine(FindMatchesRecursivelyCoroutine(collapsedFruits, isCreatedNewFruits));
     }
 
     /// <summary>
     /// Coroutine that recursively finds and clears all matched fruits in the grid.
     /// </summary>
     /// <param name="collapsedFruits">List of fruits to check for matches.</param>
-    IEnumerator FindMatchesRecursivelyCoroutine(List<GameObject> collapsedFruits)
+    IEnumerator FindMatchesRecursivelyCoroutine(List<GameObject> collapsedFruits, bool isCreatedNewFruits)
     {
         yield return new WaitForSeconds(.8f);
 
@@ -501,10 +514,9 @@ public class BoardManager : MonoBehaviour
             }
         });
 
-
         if (!(newMatches.Count >= MinFruitsToMatch))
         {
-            IsShifting = false;
+            if (!isCreatedNewFruits) IsShifting = false;
             yield break;
         }
 

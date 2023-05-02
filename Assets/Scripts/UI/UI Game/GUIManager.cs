@@ -44,6 +44,7 @@ public class GUIManager : MonoBehaviour
     [SerializeField] GamePlayMode gamePlayMode;
 
     [SerializeField] TMP_Text movesText, scoreText, multiplicationFactorText;
+    [SerializeField] GameObject imageInfiniteMoves;
 
     [Header("Screens")]
     [SerializeField] GameObject menuGameOver;
@@ -55,21 +56,33 @@ public class GUIManager : MonoBehaviour
     // Serialized timer fields
     [SerializeField] float timeToMatch, currentTime;
 
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(this.gameObject);
+    }
+
     void Start()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(this.gameObject);
-        }
-
-        if (gamePlayMode == GamePlayMode.TimedMatch) timeBarUI.SetActive(true);
+        UpdateStateGamePlayMode();
 
         scoreText.text = score.ToString();
         movesText.text = moveCounter.ToString();
+    }
+
+    void UpdateStateGamePlayMode()
+    {
+        if (gamePlayMode == GamePlayMode.TimedMatch)
+        {
+            timeBarUI.SetActive(true);
+            imageInfiniteMoves.SetActive(true);
+            movesText.enabled = false;
+        }
+        else if (gamePlayMode == GamePlayMode.MovesLimited)
+        {
+            imageInfiniteMoves.SetActive(false);
+            movesText.enabled = true;
+        }
     }
 
     /// <summary>
@@ -79,7 +92,7 @@ public class GUIManager : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
         yield return new WaitUntil(() => !BoardManager.Instance.IsShifting);
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.3f);
 
         menuGameOver.GetComponent<GameOverController>().OnGameOver();
     }

@@ -14,7 +14,6 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
     static Color selectedColor = new Color(.5f, .5f, .5f, 1);
     // static Fruit nextSelected = null;
 
-    [SerializeField] AudioClip swapFruitAudio;
     [SerializeField] AudioClip fruitDestroyAudio;
     // Movement curve when moving the fruit
     [SerializeField] Ease ease;
@@ -102,7 +101,6 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
         // Check if the method has not been called yet
         if (!hasTouched)
         {
-            audioSource.PlayOneShot(swapFruitAudio, 0.7f);
             StartCoroutine(BoardManager.Instance.SwapFruit(this.gameObject, directionLabel));
             hasTouched = true;
             return;
