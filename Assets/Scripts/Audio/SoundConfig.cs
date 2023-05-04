@@ -11,7 +11,7 @@ public class SoundConfig : MonoBehaviour
         audioManager = FindObjectOfType<AudioManager>(); // get AudioManager reference
     }
 
-     // Called when the "Sound Music" button is clicked
+    // Called when the "Sound Music" button is clicked
     public void OnClickSoundMusic()
     {
         audioManager.ControlMusic(); // call AudioManager's ControlMusic method to toggle music

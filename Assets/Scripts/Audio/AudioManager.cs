@@ -55,13 +55,47 @@ public class AudioManager : MonoBehaviour
         musicMixer.SetFloat("MusicMixer", currentValueMusic); // Sets the volume of music
     }
 
+    /// <summary>
+    /// Updates the music and SFX toggle buttons' UI images based on the current audio state.
+    /// </summary>
+    /// <param name="imageMusic">The image component for the music toggle button.</param>
+    /// <param name="imageSFX">The image component for the SFX toggle button.</param>
     public void UpdateAudioUI(Image imageMusic, Image imageSFX)
     {
-        this.imageMusic = imageMusic; // Updates the image component for music icon
-        this.imageSFX = imageSFX; // Updates the image component for sound effect icon
+        UpdateAudioMusicUI(imageMusic);
+        UpdateAudioSFXUI(imageSFX);
+    }
 
-        // Sets the sprite of each icon based on their current volume
+    /// <summary>
+    /// Updates the music toggle button's UI image based on the current audio state.
+    /// </summary>
+    /// <param name="imageMusic">The image component for the music toggle button.</param>
+    public void UpdateAudioMusicUI(Image imageMusic)
+    {
+        this.imageMusic = imageMusic; // Updates the image component for music icon
         imageMusic.sprite = currentValueMusic == minValue ? imageMusicOff : imageMusicOn;
+
+    }
+
+    /// <summary>
+    /// Updates the SFX toggle button's UI image based on the current audio state.
+    /// </summary>
+    /// <param name="imageSFX">The image component for the SFX toggle button.</param>
+    public void UpdateAudioSFXUI(Image imageSFX)
+    {
+        this.imageSFX = imageSFX; // Updates the image component for sound effect icon
         imageSFX.sprite = currentValueSFX == minValue ? imageSFXOff : imageSFXOn;
     }
+
+    /// <summary>
+    /// Determines if the music is currently muted.
+    /// </summary>
+    /// <returns><c>true</c> if the music is currently muted; otherwise, <c>false</c>.</returns>
+    public bool IsMuteControlMusic() => currentValueMusic == minValue;
+
+    /// <summary>
+    /// Determines if the SFX are currently muted.
+    /// </summary>
+    /// <returns><c>true</c> if the SFX are currently muted; otherwise, <c>false</c>.</returns>
+    public bool IsMuteControlSFX() => currentValueSFX == minValue;
 }
