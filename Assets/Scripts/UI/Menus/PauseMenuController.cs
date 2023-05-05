@@ -11,7 +11,7 @@ public class PauseMenuController : MonoBehaviour
     [SerializeField] GameObject particleSystemEnergy;
     [SerializeField] Animator boxAnimator;
     [SerializeField] AudioClip popComplete;
-    
+
     [Header("Button Confirmation Quit")]
     [SerializeField] GameObject confirmationQuit;
     [SerializeField] Animator confirmationQuitAnimator;
@@ -77,7 +77,8 @@ public class PauseMenuController : MonoBehaviour
     {
         audioSource.PlayOneShot(popComplete);
         StartCoroutine(ScreenChangeTransition.Instance.FadeOut("LevelMenu"));
-        // TODO: Rest Life -1
+        LifeController.Instance.ChangeLives(-1);
+        Time.timeScale = 1;
     }
 
     IEnumerator ConfirmationQuitOnRutiner()
@@ -91,7 +92,6 @@ public class PauseMenuController : MonoBehaviour
     IEnumerator ConfirmationQuitOffRutiner()
     {
         yield return new WaitForSecondsRealtime(1);
-
         overlay.SetActive(false);
         confirmationQuit.SetActive(false);
         Time.timeScale = 1;

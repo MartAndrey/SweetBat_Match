@@ -34,7 +34,7 @@ public class GUIManager : MonoBehaviour
             if (moveCounter <= 0)
             {
                 moveCounter = 0;
-                StartCoroutine(GameOver());
+                StartCoroutine(CheckGameStatus());
             }
         }
     }
@@ -47,7 +47,8 @@ public class GUIManager : MonoBehaviour
     [SerializeField] GameObject imageInfiniteMoves;
 
     [Header("Screens")]
-    [SerializeField] GameObject menuGameOver;
+    [SerializeField] GameOverController menuGameOver;
+    [SerializeField] CompleteGameController menuCompleteGame;
     [Header("UI")]
     // Serialized time bar UI element
     [SerializeField] GameObject timeBarUI;
@@ -86,15 +87,15 @@ public class GUIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Waits until the board has finished shifting before showing the game over menu.
+    /// Wait until the board has finished changing before displaying the finished game or game completed menu.
     /// </summary>
-    IEnumerator GameOver()
+    IEnumerator CheckGameStatus()
     {
         yield return new WaitForEndOfFrame();
         yield return new WaitUntil(() => !BoardManager.Instance.IsShifting);
         yield return new WaitForSeconds(0.3f);
-
-        menuGameOver.GetComponent<GameOverController>().OnGameOver();
+        if (ProgressBar.Instance.GetActiveStars() >= 1) menuCompleteGame.OnCompleteGame();
+        else menuGameOver.OnGameOver();
     }
 
     /// <summary>
@@ -127,7 +128,7 @@ public class GUIManager : MonoBehaviour
             currentTime += Time.deltaTime;
             factor = Mathf.Clamp(currentTime / timeToMatch, 0, 1);
             UITimeBar.Instance.ChangeTimeBar(factor);
-            if (currentTime > timeToMatch) StartCoroutine(GameOver());
+            if (currentTime > timeToMatch) StartCoroutine(CheckGameStatus());
             yield return null;
         }
 

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
+[RequireComponent(typeof(AudioSource))]
 public class ToggleAudio : MonoBehaviour
 {
     // Enum for different toggle types
@@ -16,20 +17,23 @@ public class ToggleAudio : MonoBehaviour
     [SerializeField] RectTransform rectTransformButton;
     // Serialized variable for mute status
     [SerializeField] bool isMute;
+    [SerializeField] float timeTransitionToggle;
     // Variable for audio on position
     float audionOn = 192;
     // Variable for audio off position
     float audionOff = 0;
     // Serialized variable for button's rect transform
-
     [SerializeField] RectTransform buttonToggle;
+    [SerializeField] AudioClip popCompleteAudio;
 
     AudioManager audioManager;
+    AudioSource audioSource;
 
     void Awake()
     {
         DOTween.defaultTimeScaleIndependent = true; // Enable independent time scale for DOTween
         audioManager = FindObjectOfType<AudioManager>(); // get AudioManager reference
+        audioSource = GetComponent<AudioSource>();
     }
 
     void OnEnable()
@@ -43,10 +47,11 @@ public class ToggleAudio : MonoBehaviour
     /// </summary>
     public void OnClickSoundMusic()
     {
+        audioSource.PlayOneShot(popCompleteAudio);
         isMute = !isMute; // Toggle mute status
         // Animate button's position based on mute status
-        if (isMute) rectTransformButton.DOAnchorPos(new Vector2(audionOff, 0), 1f);
-        else rectTransformButton.DOAnchorPos(new Vector2(audionOn, 0), 1f);
+        if (isMute) rectTransformButton.DOAnchorPos(new Vector2(audionOff, 0), timeTransitionToggle);
+        else rectTransformButton.DOAnchorPos(new Vector2(audionOn, 0), timeTransitionToggle);
         audioManager.ControlMusic(); // Call AudioManager's ControlMusic method to toggle music
 
     }
@@ -56,10 +61,11 @@ public class ToggleAudio : MonoBehaviour
     /// </summary>
     public void OnClickSoundSFX()
     {
+        audioSource.PlayOneShot(popCompleteAudio);
         isMute = !isMute; // Toggle mute status
         // Animate button's position based on mute status
-        if (isMute) rectTransformButton.DOAnchorPos(new Vector2(audionOff, 0), 1f);
-        else rectTransformButton.DOAnchorPos(new Vector2(audionOn, 0), 1f);
+        if (isMute) rectTransformButton.DOAnchorPos(new Vector2(audionOff, 0), timeTransitionToggle);
+        else rectTransformButton.DOAnchorPos(new Vector2(audionOn, 0), timeTransitionToggle);
         audioManager.ControlSFX(); // Call AudioManager's ControlSFX method to toggle sound effects
     }
 

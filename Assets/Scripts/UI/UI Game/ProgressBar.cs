@@ -50,4 +50,21 @@ public class ProgressBar : MonoBehaviour
                 break;
         }
     }
+
+    /// <summary>
+    /// Returns the number of active stars in the progress bar
+    /// </summary>
+    /// <returns>Number of active stars</returns>
+    public int GetActiveStars()
+    {
+        int activeStars = 0;
+
+        // Check the number of active stars in the array
+        for (int i = 0; i < stars.Length; i++)
+        {
+            if (stars[i].activeSelf) activeStars++;
+        }
+
+        return activeStars;
+    }
 }
