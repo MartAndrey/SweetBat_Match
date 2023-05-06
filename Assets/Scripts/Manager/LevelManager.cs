@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using System.Linq;
-using UnityEngine.UI;
+using DG.Tweening;
 
 public class LevelManager : MonoBehaviour
 {
@@ -31,17 +30,16 @@ public class LevelManager : MonoBehaviour
     // This integer variable defines the maximum distance between the focusLevel and profileMarker before the player is returned to the returnLevel.
     int maxDistanceToReturn = 850;
 
+    // Duration to move the Rect Transform from the list of levels to indicate the next level
+    float nextLevelTime = 1;
+    int nextPositionLevels = -250;
+
     void Start()
     {
         widthLevelPrefab = levelPrefab.GetComponent<RectTransform>().sizeDelta.x;
 
         CreateLevel(initialLevel); // Create the initial levels
         UnlockLevel(levelsList[GameManager.Instance.Level]); // Unlock the first level
-        UnlockLevel(levelsList[1]);
-        UnlockLevel(levelsList[2]);
-        UnlockLevel(levelsList[3]);
-        UnlockLevel(levelsList[4]);
-        UnlockLevel(levelsList[5]);
     }
     // [ContextMenu("SetLevels")] void SetLevels() => CreateLevel(10);
     // Creates the specified number of levels starting from the current level
@@ -114,5 +112,28 @@ public class LevelManager : MonoBehaviour
         {
             returnLevel.StatusChild(false);
         }
+    }
+
+    /// <summary>
+    /// Unlocks the next level, moves the profile marker to the next level, and sets focus on it.
+    /// </summary>
+    public void NextLevel()
+    {
+        GameObject nextLevel = levelsList[GameManager.Instance.Level];
+
+        // Unlocks the next level
+        nextLevel.GetComponent<Level>().UnlockLevel();
+
+        // Animates the movement of the profile marker to the next level
+        profileMarker.transform.DOMoveX(nextLevel.transform.position.x, nextLevelTime);
+        profileMarker.transform.DOMoveY(profileMarker.transform.position.y + 40, nextLevelTime / 2).OnComplete(() =>
+        {
+            profileMarker.transform.DOMoveY(profileMarker.transform.position.y - 40, nextLevelTime / 2).OnComplete(() =>
+            {
+                // Sets focus on the next level and animates the movement of the levels list
+                focusLevel.GetComponent<FocusLevel>().SetLevelFocus(nextLevel.GetComponent<Collider2D>());
+                rectTransformLevels.DOAnchorPosX(nextPositionLevels, nextLevelTime);
+            });
+        });
     }
 }

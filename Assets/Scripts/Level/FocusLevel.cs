@@ -58,7 +58,7 @@ public class FocusLevel : MonoBehaviour
         other.gameObject.transform.localScale = scaleDown;
     }
 
-    void SetLevelFocus(Collider2D other)
+    public void SetLevelFocus(Collider2D other)
     {
         focusLevel = other.gameObject;
         other.gameObject.transform.localScale = scaleUp;  // Scale up the level that the user is currently focusing on

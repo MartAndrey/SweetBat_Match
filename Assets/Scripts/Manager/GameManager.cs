@@ -19,7 +19,31 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
+        DontDestroyOnLoad(gameObject);
+
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+    }
+
+    /// <summary>
+    /// Increases the level count and starts the next level routine.
+    /// </summary>
+    public void NextLevel()
+    {
+        // Increases the level count
+        level++;
+        // Starts the next level routine
+        StartCoroutine(NextLevelRutiner());
+    }
+
+    /// <summary>
+    /// Waits for 2 seconds and finds the LevelManager object.
+    /// </summary>
+    IEnumerator NextLevelRutiner()
+    {
+        yield return new WaitForSeconds(2);
+        // Finds the LevelManager object
+        LevelManager levelManager = FindObjectOfType<LevelManager>();
+        levelManager.NextLevel();
     }
 }

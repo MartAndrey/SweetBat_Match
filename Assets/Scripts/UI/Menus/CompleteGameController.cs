@@ -59,10 +59,12 @@ public class CompleteGameController : MonoBehaviour
     }
 
     /// <summary>
-    /// Plays a sound effect to indicate next level
+    /// Plays a sound effect and fades the current-level screen to indicate that it has moved to the next level.
     /// </summary>
     public void NextLevel()
     {
         audioSource.PlayOneShot(popComplete);
+        StartCoroutine(ScreenChangeTransition.Instance.FadeOut("LevelMenu"));
+        GameManager.Instance.NextLevel();
     }
 }
