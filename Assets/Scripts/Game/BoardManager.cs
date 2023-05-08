@@ -23,8 +23,6 @@ public class BoardManager : MonoBehaviour
     // Variable to which the score is added and then multiplied by the multiplication factor
     public int SumScore { get; set; }
 
-    [Tooltip("All prefabs fruits")]
-    [SerializeField] List<GameObject> prefabs = new List<GameObject>();
     [Tooltip("Reference fruit")]
     [SerializeField] GameObject currentFruit;
     [Tooltip("Board size in columns(y) and Rows(x)")]
@@ -40,6 +38,8 @@ public class BoardManager : MonoBehaviour
     [SerializeField] AudioClip fruitCrackAudio;
     [SerializeField] AudioClip missMove;
 
+    // All prefabs available fruits
+    List<GameObject> prefabs = new List<GameObject>();
     // All the fruits on the board
     GameObject[,] fruits;
     // List<GameObject> check = new List<GameObject>();
@@ -85,6 +85,8 @@ public class BoardManager : MonoBehaviour
         {
             totalProbabilities += i;
         }
+
+        prefabs = GameManager.Instance.AvailableFruits;
 
         boardCollider = GetComponent<Collider2D>();
         audioSource = GetComponent<AudioSource>();

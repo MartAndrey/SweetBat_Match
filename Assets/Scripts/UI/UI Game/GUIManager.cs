@@ -4,8 +4,6 @@ using UnityEngine;
 using TMPro;
 using System;
 
-public enum GamePlayMode { MovesLimited, TimedMatch }
-
 public class GUIManager : MonoBehaviour
 {
     public static GUIManager Instance;
@@ -65,14 +63,17 @@ public class GUIManager : MonoBehaviour
 
     void Start()
     {
-        UpdateStateGamePlayMode();
-
         scoreText.text = score.ToString();
         movesText.text = moveCounter.ToString();
     }
 
-    void UpdateStateGamePlayMode()
+    /// <summary>
+    /// Updates the game play mode and UI based on the randomly generated game play mode.
+    /// </summary>
+    public void UpdateStateGamePlayMode()
     {
+        gamePlayMode = GameManager.Instance.GetRandomGamePlayMode();
+
         if (gamePlayMode == GamePlayMode.TimedMatch)
         {
             timeBarUI.SetActive(true);
@@ -81,6 +82,7 @@ public class GUIManager : MonoBehaviour
         }
         else if (gamePlayMode == GamePlayMode.MovesLimited)
         {
+            timeBarUI.SetActive(false);
             imageInfiniteMoves.SetActive(false);
             movesText.enabled = true;
         }
