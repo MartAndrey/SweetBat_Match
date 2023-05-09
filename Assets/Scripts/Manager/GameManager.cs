@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Events;
 
 // Define a set of game modes for different game objectives
 public enum GameMode { FeedingObjective, ScoringObjective, TimeObjective, CollectionObjective }
@@ -11,6 +12,12 @@ public enum GamePlayMode { MovesLimited, TimedMatch }
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;  // Static reference to the GameManager instance
+
+    /// Observer Pattern
+    [HideInInspector] public UnityEvent OnFeedingObjective;
+    [HideInInspector] public UnityEvent OnScoringObjective;
+    [HideInInspector] public UnityEvent OnTimeObjective;
+    [HideInInspector] public UnityEvent OnCollectionObjective;
 
     public int Level { get { return level; } }  // Public getter for the current level
     // Gets or sets the objective game mode.
@@ -93,7 +100,8 @@ public class GameManager : MonoBehaviour
     {
         if (gameMode == GameMode.FeedingObjective)
         {
-            GUIManager.Instance.UpdateStateGamePlayMode();
+            OnFeedingObjective?.Invoke();
+
         }
         else if (gameMode == GameMode.ScoringObjective)
         {

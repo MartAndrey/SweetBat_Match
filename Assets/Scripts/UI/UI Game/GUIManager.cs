@@ -55,6 +55,16 @@ public class GUIManager : MonoBehaviour
     // Serialized timer fields
     [SerializeField] float timeToMatch, currentTime;
 
+    void OnEnable()
+    {
+        GameManager.Instance.OnFeedingObjective.AddListener(UpdateStateGamePlayMode);
+    }
+
+    void OnDisable()
+    {
+        GameManager.Instance.OnFeedingObjective.RemoveListener(UpdateStateGamePlayMode);
+    }
+
     void Awake()
     {
         if (Instance == null) Instance = this;
