@@ -9,9 +9,6 @@ public class BoardManager : MonoBehaviour
     // Singleton
     public static BoardManager Instance;
 
-    // Event that notifies us when there are changes in the board
-    public static Action OnBoardChanges;
-
     // minimum number of fruits to combine including the current one
     public const int MinFruitsToMatch = 3;
 
@@ -37,6 +34,7 @@ public class BoardManager : MonoBehaviour
     [SerializeField] AudioClip swapFruitAudio;
     [SerializeField] AudioClip fruitCrackAudio;
     [SerializeField] AudioClip missMove;
+    [SerializeField] CharacterBatUI characterBatUI;
 
     // All prefabs available fruits
     List<GameObject> prefabs = new List<GameObject>();
@@ -338,6 +336,9 @@ public class BoardManager : MonoBehaviour
     /// <param name="fruitToClear">List of matched fruits to be cleared.</param>
     void ClearSingleFruitMatch(List<GameObject> fruitToClear)
     {
+        if (GameManager.Instance.GameMode == GameMode.FeedingObjective)
+            characterBatUI.CheckAmountObjective(fruitToClear);
+
         audioSource.PlayOneShot(fruitCrackAudio);
         fruitToClear.ForEach(matchedFruit =>
         {
