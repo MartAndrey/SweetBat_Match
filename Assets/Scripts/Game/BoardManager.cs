@@ -337,7 +337,7 @@ public class BoardManager : MonoBehaviour
     void ClearSingleFruitMatch(List<GameObject> fruitToClear)
     {
         if (GameManager.Instance.GameMode == GameMode.FeedingObjective)
-            characterBatUI.CheckAmountObjective(fruitToClear);
+            StartCoroutine(characterBatUI.CheckAmountObjective(fruitToClear));
 
         audioSource.PlayOneShot(fruitCrackAudio);
         fruitToClear.ForEach(matchedFruit =>

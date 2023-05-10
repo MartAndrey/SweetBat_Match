@@ -4,9 +4,11 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System;
+using DG.Tweening;
 
 public class CharacterBatUI : MonoBehaviour
 {
+    // SerializeFields to expose various GameObjects and UI elements in the inspector.
     [SerializeField] GameObject amountsGoalsObject;
     [SerializeField] TMP_Text[] textAmountGoals;
     [SerializeField] GameObject[] fruitObjectGoals;
@@ -14,8 +16,12 @@ public class CharacterBatUI : MonoBehaviour
     [SerializeField] GameObject objectPlus;
     [SerializeField] int maxObjectiveFruits;
 
+    // List of available fruit GameObjects to choose from.
     List<GameObject> availableFruits;
 
+    AudioSource audioSource;
+
+    // Indices for the first and second goals in the array of goals.
     int firstGoal = 0;
     int secondGoal = 1;
 
@@ -23,9 +29,12 @@ public class CharacterBatUI : MonoBehaviour
     const int MAX_GOAL = 5;
     const int MIN_GOAL = 1;
 
+    // Integer variables for the maximum number of goals, remaining goals, and current goal.
     int maxGoal;
     int remainingGoals;
     int currentGoal;
+    // Boolean variable to track whether the current goal has been completed.
+    bool goalComplete;
 
     void OnEnable()
     {
@@ -35,6 +44,11 @@ public class CharacterBatUI : MonoBehaviour
     void OnDisable()
     {
         GameManager.Instance.OnFeedingObjective.RemoveListener(SetFeedingObjective);
+    }
+
+    void Awake()
+    {
+        audioSource = GetComponent<AudioSource>();
     }
 
     void SetFeedingObjective()
@@ -98,12 +112,12 @@ public class CharacterBatUI : MonoBehaviour
         // Deactivates the second objective UI game object if only one fruit is required to collect.
         if (amountObjective == 1)
         {
-            fruitObjectGoals[secondGoal].SetActive(false);
+            fruitObjectGoals[secondGoal].transform.parent.gameObject.SetActive(false);
             objectPlus.SetActive(false);
         }
         else
         {
-            fruitObjectGoals[secondGoal].SetActive(true);
+            fruitObjectGoals[secondGoal].transform.parent.gameObject.SetActive(true);
             objectPlus.SetActive(true);
         }
 
@@ -116,6 +130,8 @@ public class CharacterBatUI : MonoBehaviour
                 fruitObjectGoals[i].GetComponentInChildren<Image>().sprite = GetRandomFruitsAvailable();
                 // Sets the amount of the fruit to collect.
                 fruitObjectGoals[i].GetComponentInChildren<TMP_Text>().text = GetRandomAmountFruitObjective().ToString();
+
+                EnterAnimateGoal(fruitObjectGoals[i]);
             }
         }
 
@@ -192,7 +208,7 @@ public class CharacterBatUI : MonoBehaviour
     /// Check the amount of fruits needed to complete a given objective.
     /// </summary>
     /// <param name="listMatchesFruits">List of fruits to check against the objective.</param>
-    public void CheckAmountObjective(List<GameObject> listMatchesFruits)
+    public IEnumerator CheckAmountObjective(List<GameObject> listMatchesFruits)
     {
         // Check if first goal is active and update if not
         if (!checkFruitsGoal[firstGoal].activeInHierarchy)
@@ -207,7 +223,23 @@ public class CharacterBatUI : MonoBehaviour
         }
 
         // Check if both goals have been completed and update the objective if necessary
-        if (IsChangeObjective()) NextObjective();
+        if (IsChangeObjective())
+        {
+            // If the current goal is not yet complete, play an audio cue and mark the goal as complete if it is the last goal.
+            if (!goalComplete)
+            {
+                audioSource.Play();
+
+                if (currentGoal == maxGoal) goalComplete = true;
+            }
+
+            // Animate the exit of all active goals, wait for a short period of time, then move on to the next objective.
+            ExitAnimateGoal(fruitObjectGoals);
+
+            yield return new WaitForSeconds(.4f);
+
+            NextObjective();
+        }
     }
 
     /// <summary>
@@ -278,5 +310,47 @@ public class CharacterBatUI : MonoBehaviour
     {
         textGoal.enabled = textGoal.enabled == true ? false : true;
         checkGoal.SetActive(checkGoal.activeSelf ? false : true);
+    }
+
+    /// <summary>
+    /// Animate the entrance of a goal with a slide up and fade in effect.
+    /// </summary>
+    /// <param name="goal">The goal GameObject to animate.</param>
+    void EnterAnimateGoal(GameObject goal)
+    {
+        // Get the RectTransform and CanvasGroup components of the goal GameObject.
+        RectTransform goalRectTransform = goal.GetComponent<RectTransform>();
+        CanvasGroup goalCanvasGroup = goal.GetComponent<CanvasGroup>();
+
+        // Set the initial local position of the RectTransform to a position just below the screen.
+        goalRectTransform.localPosition = new Vector2(goalRectTransform.anchoredPosition.x, -30);
+        goalRectTransform.DOLocalMoveY(goalRectTransform.anchoredPosition.y + 30, 0.3f);
+
+        // Use DOTween to animate the RectTransform upwards by 30 units and fade in the CanvasGroup.
+        goalCanvasGroup.alpha = 0;
+        goalCanvasGroup.DOFade(1, .3f);
+    }
+
+    /// <summary>
+    /// Animate the exit of all active goals with a slide down and fade out effect.
+    /// </summary>
+    /// <param name="goals">The array of goal GameObjects to animate.</param>
+    void ExitAnimateGoal(GameObject[] goals)
+    {
+        // If the current goal is the maximum goal, do not animate the exit.
+        if (currentGoal == maxGoal) return;
+
+        // Loop through each goal GameObject in the array and animate its RectTransform and CanvasGroup components.
+        for (int i = 0; i < goals.Length; i++)
+        {
+            if (goals[i].activeInHierarchy)
+            {
+                RectTransform goalRectTransform = goals[i].GetComponent<RectTransform>();
+                CanvasGroup goalCanvasGroup = goals[i].GetComponent<CanvasGroup>();
+
+                goalRectTransform.DOLocalMoveY(goalRectTransform.anchoredPosition.y - 30, 0.3f);
+                goalCanvasGroup.DOFade(0, .3f);
+            }
+        }
     }
 }

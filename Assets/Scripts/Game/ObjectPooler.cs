@@ -8,23 +8,20 @@ public class ObjectPooler : MonoBehaviour
 
     public List<GameObject> FruitList { get { return fruitList; } set { fruitList = value; } }
 
-    [Tooltip("All fruit prefabs")]
-    [SerializeField] List<GameObject> fruitPrefabs;
     [Tooltip("Fruit list for object pooler")]
     [SerializeField] List<GameObject> fruitList;
     [Tooltip("Amount of fruits for each prefab at start")]
     [SerializeField] int fruitSize;
 
+    // All fruit prefabs
+    List<GameObject> fruitPrefabs;
+
     void Start()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        fruitPrefabs = GameManager.Instance.AvailableFruits;
+        
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
 
         AddNewFruitToPool(fruitSize);
     }

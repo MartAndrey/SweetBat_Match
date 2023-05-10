@@ -106,6 +106,7 @@ public class GUIManager : MonoBehaviour
         yield return new WaitForEndOfFrame();
         yield return new WaitUntil(() => !BoardManager.Instance.IsShifting);
         yield return new WaitForSeconds(0.3f);
+
         if (ProgressBar.Instance.GetActiveStars() >= 1) menuCompleteGame.OnCompleteGame();
         else menuGameOver.OnGameOver();
     }
@@ -140,7 +141,14 @@ public class GUIManager : MonoBehaviour
             currentTime += Time.deltaTime;
             factor = Mathf.Clamp(currentTime / timeToMatch, 0, 1);
             UITimeBar.Instance.ChangeTimeBar(factor);
-            if (currentTime > timeToMatch) StartCoroutine(CheckGameStatus());
+
+            if (currentTime > timeToMatch)
+            {
+                yield return new WaitUntil(() => !BoardManager.Instance.IsShifting);
+
+                if (currentTime >= timeToMatch) StartCoroutine(CheckGameStatus());
+            }
+
             yield return null;
         }
 
