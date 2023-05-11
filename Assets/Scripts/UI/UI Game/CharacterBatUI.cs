@@ -8,13 +8,22 @@ using DG.Tweening;
 
 public class CharacterBatUI : MonoBehaviour
 {
-    // SerializeFields to expose various GameObjects and UI elements in the inspector.
+    [Header("Feeding Objective")]
+    [SerializeField] GameObject objectFeedingObjective;
     [SerializeField] GameObject amountsGoalsObject;
     [SerializeField] TMP_Text[] textAmountGoals;
     [SerializeField] GameObject[] fruitObjectGoals;
     [SerializeField] GameObject[] checkFruitsGoal;
     [SerializeField] GameObject objectPlus;
-    [SerializeField] int maxObjectiveFruits;
+
+    [Header("Scoring Objective")]
+    [SerializeField] GameObject objectScoringObjective;
+    [SerializeField] TMP_Text remainingScoreText;
+
+    // Dictionary<GameMode, Action> gameModeHandlers;
+
+    //========================Feeding Objective===========================//
+    int maxObjectiveFruits;
 
     // List of available fruit GameObjects to choose from.
     List<GameObject> availableFruits;
@@ -36,14 +45,21 @@ public class CharacterBatUI : MonoBehaviour
     // Boolean variable to track whether the current goal has been completed.
     bool goalComplete;
 
+    bool isAnimationChangeObjective;
+
+    //========================Scoring Objective===========================//
+    int maxScoreObjective;
+
     void OnEnable()
     {
         GameManager.Instance.OnFeedingObjective.AddListener(SetFeedingObjective);
+        GameManager.Instance.OnScoringObjective.AddListener(SetScoringObjective);
     }
 
     void OnDisable()
     {
         GameManager.Instance.OnFeedingObjective.RemoveListener(SetFeedingObjective);
+        GameManager.Instance.OnScoringObjective.RemoveListener(SetScoringObjective);
     }
 
     void Awake()
@@ -53,6 +69,9 @@ public class CharacterBatUI : MonoBehaviour
 
     void SetFeedingObjective()
     {
+        objectFeedingObjective.SetActive(true);
+
+        maxObjectiveFruits = GameManager.Instance.MaxFeedingObjective;
         // Gets the list of available fruits from the game manager.
         availableFruits = GameManager.Instance.AvailableFruits;
         // Activates the UI game object to show the current and maximum goal amounts.
@@ -63,6 +82,19 @@ public class CharacterBatUI : MonoBehaviour
 
         // Sets the fruits to collect and their objective amounts.
         SetFruitsObjective();
+    }
+
+    /// <summary>
+    /// Activates the scoring objective game object and sets the maximum score objective.
+    /// </summary>
+    void SetScoringObjective()
+    {
+        // Activate the scoring objective game object.
+        objectScoringObjective.SetActive(true);
+        // Set the maximum score objective based on the GameManager's MaxScoreObjective property.
+        maxObjectiveFruits = GameManager.Instance.MaxScoreObjective;
+        // Set the remaining score text to display the maximum score objective as a string.
+        remainingScoreText.text = maxObjectiveFruits.ToString();
     }
 
     /// <summary>
@@ -210,6 +242,8 @@ public class CharacterBatUI : MonoBehaviour
     /// <param name="listMatchesFruits">List of fruits to check against the objective.</param>
     public IEnumerator CheckAmountObjective(List<GameObject> listMatchesFruits)
     {
+        if (isAnimationChangeObjective) yield break;
+
         // Check if first goal is active and update if not
         if (!checkFruitsGoal[firstGoal].activeInHierarchy)
         {
@@ -230,7 +264,12 @@ public class CharacterBatUI : MonoBehaviour
             {
                 audioSource.Play();
 
-                if (currentGoal == maxGoal) goalComplete = true;
+                if (currentGoal == maxGoal)
+                {
+                    GameManager.Instance.ObjectiveComplete = true;
+                    goalComplete = true;
+                    GUIManager.Instance.CompleteTimeToMatchObjective();
+                }
             }
 
             // Animate the exit of all active goals, wait for a short period of time, then move on to the next objective.
@@ -328,7 +367,11 @@ public class CharacterBatUI : MonoBehaviour
 
         // Use DOTween to animate the RectTransform upwards by 30 units and fade in the CanvasGroup.
         goalCanvasGroup.alpha = 0;
-        goalCanvasGroup.DOFade(1, .3f);
+        goalCanvasGroup.DOFade(1, .3f).OnComplete(() =>
+        {
+            isAnimationChangeObjective = false;
+
+        });
     }
 
     /// <summary>
@@ -339,6 +382,8 @@ public class CharacterBatUI : MonoBehaviour
     {
         // If the current goal is the maximum goal, do not animate the exit.
         if (currentGoal == maxGoal) return;
+
+        isAnimationChangeObjective = true;
 
         // Loop through each goal GameObject in the array and animate its RectTransform and CanvasGroup components.
         for (int i = 0; i < goals.Length; i++)

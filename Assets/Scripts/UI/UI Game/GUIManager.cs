@@ -51,24 +51,28 @@ public class GUIManager : MonoBehaviour
     // Serialized time bar UI element
     [SerializeField] GameObject timeBarUI;
 
-    [SerializeField] int moveCounter, score;
-    // Serialized timer fields
-    [SerializeField] float timeToMatch, currentTime;
+    int moveCounter, score;
+    float timeToMatch, currentTime;
 
     void OnEnable()
     {
         GameManager.Instance.OnFeedingObjective.AddListener(UpdateStateGamePlayMode);
+        GameManager.Instance.OnScoringObjective.AddListener(UpdateStateGamePlayMode);
     }
 
     void OnDisable()
     {
         GameManager.Instance.OnFeedingObjective.RemoveListener(UpdateStateGamePlayMode);
+        GameManager.Instance.OnScoringObjective.RemoveListener(UpdateStateGamePlayMode);
     }
 
     void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(this.gameObject);
+
+        moveCounter = GameManager.Instance.MoveCounter;
+        timeToMatch = GameManager.Instance.TimeToMatch;
     }
 
     void Start()
@@ -107,7 +111,8 @@ public class GUIManager : MonoBehaviour
         yield return new WaitUntil(() => !BoardManager.Instance.IsShifting);
         yield return new WaitForSeconds(0.3f);
 
-        if (ProgressBar.Instance.GetActiveStars() >= 1) menuCompleteGame.OnCompleteGame();
+        if (ProgressBar.Instance.GetActiveStars() >= 1 && GameManager.Instance.ObjectiveComplete)
+            menuCompleteGame.OnCompleteGame();
         else menuGameOver.OnGameOver();
     }
 
@@ -153,5 +158,15 @@ public class GUIManager : MonoBehaviour
         }
 
         yield return null;
+    }
+
+    /// <summary>
+    /// Checks whether the game objective is complete and whether the player earned at least three stars, then starts the CheckGameStatus coroutine.
+    /// </summary>
+    public void CompleteTimeToMatchObjective()
+    {
+        // Check whether the game objective is complete, the player earned at least three stars, and the game mode is TimedMatch.
+        if (GameManager.Instance.ObjectiveComplete && ProgressBar.Instance.GetActiveStars() >= 3 && gamePlayMode == GamePlayMode.TimedMatch)
+            StartCoroutine(CheckGameStatus());
     }
 }

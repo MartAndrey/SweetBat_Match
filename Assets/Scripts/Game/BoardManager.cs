@@ -165,6 +165,7 @@ public class BoardManager : MonoBehaviour
         }
 
         boardCollider.enabled = false;
+
         if (GUIManager.Instance.GamePlayMode == GamePlayMode.TimedMatch)
             StartCoroutine(GUIManager.Instance.TimeToMatchCoroutine());
 

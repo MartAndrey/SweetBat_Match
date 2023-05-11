@@ -3983,6 +3983,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff1bc8ff7e057f04493d9138c481326e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnFeedingObjective:
+    m_PersistentCalls:
+      m_Calls: []
+  OnScoringObjective:
+    m_PersistentCalls:
+      m_Calls: []
+  OnTimeObjective:
+    m_PersistentCalls:
+      m_Calls: []
+  OnCollectionObjective:
+    m_PersistentCalls:
+      m_Calls: []
   gameMode: 0
   level: 0
   availableFruits:
@@ -3994,6 +4006,9 @@ MonoBehaviour:
   - {fileID: 5182403206852857962, guid: b06ad6d962700de40a25e00ccd3b09c8, type: 3}
   - {fileID: 5076765230915325859, guid: fe78d4afa3f68664fa71adf376f4aea6, type: 3}
   - {fileID: 2705507177751519838, guid: 06e4910d9238ddb418ce390133ed7724, type: 3}
+  moveCounter: 20
+  timeToMatch: 10
+  maxFeedingObjective: 45
 --- !u!4 &311158764
 Transform:
   m_ObjectHideFlags: 0

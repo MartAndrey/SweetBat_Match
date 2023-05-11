@@ -25,12 +25,45 @@ public class GameManager : MonoBehaviour
     // Gets the list of available fruits.
     public List<GameObject> AvailableFruits { get { return availableFruits; } }
 
+    // Gets the maximum feeding objective.
+    public int MaxFeedingObjective { get { return maxFeedingObjective; } }
+    // Gets the maximum score objective.
+    public int MaxScoreObjective { get { return maxScoreObjective; } }
+
+    // Gets the current move counter.
+    public int MoveCounter { get { return moveCounter; } }
+    // Gets the time to match.
+    public float TimeToMatch { get { return timeToMatch; } }
+
+    // Gets or sets whether the game objective is complete.
+    public bool ObjectiveComplete { get { return objectiveComplete; } set { objectiveComplete = value; } }
+
     // Serialized game mode field
     [SerializeField] GameMode gameMode;
 
-    [SerializeField] int level = 0; // Private field for the current level
+    // Private field for the current level
+    [SerializeField] int level = 0;
+    // List of available fruits
     [SerializeField] List<GameObject> availableFruits;
+    // List of upcoming fruits
     [SerializeField] List<GameObject> upcomingFruits;
+
+    [Header("Game Mode")]
+    // Move counter for the game mode
+    [SerializeField] int moveCounter;
+    // Time to match for the game mode
+    [SerializeField] float timeToMatch;
+
+    [Header("Feeding Objective")]
+    // Maximum feeding objective
+    [SerializeField] int maxFeedingObjective;
+
+    [Header("Scoring Objective")]
+    // Maximum score objective
+    [SerializeField] int maxScoreObjective;
+
+    // Indicates whether the game objective is complete
+    bool objectiveComplete;
 
     /// <summary>
     /// Subscribes to the SceneManager's sceneLoaded event when the script is enabled.
@@ -105,7 +138,7 @@ public class GameManager : MonoBehaviour
         }
         else if (gameMode == GameMode.ScoringObjective)
         {
-
+            OnScoringObjective?.Invoke();
         }
         else if (gameMode == GameMode.TimeObjective)
         {
