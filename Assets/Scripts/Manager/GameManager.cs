@@ -14,10 +14,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;  // Static reference to the GameManager instance
 
     /// Observer Pattern
-    [HideInInspector] public UnityEvent OnFeedingObjective;
-    [HideInInspector] public UnityEvent OnScoringObjective;
-    [HideInInspector] public UnityEvent OnTimeObjective;
-    [HideInInspector] public UnityEvent OnCollectionObjective;
+    [HideInInspector] public UnityEvent<GameMode> OnGameMode;
 
     public int Level { get { return level; } }  // Public getter for the current level
     // Gets or sets the objective game mode.
@@ -121,32 +118,7 @@ public class GameManager : MonoBehaviour
     {
         if (scene.name == "Game")
         {
-            SetObjectiveGameMode(gameMode);
-        }
-    }
-
-    /// <summary>
-    /// Sets the objective game mode and updates the game play mode if the mode is "FeedingObjective".
-    /// </summary>
-    /// <param name="gameMode">The objective game mode</param>
-    void SetObjectiveGameMode(GameMode gameMode)
-    {
-        if (gameMode == GameMode.FeedingObjective)
-        {
-            OnFeedingObjective?.Invoke();
-
-        }
-        else if (gameMode == GameMode.ScoringObjective)
-        {
-            OnScoringObjective?.Invoke();
-        }
-        else if (gameMode == GameMode.TimeObjective)
-        {
-
-        }
-        else if (gameMode == GameMode.CollectionObjective)
-        {
-
+            OnGameMode?.Invoke(gameMode);
         }
     }
 

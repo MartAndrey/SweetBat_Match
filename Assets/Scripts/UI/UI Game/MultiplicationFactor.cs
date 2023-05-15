@@ -6,62 +6,57 @@ public class MultiplicationFactor : MonoBehaviour
 {
     public static MultiplicationFactor Instance;
 
-    // Returns the multiplication value
-    public int GetMultiplicationFactor { get { return multiplicationFactor; } }
+    // Checks the current multiplication factor.
+    public int CheckMultiplicationFactor { get { return multiplicationFactor; } set { multiplicationFactor = value; } }
+    // Checks if the multiplication factor is active.
+    public bool IsActiveMultiplication { get { return isActiveMultiplication; } set { isActiveMultiplication = value; } }
 
     [Tooltip("Multiplication factor container")]
+    // Reference to the multiplication factor container GameObject.
     [SerializeField] GameObject boxMultiplicationFactor;
     [Tooltip("Multiplication Factor Container Animator")]
+    // Reference to the multiplication factor container Animator.
     [SerializeField] Animator animator;
+    // Current multiplication factor.
     [SerializeField] int multiplicationFactor;
+    // Audio clips for different combos.
     [SerializeField] AudioClip[] combosAudio;
 
+    // Flag indicating if the multiplication factor is active.
+    bool isActiveMultiplication;
+    // Reference to the AudioSource component.
     AudioSource audioSource;
-
-    // Time in which the multiplication factor is active
-    float timeToDisable;
 
     void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
 
         audioSource = GetComponent<AudioSource>();
     }
 
-    void Update()
+    /// <summary>
+    /// Sets the multiplication factor randomly based on a range of values.
+    /// </summary>
+    public void SetMultiplicationFactorRandom()
     {
-        if (timeToDisable > 0 && boxMultiplicationFactor.activeSelf)
+        float rn = Random.Range(0.0f, 1f);
+
+        if (rn > 0.5f)
         {
-            timeToDisable -= Time.deltaTime;
-
-            if (timeToDisable < 0)
-            {
-                if (multiplicationFactor > 1)
-                {
-                    GUIManager.Instance.Score += BoardManager.Instance.SumScore * (multiplicationFactor - 1);
-                }
-
-                boxMultiplicationFactor.SetActive(false);
-                ResetMultiplicationFactor();
-            }
+            isActiveMultiplication = true;
+            boxMultiplicationFactor.SetActive(true);
         }
     }
 
-    public void SetMultiplicationFactor()
+    /// <summary>
+    /// Increases the multiplication factor and performs actions based on the new factor value.
+    /// </summary>
+    public void IncreaseMultiplicationFactor()
     {
-        timeToDisable = 2;
         multiplicationFactor++;
 
         if (multiplicationFactor <= 0) return;
-
-        boxMultiplicationFactor.SetActive(true);
 
         GUIManager.Instance.MultiplicationFactor = multiplicationFactor;
 
@@ -83,9 +78,26 @@ public class MultiplicationFactor : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Resets the multiplication factor to zero and updates related values.
+    /// </summary>
     public void ResetMultiplicationFactor()
     {
         multiplicationFactor = 0;
+        GUIManager.Instance.MultiplicationFactor = multiplicationFactor;
         BoardManager.Instance.SumScore = 0;
+    }
+
+    /// <summary>
+    /// Coroutine to disable the multiplication factor after a delay.
+    /// </summary>
+    public IEnumerator DisableMultiplication()
+    {
+        yield return new WaitForSeconds(1);
+
+        GUIManager.Instance.Score += BoardManager.Instance.SumScore * multiplicationFactor;
+        boxMultiplicationFactor.SetActive(false);
+        isActiveMultiplication = false;
+        ResetMultiplicationFactor();
     }
 }

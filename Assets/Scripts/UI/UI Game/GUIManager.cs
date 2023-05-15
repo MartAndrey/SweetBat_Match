@@ -50,20 +50,22 @@ public class GUIManager : MonoBehaviour
     [Header("UI")]
     // Serialized time bar UI element
     [SerializeField] GameObject timeBarUI;
+    [SerializeField] GameObject multiplicationFactor;
 
     int moveCounter, score;
     float timeToMatch, currentTime;
 
+    // Dictionary to map game modes to corresponding objective setting methods.
+    Dictionary<GameMode, Action> gameModeHandlers;
+
     void OnEnable()
     {
-        GameManager.Instance.OnFeedingObjective.AddListener(UpdateStateGamePlayMode);
-        GameManager.Instance.OnScoringObjective.AddListener(UpdateStateGamePlayMode);
+        GameManager.Instance.OnGameMode.AddListener(OnGameMode);
     }
 
     void OnDisable()
     {
-        GameManager.Instance.OnFeedingObjective.RemoveListener(UpdateStateGamePlayMode);
-        GameManager.Instance.OnScoringObjective.RemoveListener(UpdateStateGamePlayMode);
+        GameManager.Instance.OnGameMode.RemoveListener(OnGameMode);
     }
 
     void Awake()
@@ -73,12 +75,40 @@ public class GUIManager : MonoBehaviour
 
         moveCounter = GameManager.Instance.MoveCounter;
         timeToMatch = GameManager.Instance.TimeToMatch;
+
+        gameModeHandlers = new Dictionary<GameMode, Action>()
+        {
+            {GameMode.FeedingObjective, SetFeedingObjective},
+            {GameMode.ScoringObjective, SetScoringObjective}
+        };
     }
 
     void Start()
     {
         scoreText.text = score.ToString();
         movesText.text = moveCounter.ToString();
+    }
+
+    void OnGameMode(GameMode gameMode)
+    {
+        if (gameModeHandlers.ContainsKey(gameMode)) gameModeHandlers[gameMode]();
+    }
+
+    /// <summary>
+    /// Sets the feeding objective for the game mode.
+    /// </summary>
+    void SetFeedingObjective()
+    {
+        UpdateStateGamePlayMode();
+    }
+
+    /// <summary>
+    /// Sets the scoring objective for the game mode.
+    /// </summary>
+    void SetScoringObjective()
+    {
+        UpdateStateGamePlayMode();
+        multiplicationFactor.SetActive(true);
     }
 
     /// <summary>

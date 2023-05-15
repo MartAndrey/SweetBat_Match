@@ -20,7 +20,7 @@ public class CharacterBatUI : MonoBehaviour
     [SerializeField] GameObject objectScoringObjective;
     [SerializeField] TMP_Text remainingScoreText;
 
-    // Dictionary<GameMode, Action> gameModeHandlers;
+    Dictionary<GameMode, Action> gameModeHandlers;
 
     //========================Feeding Objective===========================//
     int maxObjectiveFruits;
@@ -48,27 +48,37 @@ public class CharacterBatUI : MonoBehaviour
     bool isAnimationChangeObjective;
 
     //========================Scoring Objective===========================//
-    int maxScoreObjective;
+    int remainingScoreObjective;
 
     void OnEnable()
     {
-        GameManager.Instance.OnFeedingObjective.AddListener(SetFeedingObjective);
-        GameManager.Instance.OnScoringObjective.AddListener(SetScoringObjective);
+        GameManager.Instance.OnGameMode.AddListener(OnGameMode);
     }
 
     void OnDisable()
     {
-        GameManager.Instance.OnFeedingObjective.RemoveListener(SetFeedingObjective);
-        GameManager.Instance.OnScoringObjective.RemoveListener(SetScoringObjective);
+        GameManager.Instance.OnGameMode.RemoveListener(OnGameMode);
     }
 
     void Awake()
     {
         audioSource = GetComponent<AudioSource>();
+        gameModeHandlers = new Dictionary<GameMode, Action>()
+        {
+            { GameMode.FeedingObjective, SetFeedingObjective },
+            { GameMode.ScoringObjective, SetScoringObjective },
+        };
+    }
+
+    void OnGameMode(GameMode gameMode)
+    {
+        if (gameModeHandlers.ContainsKey(gameMode)) gameModeHandlers[gameMode]();
     }
 
     void SetFeedingObjective()
     {
+        GameManager.Instance.ObjectiveComplete = false;
+
         objectFeedingObjective.SetActive(true);
 
         maxObjectiveFruits = GameManager.Instance.MaxFeedingObjective;
@@ -89,13 +99,17 @@ public class CharacterBatUI : MonoBehaviour
     /// </summary>
     void SetScoringObjective()
     {
+        GameManager.Instance.ObjectiveComplete = false;
+
         // Activate the scoring objective game object.
         objectScoringObjective.SetActive(true);
         // Set the maximum score objective based on the GameManager's MaxScoreObjective property.
-        maxObjectiveFruits = GameManager.Instance.MaxScoreObjective;
+        remainingScoreObjective = GameManager.Instance.MaxScoreObjective;
         // Set the remaining score text to display the maximum score objective as a string.
-        remainingScoreText.text = maxObjectiveFruits.ToString();
+        remainingScoreText.text = remainingScoreObjective.ToString();
     }
+
+    #region Feeding Objective
 
     /// <summary>
     /// Sets the minimum and maximum goal amounts, and updates the UI with the current and maximum goal amounts.
@@ -398,4 +412,42 @@ public class CharacterBatUI : MonoBehaviour
             }
         }
     }
+
+    #endregion;
+
+    //========================Scoring Objective===========================//
+
+    #region Scoring Objective
+
+    public IEnumerator RemainingScore()
+    {
+        int amount = GameManager.Instance.MaxScoreObjective - GUIManager.Instance.Score;
+
+        while (amount < remainingScoreObjective)
+        {
+            remainingScoreObjective--;
+            remainingScoreText.text = remainingScoreObjective.ToString();
+
+            if (remainingScoreObjective <= 0)
+            {
+                RemainingScoreComplete();
+                yield break;
+            }
+            yield return null;
+        }
+
+
+        yield return null;
+    }
+
+    void RemainingScoreComplete()
+    {
+        audioSource.Play();
+        remainingScoreObjective = 0;
+        remainingScoreText.text = remainingScoreObjective.ToString();
+        GameManager.Instance.ObjectiveComplete = true;
+        GUIManager.Instance.CompleteTimeToMatchObjective();
+    }
+
+    #endregion
 }

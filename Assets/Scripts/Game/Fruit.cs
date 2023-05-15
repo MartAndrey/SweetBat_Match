@@ -81,7 +81,8 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
     {
         StartCoroutine(ChangeOnTheBoard());
 
-        MultiplicationFactor.Instance.ResetMultiplicationFactor();
+        if (GameManager.Instance.GameMode == GameMode.ScoringObjective)
+            MultiplicationFactor.Instance.ResetMultiplicationFactor();
 
         if (BoardManager.Instance.IsShifting || GUIManager.Instance.MoveCounter <= 0)
             return;

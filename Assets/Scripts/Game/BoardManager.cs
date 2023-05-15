@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -224,8 +223,6 @@ public class BoardManager : MonoBehaviour
         // Check if any matches are found
         bool HasFoundMatches = FoundMatches(fruit, nextFruit);
 
-        // MultiplicationFactor.Instance.SetMultiplicationFactor(); TODO:
-
         if (!HasFoundMatches)
         {
             if (GUIManager.Instance.GamePlayMode == GamePlayMode.TimedMatch)
@@ -316,10 +313,15 @@ public class BoardManager : MonoBehaviour
     /// <param name="firstFruit">The first fruit to check for matches.</param>
     /// <param name="secondFruit">The second fruit to check for matches.</param>
     /// <returns>A list of GameObjects representing the fruits that were cleared.</returns>
-    List<GameObject> ClearAllFruitMatches(GameObject firstFruit, GameObject secondFruit)
+    (List<GameObject>, int) ClearAllFruitMatches(GameObject firstFruit, GameObject secondFruit)
     {
+        int uniqueMatches = 0;
+
         List<GameObject> firstMatches = ThereAreFoundMatches(firstFruit);
         List<GameObject> secondMatches = ThereAreFoundMatches(secondFruit);
+
+        if (firstMatches.Count >= MinFruitsToMatch) uniqueMatches++;
+        if (secondMatches.Count >= MinFruitsToMatch) uniqueMatches++;
 
         List<GameObject> allMatches = firstMatches.Union(secondMatches).ToList();
 
@@ -328,7 +330,7 @@ public class BoardManager : MonoBehaviour
             ClearSingleFruitMatch(allMatches);
         }
 
-        return allMatches;
+        return (allMatches, uniqueMatches);
     }
 
     /// <summary>
@@ -359,8 +361,23 @@ public class BoardManager : MonoBehaviour
         yield return new WaitForSeconds(timeToDisableFruit);
 
         List<GameObject> collapsedFruits = CollapseFruits(GetColumns(clearMatches));
+        // Calculate the new score by multiplying the number of cleared matches by the score
+        int newScore = (clearMatches.Count * score);
+        // Calculate the new score by multiplying the number of cleared matches by the score
+        GUIManager.Instance.Score += newScore;
 
-        GUIManager.Instance.Score += (clearMatches.Count * score);
+        // If the game mode is ScoringObjective
+        if (GameManager.Instance.GameMode == GameMode.ScoringObjective)
+        {
+            // If the multiplication factor is active, add the new score to the sum of scores
+            if (MultiplicationFactor.Instance.IsActiveMultiplication)
+                SumScore += newScore;
+
+            // Stop the RemainingScore coroutine and start it again
+            StopCoroutine(characterBatUI.RemainingScore());
+            StartCoroutine(characterBatUI.RemainingScore());
+        }
+
         AddFruitsToPool(clearMatches);
 
         FindMatchesRecursively(collapsedFruits);
@@ -376,10 +393,19 @@ public class BoardManager : MonoBehaviour
     {
         bool foundMatches = false;
 
-        List<GameObject> clearMatches = ClearAllFruitMatches(firstFruit, secondFruit);
+        (List<GameObject> clearMatches, int uniqueMatches) = ClearAllFruitMatches(firstFruit, secondFruit);
 
         if (clearMatches.Count >= 3)
         {
+            // If the game mode is ScoringObjective
+            if (GameManager.Instance.GameMode == GameMode.ScoringObjective)
+            {
+                // If there were more than one unique match, increment the multiplication factor
+                if (uniqueMatches > 1) MultiplicationFactor.Instance.CheckMultiplicationFactor++;
+                // Set the multiplication factor randomly
+                MultiplicationFactor.Instance.SetMultiplicationFactorRandom();
+            }
+
             StartCoroutine(FoundMatchesRutiner(clearMatches));
             foundMatches = true;
         }
@@ -449,7 +475,7 @@ public class BoardManager : MonoBehaviour
         }
 
 
-        FillBoard();
+        movingFruits.AddRange(FillBoard());
 
         return movingFruits;
     }
@@ -457,7 +483,7 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// Fills the game board with new fruits if any slot is empty.
     /// </summary>
-    void FillBoard()
+    List<GameObject> FillBoard()
     {
         // List to store the newly generated fruits
         List<GameObject> newFruits = new List<GameObject>();
@@ -476,8 +502,7 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-        // Check for any matches with the newly generated fruits
-        FindMatchesRecursively(newFruits, true);
+        return newFruits;
     }
 
     /// <summary>
@@ -498,13 +523,33 @@ public class BoardManager : MonoBehaviour
         yield return new WaitForSeconds(.8f);
 
         List<GameObject> newMatches = new List<GameObject>();
+        List<GameObject> uniqueMatches = new List<GameObject>();
 
         collapsedFruits.ForEach(fruit =>
         {
             // Check for matches with the current fruit
             List<GameObject> matches = ThereAreFoundMatches(fruit);
+            // Set the multiplication factor randomly
             if (matches.Count >= MinFruitsToMatch)
             {
+                // If the game mode is ScoringObjective and the multiplication factor is active
+                if (GameManager.Instance.GameMode == GameMode.ScoringObjective && MultiplicationFactor.Instance.IsActiveMultiplication)
+                {
+                    // For each fruit in the matches list
+                    matches.ForEach(fruit =>
+                    {
+                        // If the fruit is not in the new matches list, add it to the unique matches list
+                        if (!newMatches.Contains(fruit)) uniqueMatches.Add(fruit);
+                    });
+
+                    // If there are enough unique matches to qualify as a valid match, increase the multiplication factor
+                    if (uniqueMatches.Count >= MinFruitsToMatch)
+                        MultiplicationFactor.Instance.IncreaseMultiplicationFactor();
+
+                    // Clear the unique matches list
+                    uniqueMatches.Clear();
+                }
+
                 // Add new matches to the list of matches
                 newMatches = newMatches.Union(matches).ToList();
                 // Clear the matched fruits from the grid
@@ -515,13 +560,30 @@ public class BoardManager : MonoBehaviour
         if (!(newMatches.Count >= MinFruitsToMatch))
         {
             if (!isCreatedNewFruits) IsShifting = false;
+            if (GameManager.Instance.GameMode == GameMode.ScoringObjective && MultiplicationFactor.Instance.IsActiveMultiplication)
+                StartCoroutine(MultiplicationFactor.Instance.DisableMultiplication());
             yield break;
         }
 
         // Collapse the columns where new matches were found
         yield return new WaitForSeconds(timeToDisableFruit);
+
         List<GameObject> newCollapsedFruits = CollapseFruits(GetColumns(newMatches));
-        GUIManager.Instance.Score += (newMatches.Count * score);
+        int newScore = (newMatches.Count * score);
+        GUIManager.Instance.Score += newScore;
+
+        if (GameManager.Instance.GameMode == GameMode.ScoringObjective)
+        {
+            if (MultiplicationFactor.Instance.IsActiveMultiplication)
+                SumScore += newScore;
+
+            if (!GameManager.Instance.ObjectiveComplete)
+            {
+                StopCoroutine(characterBatUI.RemainingScore());
+                StartCoroutine(characterBatUI.RemainingScore());
+            }
+        }
+
         AddFruitsToPool(newMatches);
         FindMatchesRecursively(newCollapsedFruits);
 
