@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Timer : MonoBehaviour
+public abstract class Timer : MonoBehaviour
 {
     // Property to check if the timer should run indefinitely or not
     public bool IsInfinite { get; set; }

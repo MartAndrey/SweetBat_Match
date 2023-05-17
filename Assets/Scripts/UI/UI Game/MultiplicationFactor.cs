@@ -27,6 +27,18 @@ public class MultiplicationFactor : MonoBehaviour
     // Reference to the AudioSource component.
     AudioSource audioSource;
 
+    void OnEnable()
+    {
+        if (GameManager.Instance.GameMode == GameMode.ScoringObjective)
+            GameManager.Instance.OnUniqueMatches.AddListener(IncreaseMultiplicationFactor);
+    }
+
+    void OnDisable()
+    {
+        if (GameManager.Instance.GameMode == GameMode.ScoringObjective)
+            GameManager.Instance.OnUniqueMatches.RemoveListener(IncreaseMultiplicationFactor);
+    }
+
     void Awake()
     {
         if (Instance == null) Instance = this;
@@ -42,7 +54,7 @@ public class MultiplicationFactor : MonoBehaviour
     {
         float rn = Random.Range(0.0f, 1f);
 
-        if (rn > 0.5f)
+        if (rn < 0.3f)
         {
             isActiveMultiplication = true;
             boxMultiplicationFactor.SetActive(true);
@@ -52,8 +64,10 @@ public class MultiplicationFactor : MonoBehaviour
     /// <summary>
     /// Increases the multiplication factor and performs actions based on the new factor value.
     /// </summary>
-    public void IncreaseMultiplicationFactor()
+    void IncreaseMultiplicationFactor()
     {
+        if (!isActiveMultiplication) return;
+
         multiplicationFactor++;
 
         if (multiplicationFactor <= 0) return;

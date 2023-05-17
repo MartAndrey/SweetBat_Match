@@ -10,6 +10,7 @@ public class GUIManager : MonoBehaviour
 
     public GamePlayMode GamePlayMode { get { return gamePlayMode; } set { gamePlayMode = value; } }
     public float CurrentTime { get { return currentTime; } set { currentTime = value; } }
+    public TimerGame TimerGame { get { return bannerTime.GetComponent<TimerGame>(); } }
 
     public int Score
     {
@@ -19,6 +20,11 @@ public class GUIManager : MonoBehaviour
             score = value;
             StartCoroutine(UpdateScore());
             ProgressBar.Instance.ChangeBarScore(score);
+            if (GameManager.Instance.GameMode == GameMode.ScoringObjective)
+            {
+                StopCoroutine(characterBatUI.RemainingScore());
+                StartCoroutine(characterBatUI.RemainingScore());
+            }
         }
     }
 
@@ -41,6 +47,9 @@ public class GUIManager : MonoBehaviour
 
     [SerializeField] GamePlayMode gamePlayMode;
 
+    [SerializeField] GameObject bannerMove;
+    [SerializeField] GameObject bannerTime;
+
     [SerializeField] TMP_Text movesText, scoreText, multiplicationFactorText;
     [SerializeField] GameObject imageInfiniteMoves;
 
@@ -51,6 +60,7 @@ public class GUIManager : MonoBehaviour
     // Serialized time bar UI element
     [SerializeField] GameObject timeBarUI;
     [SerializeField] GameObject multiplicationFactor;
+    [SerializeField] CharacterBatUI characterBatUI;
 
     int moveCounter, score;
     float timeToMatch, currentTime;
@@ -78,8 +88,9 @@ public class GUIManager : MonoBehaviour
 
         gameModeHandlers = new Dictionary<GameMode, Action>()
         {
-            {GameMode.FeedingObjective, SetFeedingObjective},
-            {GameMode.ScoringObjective, SetScoringObjective}
+            { GameMode.FeedingObjective, SetFeedingObjective },
+            { GameMode.ScoringObjective, SetScoringObjective },
+            { GameMode.TimeObjective, SetTimeObjective }
         };
     }
 
@@ -112,10 +123,22 @@ public class GUIManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Sets the game's play mode to Timed Match and activates the necessary UI elements.
+    /// </summary>
+    void SetTimeObjective()
+    {
+        gamePlayMode = GamePlayMode.TimedMatch;
+        bannerTime.SetActive(true);
+        timeBarUI.SetActive(true);
+    }
+
+    /// <summary>
     /// Updates the game play mode and UI based on the randomly generated game play mode.
     /// </summary>
     public void UpdateStateGamePlayMode()
     {
+        bannerMove.SetActive(true);
+
         gamePlayMode = GameManager.Instance.GetRandomGamePlayMode();
 
         if (gamePlayMode == GamePlayMode.TimedMatch)

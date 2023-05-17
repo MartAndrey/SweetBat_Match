@@ -20,6 +20,10 @@ public class CharacterBatUI : MonoBehaviour
     [SerializeField] GameObject objectScoringObjective;
     [SerializeField] TMP_Text remainingScoreText;
 
+    [Header("Time Objective")]
+    [SerializeField] GameObject objectTimeObjective;
+    [SerializeField] TMP_Text remainingMatchText;
+
     Dictionary<GameMode, Action> gameModeHandlers;
 
     //========================Feeding Objective===========================//
@@ -50,14 +54,23 @@ public class CharacterBatUI : MonoBehaviour
     //========================Scoring Objective===========================//
     int remainingScoreObjective;
 
+    //========================Time Objective===========================//
+    int remainingMatch;
+
     void OnEnable()
     {
         GameManager.Instance.OnGameMode.AddListener(OnGameMode);
+
+        if (GameManager.Instance.GameMode == GameMode.TimeObjective)
+            GameManager.Instance.OnUniqueMatches.AddListener(RemainingMatchObjective);
     }
 
     void OnDisable()
     {
         GameManager.Instance.OnGameMode.RemoveListener(OnGameMode);
+
+        if (GameManager.Instance.GameMode == GameMode.TimeObjective)
+            GameManager.Instance.OnUniqueMatches.RemoveListener(RemainingMatchObjective);
     }
 
     void Awake()
@@ -67,6 +80,7 @@ public class CharacterBatUI : MonoBehaviour
         {
             { GameMode.FeedingObjective, SetFeedingObjective },
             { GameMode.ScoringObjective, SetScoringObjective },
+            { GameMode.TimeObjective, SetTimeObjective },
         };
     }
 
@@ -107,6 +121,18 @@ public class CharacterBatUI : MonoBehaviour
         remainingScoreObjective = GameManager.Instance.MaxScoreObjective;
         // Set the remaining score text to display the maximum score objective as a string.
         remainingScoreText.text = remainingScoreObjective.ToString();
+    }
+
+    /// <summary>
+    /// Activates the time objective object, resets the objective completion flag,
+    /// and updates the remaining match count on the UI.
+    /// </summary>
+    void SetTimeObjective()
+    {
+        objectTimeObjective.SetActive(true);
+        GameManager.Instance.ObjectiveComplete = false;
+        remainingMatch = GameManager.Instance.MatchObjectiveAmount;
+        remainingMatchText.text = remainingMatch.ToString();
     }
 
     #region Feeding Objective
@@ -415,10 +441,12 @@ public class CharacterBatUI : MonoBehaviour
 
     #endregion;
 
-    //========================Scoring Objective===========================//
-
     #region Scoring Objective
 
+    /// <summary>
+    /// Coroutine for updating the remaining score objective on the UI.
+    /// </summary>
+    /// <returns>An IEnumerator for coroutine execution.</returns>
     public IEnumerator RemainingScore()
     {
         int amount = GameManager.Instance.MaxScoreObjective - GUIManager.Instance.Score;
@@ -440,6 +468,9 @@ public class CharacterBatUI : MonoBehaviour
         yield return null;
     }
 
+    /// <summary>
+    /// Handles the completion of the remaining score objective.
+    /// </summary>
     void RemainingScoreComplete()
     {
         audioSource.Play();
@@ -447,6 +478,28 @@ public class CharacterBatUI : MonoBehaviour
         remainingScoreText.text = remainingScoreObjective.ToString();
         GameManager.Instance.ObjectiveComplete = true;
         GUIManager.Instance.CompleteTimeToMatchObjective();
+    }
+
+    #endregion
+
+    #region Time Objective
+
+    /// <summary>
+    /// Updates the remaining match count on the UI and checks if the match objective is completed.
+    /// </summary>
+    public void RemainingMatchObjective()
+    {
+        if (remainingMatch <= 0) return;
+
+        remainingMatch--;
+        remainingMatchText.text = remainingMatch.ToString();
+
+        if (remainingMatch == 0)
+        {
+            audioSource.Play();
+            GameManager.Instance.ObjectiveComplete = true;
+            GUIManager.Instance.CompleteTimeToMatchObjective();
+        }
     }
 
     #endregion

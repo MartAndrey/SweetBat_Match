@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
 
     /// Observer Pattern
     [HideInInspector] public UnityEvent<GameMode> OnGameMode;
+    [HideInInspector] public UnityEvent OnUniqueMatches;
 
     public int Level { get { return level; } }  // Public getter for the current level
     // Gets or sets the objective game mode.
@@ -34,6 +35,13 @@ public class GameManager : MonoBehaviour
 
     // Gets or sets whether the game objective is complete.
     public bool ObjectiveComplete { get { return objectiveComplete; } set { objectiveComplete = value; } }
+
+    // Gets the total remaining seconds for the timer.
+    public float TotalSeconds { get { return totalSeconds; } }
+    // Gets the match objective amount.
+    public int MatchObjectiveAmount { get { return matchObjectiveAmount; } }
+    // Gets or sets a value indicating whether unique matches are required.
+    public bool UniqueMatches { get { return uniqueMatches; } set { uniqueMatches = value; } }
 
     // Serialized game mode field
     [SerializeField] GameMode gameMode;
@@ -59,8 +67,14 @@ public class GameManager : MonoBehaviour
     // Maximum score objective
     [SerializeField] int maxScoreObjective;
 
+    [Header("Time Objective")]
+    [SerializeField] float totalSeconds;
+    [SerializeField] int matchObjectiveAmount;
+
     // Indicates whether the game objective is complete
     bool objectiveComplete;
+
+    bool uniqueMatches;
 
     /// <summary>
     /// Subscribes to the SceneManager's sceneLoaded event when the script is enabled.
@@ -84,6 +98,9 @@ public class GameManager : MonoBehaviour
 
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+        if (gameMode == GameMode.ScoringObjective || gameMode == GameMode.TimeObjective)
+            uniqueMatches = true;
     }
 
     /// <summary>

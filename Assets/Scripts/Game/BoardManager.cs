@@ -165,8 +165,14 @@ public class BoardManager : MonoBehaviour
 
         boardCollider.enabled = false;
 
+        // Starts the time objective if the game mode is a timed match.
         if (GUIManager.Instance.GamePlayMode == GamePlayMode.TimedMatch)
+        {
             StartCoroutine(GUIManager.Instance.TimeToMatchCoroutine());
+
+            if (GameManager.Instance.GameMode == GameMode.TimeObjective)
+                GUIManager.Instance.TimerGame.StartTimer();
+        }
 
         IsShifting = false;
 
@@ -405,6 +411,8 @@ public class BoardManager : MonoBehaviour
                 // Set the multiplication factor randomly
                 MultiplicationFactor.Instance.SetMultiplicationFactorRandom();
             }
+            else if (GameManager.Instance.GameMode == GameMode.TimeObjective)
+                characterBatUI.RemainingMatchObjective();
 
             StartCoroutine(FoundMatchesRutiner(clearMatches));
             foundMatches = true;
@@ -533,7 +541,7 @@ public class BoardManager : MonoBehaviour
             if (matches.Count >= MinFruitsToMatch)
             {
                 // If the game mode is ScoringObjective and the multiplication factor is active
-                if (GameManager.Instance.GameMode == GameMode.ScoringObjective && MultiplicationFactor.Instance.IsActiveMultiplication)
+                if (GameManager.Instance.UniqueMatches)
                 {
                     // For each fruit in the matches list
                     matches.ForEach(fruit =>
@@ -544,7 +552,7 @@ public class BoardManager : MonoBehaviour
 
                     // If there are enough unique matches to qualify as a valid match, increase the multiplication factor
                     if (uniqueMatches.Count >= MinFruitsToMatch)
-                        MultiplicationFactor.Instance.IncreaseMultiplicationFactor();
+                        GameManager.Instance.OnUniqueMatches?.Invoke();
 
                     // Clear the unique matches list
                     uniqueMatches.Clear();
