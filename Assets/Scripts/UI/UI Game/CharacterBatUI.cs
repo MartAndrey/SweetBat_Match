@@ -57,6 +57,8 @@ public class CharacterBatUI : MonoBehaviour
     //========================Time Objective===========================//
     int remainingMatch;
 
+    //========================Collection Objective===========================//
+
     void OnEnable()
     {
         GameManager.Instance.OnGameMode.AddListener(OnGameMode);
@@ -501,6 +503,12 @@ public class CharacterBatUI : MonoBehaviour
             GUIManager.Instance.CompleteTimeToMatchObjective();
         }
     }
+
+    #endregion
+
+    #region Collection Objective
+
+    
 
     #endregion
 }

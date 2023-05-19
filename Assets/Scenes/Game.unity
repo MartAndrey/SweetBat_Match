@@ -5992,7 +5992,7 @@ MonoBehaviour:
   OnUniqueMatches:
     m_PersistentCalls:
       m_Calls: []
-  gameMode: 2
+  gameMode: 3
   level: 0
   availableFruits:
   - {fileID: 9003223963689281457, guid: dcfa150433e47994ebf8b1bc2346b4f9, type: 3}
@@ -7054,7 +7054,7 @@ MonoBehaviour:
   spawnFruit: {fileID: 702544634}
   delayToCreateFruit: 0.03
   score: 10
-  fruitsProbabilities: 04000000030000000300000002000000020000000200000001000000
+  fruitsProbabilities: 04000000030000000200000001000000
   swapFruitAudio: {fileID: 8300000, guid: 617ba310b8fc6ed4e8af0c91694f8b16, type: 3}
   fruitCrackAudio: {fileID: 8300000, guid: 042559644c8fdaf4098952b292ce5e4a, type: 3}
   missMove: {fileID: 8300000, guid: 56f624f30b38fa342b89ab1b8a58ba27, type: 3}

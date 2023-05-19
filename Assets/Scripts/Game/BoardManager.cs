@@ -28,7 +28,6 @@ public class BoardManager : MonoBehaviour
     [SerializeField] float delayToCreateFruit;
     [SerializeField] int score;
     [Tooltip("Probability of each fruit to appear")]
-    [SerializeField] int[] fruitsProbabilities;
     [Header("Audio")]
     [SerializeField] AudioClip swapFruitAudio;
     [SerializeField] AudioClip fruitCrackAudio;
@@ -52,7 +51,7 @@ public class BoardManager : MonoBehaviour
     // Time it takes for fruits to deactivate
     float timeToDisableFruit = 0.32f;
 
-    int totalProbabilities;
+    int[] fruitsProbabilities;
 
     // List of fruits that were changed position when there was a match
     List<GameObject> fruitsWereMoved;
@@ -72,11 +71,6 @@ public class BoardManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        foreach (int i in fruitsProbabilities)
-        {
-            totalProbabilities += i;
-        }
-
         prefabs = GameManager.Instance.AvailableFruits;
 
         boardCollider = GetComponent<Collider2D>();
@@ -89,29 +83,13 @@ public class BoardManager : MonoBehaviour
     {
         StartCoroutine(CreateInitialBoard());
     }
-
-    int SetFruitProbability()
+    [ContextMenu("fgafas")]
+    public void rwr68()
     {
-        int accumulatedProbability = 0;
-        int randomNumber = UnityEngine.Random.Range(0, totalProbabilities + 1);
-        int prefab = 0;
-
-        foreach (int i in fruitsProbabilities)
-        {
-            if (randomNumber < accumulatedProbability + i)
-            {
-                return prefab;
-            }
-
-            accumulatedProbability += i;
-            prefab++;
-        }
-
-        return 1;
+        int[] fsdfsd = ProbabilityFruit.SetFruitProbability(prefabs.Count);
     }
-
     // Create the initial elements or fruits of the board
-    IEnumerator CreateInitialBoard(bool targetLevel = false)
+    IEnumerator CreateInitialBoard()
     {
         IsShifting = true;
 
@@ -122,25 +100,24 @@ public class BoardManager : MonoBehaviour
 
         int idx = -1; // The initial value is temporary
 
+        if (GameManager.Instance.GameMode == GameMode.CollectionObjective)
+            fruitsProbabilities = ProbabilityFruit.SetFruitProbability(prefabs.Count);
+
         for (int x = 0; x < xSize; x++)
         {
             for (int y = 0; y < ySize; y++)
             {
                 yield return new WaitForSeconds(delayToCreateFruit);
 
-                if (!targetLevel)
+                do
                 {
-                    do
-                    {
-                        // Change the "currentFruit" to a prefab made fruit randomly
+                    // Change the "currentFruit" to a prefab made fruit randomly
+                    if (GameManager.Instance.GameMode == GameMode.CollectionObjective)
+                        idx = ProbabilityFruit.GetFruitProbability(fruitsProbabilities);
+                    else
                         idx = UnityEngine.Random.Range(0, prefabs.Count);
-                    } while (NeighborsSameFruit(x, y, idx));
 
-                }
-                else
-                {
-                    idx = SetFruitProbability();
-                }
+                } while (NeighborsSameFruit(x, y, idx));
 
                 currentFruit = prefabs[idx];
 
