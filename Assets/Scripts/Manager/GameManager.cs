@@ -40,6 +40,7 @@ public class GameManager : MonoBehaviour
     public float TotalSeconds { get { return totalSeconds; } }
     // Gets the match objective amount.
     public int MatchObjectiveAmount { get { return matchObjectiveAmount; } }
+    public int FruitCollectionAmount { get { return fruitCollectionAmount; } }
     // Gets or sets a value indicating whether unique matches are required.
     public bool UniqueMatches { get { return uniqueMatches; } set { uniqueMatches = value; } }
 
@@ -70,6 +71,9 @@ public class GameManager : MonoBehaviour
     [Header("Time Objective")]
     [SerializeField] float totalSeconds;
     [SerializeField] int matchObjectiveAmount;
+
+    [Header("Time Objective")]
+    [SerializeField] int fruitCollectionAmount;
 
     // Indicates whether the game objective is complete
     bool objectiveComplete;

@@ -18,6 +18,7 @@ public class BoardManager : MonoBehaviour
     public GameObject[,] Fruits { get { return fruits; } set { fruits = value; } }
     // Variable to which the score is added and then multiplied by the multiplication factor
     public int SumScore { get; set; }
+    public Sprite SpriteCollectionObjective { get { return spriteCollectionObjective; } }
 
     [Tooltip("Reference fruit")]
     [SerializeField] GameObject currentFruit;
@@ -51,20 +52,9 @@ public class BoardManager : MonoBehaviour
     // Time it takes for fruits to deactivate
     float timeToDisableFruit = 0.32f;
 
-    int[] fruitsProbabilities;
+    Dictionary<int, int> fruitsProbabilities;
 
-    // List of fruits that were changed position when there was a match
-    List<GameObject> fruitsWereMoved;
-
-    void OnEnable()
-    {
-        // OnBoardChanges += StartCoroutineFindDisable;
-    }
-
-    void OnDisable()
-    {
-        // OnBoardChanges -= StartCoroutineFindDisable;
-    }
+    Sprite spriteCollectionObjective = null;
 
     void Awake()
     {
@@ -83,11 +73,7 @@ public class BoardManager : MonoBehaviour
     {
         StartCoroutine(CreateInitialBoard());
     }
-    [ContextMenu("fgafas")]
-    public void rwr68()
-    {
-        int[] fsdfsd = ProbabilityFruit.SetFruitProbability(prefabs.Count);
-    }
+
     // Create the initial elements or fruits of the board
     IEnumerator CreateInitialBoard()
     {
@@ -101,7 +87,11 @@ public class BoardManager : MonoBehaviour
         int idx = -1; // The initial value is temporary
 
         if (GameManager.Instance.GameMode == GameMode.CollectionObjective)
-            fruitsProbabilities = ProbabilityFruit.SetFruitProbability(prefabs.Count);
+        {
+            fruitsProbabilities = ProbabilityFruit.GenerateFruitProbabilities(prefabs.Count)
+                                  .OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+            spriteCollectionObjective = prefabs[fruitsProbabilities.Last().Key].GetComponentInChildren<SpriteRenderer>().sprite;
+        }
 
         for (int x = 0; x < xSize; x++)
         {

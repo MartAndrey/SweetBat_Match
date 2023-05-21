@@ -4,43 +4,58 @@ using UnityEngine;
 
 public static class ProbabilityFruit
 {
-    public static int[] SetFruitProbability(int probabilities)
+    /// <summary>
+    /// Generates randomized probabilities for different fruits.
+    /// </summary>
+    /// <param name="probabilities">The number of probabilities to generate.</param>
+    /// <returns>A dictionary with fruit IDs as keys and their corresponding probabilities as values.</returns>
+
+    public static Dictionary<int, int> GenerateFruitProbabilities(int probabilities)
     {
         int totalProbability = 0;
 
-        int[] fruitsProbabilities = new int[probabilities];
+        // Create a dictionary to store fruit probabilities
+        Dictionary<int, int> fruitsProbabilities = new Dictionary<int, int>();
 
+        // Generate probabilities for each fruit
         for (int i = 0; i < probabilities; i++)
         {
             int rn = Mathf.RoundToInt(Random.Range(1, 101));
 
-            fruitsProbabilities[i] = rn;
+            // Add the generated probability to the dictionary
+            fruitsProbabilities.Add(i, rn);
+            // Update the total probability
             totalProbability += rn;
         }
 
+        // Calculate a fix factor for normalizing probabilities to a total of 100
         float fixProbability = 100f / totalProbability;
 
+        // Adjust the probabilities based on the fix factor
         for (int i = 0; i < probabilities; i++)
-        {
             fruitsProbabilities[i] = Mathf.RoundToInt(fruitsProbabilities[i] * fixProbability);
-        }
 
+        // Return the generated fruit probabilities
         return fruitsProbabilities;
     }
 
-    public static int GetFruitProbability(int[] fruitsProbabilities)
+    /// <summary>
+    /// Retrieves the ID of a fruit based on its probability.
+    /// </summary>
+    /// <param name="fruitsProbabilities">A dictionary containing fruit IDs and their corresponding probabilities.</param>
+    /// <returns>The ID of the selected fruit based on probability.</returns>
+    public static int GetFruitProbability(Dictionary<int, int> fruitsProbabilities)
     {
         int accumulatedProbability = 0;
-        int randomNumber = UnityEngine.Random.Range(0, 101);
-        int prefab = 0;
+        int randomNumber = UnityEngine.Random.Range(1, 101);
 
-        foreach (int i in fruitsProbabilities)
+        // Find the fruit based on the generated random number and accumulated probabilities
+        foreach (KeyValuePair<int, int> i in fruitsProbabilities)
         {
-            if (randomNumber < accumulatedProbability + i)
-                return prefab;
+            if (randomNumber < accumulatedProbability + i.Value)
+                return i.Key;
 
-            accumulatedProbability += i;
-            prefab++;
+            accumulatedProbability += i.Value;
         }
         Debug.LogWarning("Is not Found Fruit Probability");
         return 1;

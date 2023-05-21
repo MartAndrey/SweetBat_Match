@@ -24,6 +24,11 @@ public class CharacterBatUI : MonoBehaviour
     [SerializeField] GameObject objectTimeObjective;
     [SerializeField] TMP_Text remainingMatchText;
 
+    [Header("Collection Objective")]
+    [SerializeField] GameObject objectCollectionObjective;
+    [SerializeField] Image imageFruitCollection;
+    [SerializeField] TMP_Text fruitCollectionText;
+
     Dictionary<GameMode, Action> gameModeHandlers;
 
     //========================Feeding Objective===========================//
@@ -58,6 +63,7 @@ public class CharacterBatUI : MonoBehaviour
     int remainingMatch;
 
     //========================Collection Objective===========================//
+    int amountFruitCollection;
 
     void OnEnable()
     {
@@ -83,6 +89,7 @@ public class CharacterBatUI : MonoBehaviour
             { GameMode.FeedingObjective, SetFeedingObjective },
             { GameMode.ScoringObjective, SetScoringObjective },
             { GameMode.TimeObjective, SetTimeObjective },
+            { GameMode.CollectionObjective, SetCollectionObjective },
         };
     }
 
@@ -135,6 +142,19 @@ public class CharacterBatUI : MonoBehaviour
         GameManager.Instance.ObjectiveComplete = false;
         remainingMatch = GameManager.Instance.MatchObjectiveAmount;
         remainingMatchText.text = remainingMatch.ToString();
+    }
+
+    /// <summary>
+    /// Sets the collection objective for fruits.
+    /// </summary>
+    void SetCollectionObjective()
+    {
+        // Activate the collection objective object
+        objectCollectionObjective.SetActive(true);
+        // Get the fruit collection amount from the game manager
+        amountFruitCollection = GameManager.Instance.FruitCollectionAmount;
+        // Start the coroutine to set the collection objective
+        StartCoroutine(SetCollectionObjectiveRutiner());
     }
 
     #region Feeding Objective
@@ -508,7 +528,18 @@ public class CharacterBatUI : MonoBehaviour
 
     #region Collection Objective
 
-    
+    /// <summary>
+    /// Coroutine to set the collection objective UI elements.
+    /// </summary>
+    /// <returns>An enumerator for the coroutine.</returns>
+    IEnumerator SetCollectionObjectiveRutiner()
+    {
+        // Wait until the collection objective sprite is available
+        yield return new WaitUntil(() => BoardManager.Instance.SpriteCollectionObjective != null);
+        // Set the collection objective sprite and text
+        imageFruitCollection.sprite = BoardManager.Instance.SpriteCollectionObjective;
+        fruitCollectionText.text = amountFruitCollection.ToString();
+    }
 
     #endregion
 }
