@@ -26,8 +26,8 @@ public class CharacterBatUI : MonoBehaviour
 
     [Header("Collection Objective")]
     [SerializeField] GameObject objectCollectionObjective;
-    [SerializeField] Image imageFruitCollection;
-    [SerializeField] TMP_Text fruitCollectionText;
+    [SerializeField] GameObject fruitCollectionGoal;
+    [SerializeField] GameObject checkFruitCollectionGoal;
 
     Dictionary<GameMode, Action> gameModeHandlers;
 
@@ -537,8 +537,38 @@ public class CharacterBatUI : MonoBehaviour
         // Wait until the collection objective sprite is available
         yield return new WaitUntil(() => BoardManager.Instance.SpriteCollectionObjective != null);
         // Set the collection objective sprite and text
-        imageFruitCollection.sprite = BoardManager.Instance.SpriteCollectionObjective;
-        fruitCollectionText.text = amountFruitCollection.ToString();
+        fruitCollectionGoal.GetComponentInChildren<Image>().sprite = BoardManager.Instance.SpriteCollectionObjective;
+        fruitCollectionGoal.GetComponentInChildren<TMP_Text>().text = amountFruitCollection.ToString();
+    }
+
+    /// <summary>
+    /// Changes the collection goals for the game based on the list of matched fruits.
+    /// </summary>
+    /// <param name="listMatchesFruits">The list of matched fruits.</param>
+    public void ChangeCollectionGoals(List<GameObject> listMatchesFruits)
+    {
+        if (goalComplete) return;
+
+        // Find all fruits that match the current objective and update the goal amount
+        List<GameObject> fistFruitObjective = listMatchesFruits.FindAll(
+               fruit => fruit.GetComponentInChildren<SpriteRenderer>().sprite == fruitCollectionGoal.GetComponentInChildren<Image>().sprite);
+
+        if (ThereAreFruits(fistFruitObjective))
+        {
+            int amountGoal = Convert.ToInt32(fruitCollectionGoal.GetComponentInChildren<TMP_Text>().text);
+
+            amountGoal -= fistFruitObjective.Count;
+
+            // Update the UI element if the goal has been reached or exceeded
+            if (amountGoal <= 0)
+            {
+                ChangeStatusCheckFruitGoal(fruitCollectionGoal.GetComponentInChildren<TMP_Text>(), checkFruitCollectionGoal);
+                audioSource.Play();
+                goalComplete = true;
+                GameManager.Instance.ObjectiveComplete = true;
+            }
+            else fruitCollectionGoal.GetComponentInChildren<TMP_Text>().text = amountGoal.ToString();
+        }
     }
 
     #endregion

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public static class ProbabilityFruit
 {
@@ -57,7 +58,25 @@ public static class ProbabilityFruit
 
             accumulatedProbability += i.Value;
         }
-        Debug.LogWarning("Is not Found Fruit Probability");
-        return 1;
+
+        return GetFruitProbabilityWithException(fruitsProbabilities.Count, fruitsProbabilities.Last().Key);
+    }
+
+    /// <summary>
+    /// Calculates the probability of getting a fruit, excluding a specific fruit.
+    /// </summary>
+    /// <param name="amountFruits">The total number of fruits.</param>
+    /// <param name="exception">The fruit to be excluded from the calculation.</param>
+    /// <returns>The index of the randomly selected fruit.</returns>
+    static int GetFruitProbabilityWithException(int amountFruits, int exception)
+    {
+        int rn;
+
+        do
+        {
+            rn = Random.Range(0, amountFruits);
+        } while (rn == exception);
+
+        return rn;
     }
 }

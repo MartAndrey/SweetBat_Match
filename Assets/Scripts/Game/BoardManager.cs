@@ -314,6 +314,8 @@ public class BoardManager : MonoBehaviour
     {
         if (GameManager.Instance.GameMode == GameMode.FeedingObjective)
             StartCoroutine(characterBatUI.CheckAmountObjective(fruitToClear));
+        else if (GameManager.Instance.GameMode == GameMode.CollectionObjective)
+            characterBatUI.ChangeCollectionGoals(fruitToClear);
 
         audioSource.PlayOneShot(fruitCrackAudio);
         fruitToClear.ForEach(matchedFruit =>
@@ -598,6 +600,15 @@ public class BoardManager : MonoBehaviour
     {
         // Randomly select a fruit prefab from the list
         int indexFruit = UnityEngine.Random.Range(0, prefabs.Count);
+
+        if (GameManager.Instance.GameMode == GameMode.CollectionObjective)
+        {
+            if (indexFruit == fruitsProbabilities.Last().Key)
+            {
+                while (indexFruit == fruitsProbabilities.Last().Key && Random.value > 7f)
+                    indexFruit = UnityEngine.Random.Range(0, prefabs.Count);
+            }
+        }
 
         GameObject newFruit = ObjectPooler.Instance.GetFruitToPool(indexFruit, spawnFruit.transform);
         newFruit.transform.localPosition = new Vector2(x, y);

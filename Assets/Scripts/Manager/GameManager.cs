@@ -72,7 +72,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] float totalSeconds;
     [SerializeField] int matchObjectiveAmount;
 
-    [Header("Time Objective")]
+    [Header("Collection Objective")]
     [SerializeField] int fruitCollectionAmount;
 
     // Indicates whether the game objective is complete

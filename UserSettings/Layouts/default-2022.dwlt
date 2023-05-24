@@ -412,22 +412,22 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scripts/Game
+    - Assets/Scenes
     m_Globs: []
     m_OriginalText: 
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Scripts/Game
+  - Assets/Scenes
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\jeffe\OneDrive\Documentos\Unity\Projects\Hungry Bat
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 641.4}
-    m_SelectedIDs: e6720000
-    m_LastClickedID: 29414
-    m_ExpandedIDs: 000000002a7200002c7200002e72000030720000327200003472000036720000387200003a7200003c7200003e720000407200004272000000ca9a3b
+    scrollPos: {x: 0, y: 561.4}
+    m_SelectedIDs: de720000
+    m_LastClickedID: 29406
+    m_ExpandedIDs: 000000002a7200002c7200002e72000030720000327200003472000036720000387200003a7200003c7200003e7200004072000042720000fe72000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -480,10 +480,10 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 64160000
-    m_LastClickedInstanceID: 5732
+    m_SelectedInstanceIDs: f4990100
+    m_LastClickedInstanceID: 104948
     m_HadKeyboardFocusLastEvent: 1
-    m_ExpandedInstanceIDs: c6230000
+    m_ExpandedInstanceIDs: c6230000866e0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -582,10 +582,10 @@ MonoBehaviour:
     m_SaveData: []
   m_SceneHierarchy:
     m_TreeViewState:
-      scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: c6680000
-      m_LastClickedID: 26822
-      m_ExpandedIDs: 22fbffffaa67000000690000a0690000fc690000386a0000
+      scrollPos: {x: 0, y: 174.79999}
+      m_SelectedIDs: f4990100
+      m_LastClickedID: 104948
+      m_ExpandedIDs: 4c0effffde16ffff841fffff7824ffffb825ffff5c2effffa6c6ffff22fbfffff4ffffffaa670000d26700006a680000f668000000690000a0690000fc690000386a00003c990100d4990100689a0100129b01006e9b0100c69b0100
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -601,7 +601,7 @@ MonoBehaviour:
         m_IsRenaming: 0
         m_OriginalEventType: 11
         m_IsRenamingFilename: 0
-        m_ClientGUIView: {fileID: 0}
+        m_ClientGUIView: {fileID: 5}
       m_SearchString: 
     m_ExpandedScenes: []
     m_CurrenRootInstanceID: 0
@@ -900,9 +900,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: -5.3577027, y: 8.605219, z: -0.05696926}
+    m_Target: {x: 1.7366737, y: 5.480432, z: 376.21225}
     speed: 2
-    m_Value: {x: -5.3577027, y: 8.605219, z: -0.05696926}
+    m_Value: {x: 1.7366737, y: 5.480432, z: 376.21225}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -952,9 +952,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 6.562147
+    m_Target: 1.5254538
     speed: 2
-    m_Value: 6.562147
+    m_Value: 1.5254538
   m_Ortho:
     m_Target: 1
     speed: 2

@@ -90,7 +90,8 @@ public class GUIManager : MonoBehaviour
         {
             { GameMode.FeedingObjective, SetFeedingObjective },
             { GameMode.ScoringObjective, SetScoringObjective },
-            { GameMode.TimeObjective, SetTimeObjective }
+            { GameMode.TimeObjective, SetTimeObjective },
+            { GameMode.CollectionObjective, SetCollectionObjective }
         };
     }
 
@@ -132,6 +133,12 @@ public class GUIManager : MonoBehaviour
         timeBarUI.SetActive(true);
     }
 
+    void SetCollectionObjective()
+    {
+        gamePlayMode = GamePlayMode.MovesLimited;
+        MovesLimited();
+    }
+
     /// <summary>
     /// Updates the game play mode and UI based on the randomly generated game play mode.
     /// </summary>
@@ -149,10 +156,20 @@ public class GUIManager : MonoBehaviour
         }
         else if (gamePlayMode == GamePlayMode.MovesLimited)
         {
-            timeBarUI.SetActive(false);
-            imageInfiniteMoves.SetActive(false);
-            movesText.enabled = true;
+            MovesLimited();
         }
+    }
+
+    /// <summary>
+    /// Disables unnecessary UI elements and enables the move-related UI elements.
+    /// </summary>
+    void MovesLimited()
+    {
+        bannerTime.SetActive(false);
+        timeBarUI.SetActive(false);
+        imageInfiniteMoves.SetActive(false);
+        bannerMove.SetActive(true);
+        movesText.enabled = true;
     }
 
     /// <summary>
