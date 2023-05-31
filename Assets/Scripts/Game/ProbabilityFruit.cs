@@ -10,7 +10,6 @@ public static class ProbabilityFruit
     /// </summary>
     /// <param name="probabilities">The number of probabilities to generate.</param>
     /// <returns>A dictionary with fruit IDs as keys and their corresponding probabilities as values.</returns>
-
     public static Dictionary<int, int> GenerateFruitProbabilities(int probabilities)
     {
         int totalProbability = 0;

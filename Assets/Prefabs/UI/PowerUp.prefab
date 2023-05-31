@@ -106,6 +106,7 @@ MonoBehaviour:
   labelTimer: {fileID: 7618854660024273164}
   imageInfinite: {fileID: 1800436607221880113}
   imageCheck: {fileID: 6928893606599436372}
+  spritePowerUp: {fileID: 1611777743113961664}
 --- !u!114 &2252768990160772483
 MonoBehaviour:
   m_ObjectHideFlags: 0

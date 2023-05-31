@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System;
+using UnityEngine.UI;
 
 // Type of power up that this object represents
 public enum TypePowerUp { Bomb, Lightning, Potion }
@@ -25,6 +26,7 @@ public class PowerUp : Timer
     [SerializeField] GameObject labelTimer;
     [SerializeField] GameObject imageInfinite;
     [SerializeField] GameObject imageCheck;
+    [SerializeField] Image spritePowerUp;
 
     bool isChecked; // boolean that tells us if the power up was chosen only works in the StatePowerUp.LevelUI
 
@@ -121,7 +123,11 @@ public class PowerUp : Timer
         }
         else if (statePowerUp == StatePowerUp.Game)
         {
-
+            // Updates the sorting order of the canvas based on the overlay display state,
+            // and triggers the overlay switch with the provided power-up sprite.
+            OverlayDisplayPowerUp overlay = GameObject.FindObjectOfType<OverlayDisplayPowerUp>();
+            this.GetComponent<Canvas>().sortingOrder = overlay.OverlayEnable ? 0 : 5;
+            overlay.SwitchState(spritePowerUp.sprite);
         }
     }
 
