@@ -47,7 +47,7 @@ public class ButtonSetting : MonoBehaviour
     // Coroutine to deactivate the settings box after a short delay
     IEnumerator OffSettingRutiner()
     {
-        yield return new WaitForSeconds(1); // Wait for 1 second
+        yield return new WaitForSeconds(0.5f); // Wait for 1 second
         boxSettings.SetActive(false); // Deactivate the settings box
     }
 
@@ -55,7 +55,7 @@ public class ButtonSetting : MonoBehaviour
     IEnumerator CheckTransitionRutiner()
     {
         isAnimationTransition = true; // Set the flag to true to indicate that a transition is in progress
-        yield return new WaitForSecondsRealtime(1); // Wait for 1 second using real time (ignoring time scale)
+        yield return new WaitForSecondsRealtime(0.5f); // Wait for 1 second using real time (ignoring time scale)
         isAnimationTransition = false; // Set the flag to false to indicate that the transition is complete
     }
 
