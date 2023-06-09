@@ -56,4 +56,18 @@ public class GoogleAuth : MonoBehaviour
             Debug.Log("Unsuccessful login");
         }
     }
+
+    /// <summary>
+    /// Signs out the user.
+    /// </summary>
+    public void SignOut()
+    {
+        PlayGamesPlatform.Instance.SignOut();
+    }
+
+    /// <summary>
+    /// Checks if the user is currently signed out.
+    /// </summary>
+    /// <returns>True if the user is signed out, false otherwise.</returns>
+    public bool IsSignedOut() => !PlayGamesPlatform.Instance.localUser.authenticated;
 }

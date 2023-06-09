@@ -2,31 +2,52 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
+using Assets.SimpleSpinner;
 
 public enum GenderUser { Male, Female, Unknown }
 
 public class LoginController : MonoBehaviour
 {
-    public Sprite UrlPhoto { get { return photoUser; } set { photoUser = value; } }
+    // Gets or sets the user's photo sprite.
+    public Sprite PhotoUser { get { return photoUser; } set { photoUser = value; } }
 
+    [Header("Displays")]
     [SerializeField] GameObject displaySingIn;
     [SerializeField] GameObject displaySingOut;
     [SerializeField] GameObject displayConfirmSingOut;
+    [SerializeField] GameObject displayGlobalLoading;
 
+    [Header("Gender")]
     //=================Gender==========================//
     [SerializeField] GameObject displayGetGender;
 
+    [Header("Sing In")]
     //=================Sing In=========================//
     [SerializeField] TMP_Text welcomeText;
     [SerializeField] AvatarController avatar;
     [SerializeField] TMP_Text nameUserText;
 
+    [Header("Sing Out")]
+    //=================Sing Out=========================//
+    [SerializeField] GameObject loadingLogOut;
+    [SerializeField] Image checkLogOut;
+    [SerializeField] TMP_Text textButtonLogOut;
+    [SerializeField] SimpleSpinner simpleSpinner;
+
+    [Header("Authentications")]
     [SerializeField] GoogleAuth googleAuth;
     [SerializeField] FirebaseApp firebaseApp;
 
     GenderUser currentGenderUser;
     string nameUser;
-    Sprite photoUser;
+    Sprite photoUser = null;
+    Animator animator;
+
+    void Awake()
+    {
+        animator = GetComponent<Animator>();
+    }
 
     /// <summary>
     /// Initiates the Google login process.
@@ -89,16 +110,20 @@ public class LoginController : MonoBehaviour
     /// </summary>
     public void ContinueGenderUser()
     {
-        SetInformationUser();
+        StartCoroutine(SetInformationUser());
     }
 
     /// <summary>
     /// Sets the user information and updates the UI accordingly.
     /// </summary>
-    public void SetInformationUser()
+    /// <returns>An IEnumerator used for coroutine execution.</returns>
+    IEnumerator SetInformationUser()
     {
+        yield return GlobalLoading();
+
         displayGetGender.SetActive(false);
         displaySingOut.SetActive(true);
+        animator.enabled = true;
 
         welcomeText.text = string.Format($"Hello, {nameUser.Split(' ')[0]}!");
         nameUserText.text = nameUser;
@@ -109,10 +134,111 @@ public class LoginController : MonoBehaviour
     }
 
     /// <summary>
+    /// Shows the global loading display until the user's photo is loaded.
+    /// </summary>
+    /// <returns>An IEnumerator used for coroutine execution.</returns>
+    IEnumerator GlobalLoading()
+    {
+        while (photoUser == null)
+        {
+            if (!displayGlobalLoading.activeInHierarchy)
+                displayGlobalLoading.SetActive(true);
+
+            yield return null;
+        }
+
+        if (displayGlobalLoading.activeInHierarchy)
+            displayGlobalLoading.SetActive(false);
+    }
+
+    /// <summary>
     /// Initiates the sign out process.
     /// </summary>
     public void SignOut()
     {
-        displayConfirmSingOut.SetActive(true);
+        animator.Play("EnterLogOut");
+    }
+
+    /// <summary>
+    /// Shows the global loading display until the user's photo is loaded.
+    /// </summary>
+    /// <returns>An IEnumerator used for coroutine execution.</returns>
+    public void ReturnLogOut()
+    {
+        animator.Play("ExitLogOut");
+    }
+
+    /// <summary>
+    /// Shows the global loading display until the user's photo is loaded.
+    /// </summary>
+    /// <returns>An IEnumerator used for coroutine execution.</returns>
+    public void ConfirmSignOut()
+    {
+        StartCoroutine(ConfirmSignOutRutiner());
+    }
+
+    /// <summary>
+    /// Coroutine for the confirm sign out process.
+    /// </summary>
+    /// <returns>An IEnumerator used for coroutine execution.</returns>
+    IEnumerator ConfirmSignOutRutiner()
+    {
+        firebaseApp.SignOut();
+        googleAuth.SignOut();
+
+        textButtonLogOut.DOFade(0, 0.5f);
+        loadingLogOut.SetActive(true);
+        loadingLogOut.GetComponent<Image>().DOFade(1, 0.5f);
+
+        yield return new WaitForSeconds(1);
+
+        while (!firebaseApp.IsSignedOut() && !googleAuth.IsSignedOut())
+        {
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        simpleSpinner.RotationSpeed = -1;
+        checkLogOut.enabled = true;
+        checkLogOut.transform.DOScale(Vector3.one * 1.3f, 0.3f).OnComplete(() =>
+        {
+            checkLogOut.transform.DOScale(Vector3.one, 0.1f).OnComplete(() =>
+            {
+                StartCoroutine(HideDisplaySingOut());
+            });
+        });
+    }
+
+    /// <summary>
+    /// Coroutine to hide the sign out display.
+    /// </summary>
+    /// <returns>An IEnumerator used for coroutine execution.</returns>
+    IEnumerator HideDisplaySingOut()
+    {
+        yield return new WaitForSeconds(.8f);
+
+        displaySingIn.SetActive(true);
+        displaySingOut.SetActive(false);
+        displayConfirmSingOut.SetActive(false);
+        animator.enabled = false;
+
+        MainMenuController mainMenuController = FindObjectOfType<MainMenuController>();
+        mainMenuController.CloseUILogin(this.gameObject);
+
+        ResetConfirmLogOut();
+    }
+
+    /// <summary>
+    /// Resets the confirm sign out state.
+    /// </summary>
+    void ResetConfirmLogOut()
+    {
+        textButtonLogOut.alpha = 1;
+        loadingLogOut.SetActive(false);
+        Image imageLoading = loadingLogOut.GetComponent<Image>();
+        imageLoading.color = new Color(imageLoading.color.r, imageLoading.color.g, imageLoading.color.b, 0);
+
+        simpleSpinner.RotationSpeed = 1;
+        checkLogOut.enabled = false;
+        checkLogOut.transform.localScale = Vector3.zero;
     }
 }

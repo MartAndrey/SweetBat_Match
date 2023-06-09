@@ -73,7 +73,7 @@ public class FirebaseApp : MonoBehaviour
         {
             Texture2D texture = DownloadHandlerTexture.GetContent(webRequest);
             Sprite photoUser = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
-            loginController.UrlPhoto = photoUser;
+            loginController.PhotoUser = photoUser;
         }
         else
         {
@@ -88,4 +88,10 @@ public class FirebaseApp : MonoBehaviour
     {
         Firebase.Auth.FirebaseAuth.DefaultInstance.SignOut();
     }
+
+    /// <summary>
+    /// Checks if the user is currently signed out.
+    /// </summary>
+    /// <returns>True if the user is signed out, false otherwise.</returns>
+    public bool IsSignedOut() => Firebase.Auth.FirebaseAuth.DefaultInstance.CurrentUser == null;
 }
