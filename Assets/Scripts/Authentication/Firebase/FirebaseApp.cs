@@ -5,7 +5,6 @@ using UnityEngine.Networking;
 public class FirebaseApp : MonoBehaviour
 {
     [SerializeField] LoginController loginController;
-
     Firebase.FirebaseApp app;
 
     void Awake()
@@ -56,6 +55,40 @@ public class FirebaseApp : MonoBehaviour
             Firebase.Auth.FirebaseUser user = auth.CurrentUser;
 
             loginController.LoginSuccess(user.DisplayName);
+            StartCoroutine(LoadAvatarImage(user.PhotoUrl.ToString()));
+        });
+    }
+
+    /// <summary>
+    /// Logs in the user using the provided Facebook access token.
+    /// </summary>
+    /// <param name="accessToken">The Facebook access token.</param>
+    public void LoginWithFacebook(string accessToken)
+    {
+        // Get the FirebaseAuth instance
+        Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
+        // Create a Facebook credential using the access token
+        Firebase.Auth.Credential credential = Firebase.Auth.FacebookAuthProvider.GetCredential(accessToken);
+        // Sign in and retrieve user data with the Facebook credential
+        auth.SignInAndRetrieveDataWithCredentialAsync(credential).ContinueWith(task =>
+        {
+            if (task.IsCanceled) // Check if the task was canceled
+            {
+                Debug.LogError("SignInAndRetrieveDataWithCredentialAsync was canceled.");
+                return;
+            }
+            if (task.IsFaulted) // Check if the task encountered an error
+            {
+                Debug.LogError("SignInAndRetrieveDataWithCredentialAsync encountered an error: " + task.Exception);
+                return;
+            }
+
+            // Get the current user from FirebaseAuth
+            Firebase.Auth.FirebaseUser user = auth.CurrentUser;
+
+            // Call the loginController to handle successful login
+            loginController.LoginSuccess(user.DisplayName);
+            // Load the user's avatar image
             StartCoroutine(LoadAvatarImage(user.PhotoUrl.ToString()));
         });
     }

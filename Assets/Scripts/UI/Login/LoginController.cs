@@ -27,6 +27,7 @@ public class LoginController : MonoBehaviour
     [SerializeField] TMP_Text welcomeText;
     [SerializeField] AvatarController avatar;
     [SerializeField] TMP_Text nameUserText;
+    [SerializeField] GameObject warningMessage;
 
     [Header("Sing Out")]
     //=================Sing Out=========================//
@@ -36,8 +37,9 @@ public class LoginController : MonoBehaviour
     [SerializeField] SimpleSpinner simpleSpinner;
 
     [Header("Authentications")]
-    [SerializeField] GoogleAuth googleAuth;
     [SerializeField] FirebaseApp firebaseApp;
+    [SerializeField] GoogleAuth googleAuth;
+    [SerializeField] FacebookAuth facebookAuth;
 
     GenderUser currentGenderUser;
     string nameUser;
@@ -55,6 +57,16 @@ public class LoginController : MonoBehaviour
     public void LoginGoogle()
     {
         googleAuth.LoginGoogle();
+    }
+
+    /// <summary>
+    /// Initiates the Facebook login process.
+    /// </summary>
+    public void LoginFacebook()
+    {
+        warningMessage.SetActive(true);
+        Invoke("DisableWarningMessage", 10);
+        // facebookAuth.LoginFacebook();
     }
 
     /// <summary>
@@ -240,5 +252,13 @@ public class LoginController : MonoBehaviour
         simpleSpinner.RotationSpeed = 1;
         checkLogOut.enabled = false;
         checkLogOut.transform.localScale = Vector3.zero;
+    }
+
+    /// <summary>
+    /// Disables the warning message game object.
+    /// </summary>
+    void DisableWarningMessage()
+    {
+        warningMessage.SetActive(false);
     }
 }
