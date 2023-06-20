@@ -1,11 +1,19 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Networking;
 
 public class FirebaseApp : MonoBehaviour
 {
+    [HideInInspector] public UnityEvent OnSetFirebase;
+
     [SerializeField] LoginController loginController;
+
+    Dictionary<string, object> userData;
+
     Firebase.FirebaseApp app;
+    Firebase.Auth.FirebaseUser user;
 
     void Awake()
     {
@@ -19,6 +27,7 @@ public class FirebaseApp : MonoBehaviour
                 app = Firebase.FirebaseApp.DefaultInstance;
                 Debug.Log("Success App Fire");
                 // Set a flag here to indicate whether Firebase is ready to use by your app.
+                OnSetFirebase?.Invoke();
             }
             else
             {
@@ -52,9 +61,17 @@ public class FirebaseApp : MonoBehaviour
                 return;
             }
 
-            Firebase.Auth.FirebaseUser user = auth.CurrentUser;
+            user = auth.CurrentUser;
 
-            loginController.LoginSuccess(user.DisplayName);
+            userData = new Dictionary<string, object>()
+            {
+                { "name", user.DisplayName },
+                { "id", user.UserId },
+                { "email", user.Email },
+                { "url photo", user.PhotoUrl.ToString() }
+            };
+
+            loginController.LoginSuccess(userData);
             StartCoroutine(LoadAvatarImage(user.PhotoUrl.ToString()));
         });
     }
@@ -87,7 +104,7 @@ public class FirebaseApp : MonoBehaviour
             Firebase.Auth.FirebaseUser user = auth.CurrentUser;
 
             // Call the loginController to handle successful login
-            loginController.LoginSuccess(user.DisplayName);
+            loginController.LoginSuccess(userData);
             // Load the user's avatar image
             StartCoroutine(LoadAvatarImage(user.PhotoUrl.ToString()));
         });
@@ -119,6 +136,7 @@ public class FirebaseApp : MonoBehaviour
     /// </summary>
     public void SignOut()
     {
+        loginController.PhotoUser = null;
         Firebase.Auth.FirebaseAuth.DefaultInstance.SignOut();
     }
 

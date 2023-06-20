@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using Assets.SimpleSpinner;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 public enum GenderUser { Male, Female, Unknown }
 
@@ -11,6 +13,7 @@ public class LoginController : MonoBehaviour
 {
     // Gets or sets the user's photo sprite.
     public Sprite PhotoUser { get { return photoUser; } set { photoUser = value; } }
+    public GenderUser CurrentGenderUser { set { currentGenderUser = value; } }
 
     [Header("Displays")]
     [SerializeField] GameObject displaySingIn;
@@ -38,13 +41,15 @@ public class LoginController : MonoBehaviour
 
     [Header("Authentications")]
     [SerializeField] FirebaseApp firebaseApp;
+    [SerializeField] CloudFirestore cloudFirestore;
     [SerializeField] GoogleAuth googleAuth;
     [SerializeField] FacebookAuth facebookAuth;
 
     GenderUser currentGenderUser;
-    string nameUser;
     Sprite photoUser = null;
     Animator animator;
+
+    Dictionary<string, object> userData;
 
     void Awake()
     {
@@ -72,22 +77,37 @@ public class LoginController : MonoBehaviour
     /// <summary>
     /// Handles the successful login by displaying the appropriate UI.
     /// </summary>
-    /// <param name="nameUser">Name of the logged-in user.</param>
-    public void LoginSuccess(string nameUser)
+    /// <param name="userData">User data for the logged-in user.</param>
+    public void LoginSuccess(Dictionary<string, object> userData)
     {
-        StartCoroutine(LoginSuccessRutiner(nameUser));
+        this.userData = userData;
+        StartCoroutine(LoginSuccessRutiner());
     }
 
     /// <summary>
     /// Coroutine to handle the UI transition after a successful login.
     /// </summary>
-    /// <param name="nameUser">Name of the logged-in user.</param>
-    IEnumerator LoginSuccessRutiner(string nameUser)
+    IEnumerator LoginSuccessRutiner()
     {
-        yield return new WaitForEndOfFrame();
+        ActivateGlobalLoading();
+        Task<bool> checkUserTask = cloudFirestore.CheckUserExists(userData["id"].ToString());
+
+        yield return new WaitUntil(() => checkUserTask.IsCompleted);
+
+        bool userExists = checkUserTask.Result;
+
         displaySingIn.SetActive(false);
+
+        DisableGlobalLoading();
+
+        if (userExists)
+        {
+            SetInformationUser();
+            StartCoroutine(UpdateAvatar());
+            yield break;
+        }
+
         displayGetGender.SetActive(true);
-        this.nameUser = nameUser;
     }
 
     /// <summary>
@@ -122,27 +142,58 @@ public class LoginController : MonoBehaviour
     /// </summary>
     public void ContinueGenderUser()
     {
-        StartCoroutine(SetInformationUser());
+        StartCoroutine(SetInformationNewUser());
     }
 
     /// <summary>
     /// Sets the user information and updates the UI accordingly.
     /// </summary>
-    /// <returns>An IEnumerator used for coroutine execution.</returns>
-    IEnumerator SetInformationUser()
+    IEnumerator SetInformationNewUser()
     {
         yield return GlobalLoading();
 
         displayGetGender.SetActive(false);
-        displaySingOut.SetActive(true);
-        animator.enabled = true;
 
-        welcomeText.text = string.Format($"Hello, {nameUser.Split(' ')[0]}!");
-        nameUserText.text = nameUser;
+        userData.Add("gender", currentGenderUser.ToString());
 
         if (currentGenderUser == GenderUser.Male) avatar.UserMan(photoUser);
         else if (currentGenderUser == GenderUser.Female) avatar.UserWomen(photoUser);
         else if (currentGenderUser == GenderUser.Unknown) avatar.UserUnknown(photoUser);
+
+        SetInformationUser();
+
+        CreateNewUserDataBase();
+    }
+
+    /// <summary>
+    /// Updates the user avatar based on the gender and photo provided.
+    /// </summary>
+    IEnumerator UpdateAvatar()
+    {
+        yield return GlobalLoading();
+        avatar.UpdateAvatar(currentGenderUser, photoUser);
+    }
+
+    /// <summary>
+    /// Updates the UI with the user information.
+    /// </summary>
+    void SetInformationUser()
+    {
+        displaySingOut.SetActive(true);
+        animator.enabled = true;
+
+        string nameUser = (string)userData["name"];
+
+        welcomeText.text = string.Format($"Hello, {nameUser.Split(' ')[0]}!");
+        nameUserText.text = nameUser;
+    }
+
+    /// <summary>
+    /// Creates a new user in the database.
+    /// </summary>
+    void CreateNewUserDataBase()
+    {
+        cloudFirestore.CreateNewUser(userData);
     }
 
     /// <summary>
@@ -154,14 +205,18 @@ public class LoginController : MonoBehaviour
         while (photoUser == null)
         {
             if (!displayGlobalLoading.activeInHierarchy)
-                displayGlobalLoading.SetActive(true);
+                ActivateGlobalLoading();
 
             yield return null;
         }
 
         if (displayGlobalLoading.activeInHierarchy)
-            displayGlobalLoading.SetActive(false);
+            DisableGlobalLoading();
     }
+
+    void ActivateGlobalLoading() => displayGlobalLoading.SetActive(true);
+
+    void DisableGlobalLoading() => displayGlobalLoading.SetActive(false);
 
     /// <summary>
     /// Initiates the sign out process.
