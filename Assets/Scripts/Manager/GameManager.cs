@@ -44,6 +44,9 @@ public class GameManager : MonoBehaviour
     // Gets or sets a value indicating whether unique matches are required.
     public bool UniqueMatches { get { return uniqueMatches; } set { uniqueMatches = value; } }
 
+    public Dictionary<string, object> UserData { get { return userData; } set { userData = value; } }
+    public Sprite UserPhoto { get { return userPhoto; } set { userPhoto = value; } }
+
     // Serialized game mode field
     [SerializeField] GameMode gameMode;
 
@@ -79,6 +82,11 @@ public class GameManager : MonoBehaviour
     bool objectiveComplete;
 
     bool uniqueMatches;
+
+    // Dictionary containing user data.
+    Dictionary<string, object> userData;
+    // Sprite representing the user's photo.
+    Sprite userPhoto = null;
 
     /// <summary>
     /// Subscribes to the SceneManager's sceneLoaded event when the script is enabled.
@@ -152,5 +160,17 @@ public class GameManager : MonoBehaviour
         int numberOfGamePlayMode = Enum.GetNames(typeof(GamePlayMode)).Length;
 
         return (GamePlayMode)UnityEngine.Random.Range(0, numberOfGamePlayMode);
+    }
+
+    /// <summary>
+    /// Coroutine for loading the game.
+    /// </summary>
+    /// <returns>IEnumerator for coroutine execution.</returns>
+    public IEnumerator LoadingGameRutiner()
+    {
+        while (userData == null || userPhoto == null)
+        {
+            yield return null;
+        }
     }
 }

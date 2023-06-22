@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using DG.Tweening;
 
 public class MainMenuController : MonoBehaviour
 {
+    [SerializeField] LoginController LoginController;
     [SerializeField] AudioSource audioSourceLoginUI;
+    [SerializeField] AudioSource audioEnvironment;
+    [SerializeField] CanvasGroup loading;
+    [SerializeField] CanvasGroup alreadyLoading;
 
     /// <summary>
     /// Plays the screen change transition and fades out to the level menu.
@@ -42,5 +45,49 @@ public class MainMenuController : MonoBehaviour
 
         canvasGroup.alpha = 1;
         canvasGroup.DOFade(0, 0.5f).OnComplete(() => screen.SetActive(false));
+    }
+
+    /// <summary>
+    /// Checks if the game is still loading and waits until it's ready.
+    /// </summary>
+    public void CheckLoadingGame()
+    {
+        StartCoroutine(CheckLoadingGameRutiner());
+    }
+
+    /// <summary>
+    /// Coroutine for checking if the game is still loading.
+    /// </summary>
+    /// <returns>IEnumerator for coroutine execution.</returns>
+    IEnumerator CheckLoadingGameRutiner()
+    {
+        yield return StartCoroutine(GameManager.Instance.LoadingGameRutiner());
+
+        GameReadyToPlay();
+    }
+
+    /// <summary>
+    /// Performs necessary actions when the game is ready to play.
+    /// </summary>
+    void GameReadyToPlay()
+    {
+        LoginController.UserAlreadyAuthenticated();
+        ShowUIGameReadyToPlay();
+    }
+
+    /// <summary>
+    /// Displays the UI for game readiness.
+    /// </summary>
+    public void ShowUIGameReadyToPlay()
+    {
+        audioEnvironment.Play();
+
+        loading.DOFade(0, .8f).OnComplete(() =>
+        {
+            loading.gameObject.SetActive(false);
+            alreadyLoading.gameObject.SetActive(true);
+
+            alreadyLoading.DOFade(1, .8f);
+        });
     }
 }

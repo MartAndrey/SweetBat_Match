@@ -4,8 +4,6 @@ using Facebook.Unity;
 
 public class FacebookAuth : MonoBehaviour
 {
-    [SerializeField] FirebaseApp firebase;
-
     string Token;
     string Error;
 
@@ -72,7 +70,7 @@ public class FacebookAuth : MonoBehaviour
             {
                 Token = AccessToken.CurrentAccessToken.TokenString;
                 Debug.Log($"Facebook Login token: {Token}");
-                firebase.LoginWithFacebook(Token);
+                FirebaseApp.Instance.LoginWithFacebook(Token);
             }
             else
             {

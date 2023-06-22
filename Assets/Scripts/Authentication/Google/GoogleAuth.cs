@@ -4,8 +4,6 @@ using GooglePlayGames.BasicApi;
 
 public class GoogleAuth : MonoBehaviour
 {
-    [SerializeField] FirebaseApp firebase;
-
     string token;
 
     void Awake()
@@ -49,7 +47,7 @@ public class GoogleAuth : MonoBehaviour
         if (success)
         {
             token = PlayGamesPlatform.Instance.GetIdToken();
-            firebase.LoginWithGoogle(token, null);
+            FirebaseApp.Instance.LoginWithGoogle(token, null);
         }
         else
         {

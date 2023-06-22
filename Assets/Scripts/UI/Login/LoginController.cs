@@ -6,6 +6,7 @@ using DG.Tweening;
 using Assets.SimpleSpinner;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System;
 
 public enum GenderUser { Male, Female, Unknown }
 
@@ -14,6 +15,7 @@ public class LoginController : MonoBehaviour
     // Gets or sets the user's photo sprite.
     public Sprite PhotoUser { get { return photoUser; } set { photoUser = value; } }
     public GenderUser CurrentGenderUser { set { currentGenderUser = value; } }
+    public Dictionary<string, object> UserData { set { userData = value; } }
 
     [Header("Displays")]
     [SerializeField] GameObject displaySingIn;
@@ -40,8 +42,6 @@ public class LoginController : MonoBehaviour
     [SerializeField] SimpleSpinner simpleSpinner;
 
     [Header("Authentications")]
-    [SerializeField] FirebaseApp firebaseApp;
-    [SerializeField] CloudFirestore cloudFirestore;
     [SerializeField] GoogleAuth googleAuth;
     [SerializeField] FacebookAuth facebookAuth;
 
@@ -78,9 +78,9 @@ public class LoginController : MonoBehaviour
     /// Handles the successful login by displaying the appropriate UI.
     /// </summary>
     /// <param name="userData">User data for the logged-in user.</param>
-    public void LoginSuccess(Dictionary<string, object> userData)
+    public void LoginSuccess()
     {
-        this.userData = userData;
+        this.userData = GameManager.Instance.UserData;
         StartCoroutine(LoginSuccessRutiner());
     }
 
@@ -90,7 +90,7 @@ public class LoginController : MonoBehaviour
     IEnumerator LoginSuccessRutiner()
     {
         ActivateGlobalLoading();
-        Task<bool> checkUserTask = cloudFirestore.CheckUserExists(userData["id"].ToString());
+        Task<bool> checkUserTask = CloudFirestore.Instance.CheckUserExists(userData["id"].ToString());
 
         yield return new WaitUntil(() => checkUserTask.IsCompleted);
 
@@ -103,7 +103,7 @@ public class LoginController : MonoBehaviour
         if (userExists)
         {
             SetInformationUser();
-            StartCoroutine(UpdateAvatar());
+            StartCoroutine(UpdateAvatarRutiner());
             yield break;
         }
 
@@ -150,7 +150,7 @@ public class LoginController : MonoBehaviour
     /// </summary>
     IEnumerator SetInformationNewUser()
     {
-        yield return GlobalLoading();
+        yield return WhileUserPhoto();
 
         displayGetGender.SetActive(false);
 
@@ -168,19 +168,21 @@ public class LoginController : MonoBehaviour
     /// <summary>
     /// Updates the user avatar based on the gender and photo provided.
     /// </summary>
-    IEnumerator UpdateAvatar()
+    IEnumerator UpdateAvatarRutiner()
     {
-        yield return GlobalLoading();
+        yield return WhileUserPhoto();
         avatar.UpdateAvatar(currentGenderUser, photoUser);
     }
 
     /// <summary>
     /// Updates the UI with the user information.
     /// </summary>
-    void SetInformationUser()
+    void SetInformationUser(bool activateAnimation = true)
     {
         displaySingOut.SetActive(true);
-        animator.enabled = true;
+
+        if (activateAnimation)
+            animator.enabled = true;
 
         string nameUser = (string)userData["name"];
 
@@ -193,14 +195,14 @@ public class LoginController : MonoBehaviour
     /// </summary>
     void CreateNewUserDataBase()
     {
-        cloudFirestore.CreateNewUser(userData);
+        CloudFirestore.Instance.CreateNewUser(userData);
     }
 
     /// <summary>
     /// Shows the global loading display until the user's photo is loaded.
     /// </summary>
     /// <returns>An IEnumerator used for coroutine execution.</returns>
-    IEnumerator GlobalLoading()
+    IEnumerator WhileUserPhoto()
     {
         while (photoUser == null)
         {
@@ -223,6 +225,7 @@ public class LoginController : MonoBehaviour
     /// </summary>
     public void SignOut()
     {
+        animator.enabled = true;
         animator.Play("EnterLogOut");
     }
 
@@ -250,7 +253,7 @@ public class LoginController : MonoBehaviour
     /// <returns>An IEnumerator used for coroutine execution.</returns>
     IEnumerator ConfirmSignOutRutiner()
     {
-        firebaseApp.SignOut();
+        FirebaseApp.Instance.SignOut();
         googleAuth.SignOut();
 
         textButtonLogOut.DOFade(0, 0.5f);
@@ -259,7 +262,7 @@ public class LoginController : MonoBehaviour
 
         yield return new WaitForSeconds(1);
 
-        while (!firebaseApp.IsSignedOut() && !googleAuth.IsSignedOut())
+        while (!FirebaseApp.Instance.IsSignedOut() && !googleAuth.IsSignedOut())
         {
             yield return new WaitForSeconds(0.1f);
         }
@@ -315,5 +318,17 @@ public class LoginController : MonoBehaviour
     void DisableWarningMessage()
     {
         warningMessage.SetActive(false);
+    }
+
+    /// <summary>
+    /// Performs necessary actions when the user is already authenticated.
+    /// </summary>
+    public void UserAlreadyAuthenticated()
+    {
+        this.userData = GameManager.Instance.UserData;
+        this.currentGenderUser = (GenderUser)Enum.Parse(typeof(GenderUser), this.userData["gender"].ToString());
+        displaySingIn.SetActive(false);
+        SetInformationUser(false);
+        avatar.UpdateAvatar(currentGenderUser, photoUser);
     }
 }

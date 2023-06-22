@@ -8,11 +8,16 @@ using System.Threading.Tasks;
 
 public class CloudFirestore : MonoBehaviour
 {
+    public static CloudFirestore Instance;
+
     FirebaseApp firebaseApp;
     FirebaseFirestore db;
 
     void Awake()
     {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+
         firebaseApp = GameObject.FindObjectOfType<FirebaseApp>();
     }
 
@@ -71,5 +76,19 @@ public class CloudFirestore : MonoBehaviour
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Retrieves user data from the database using the specified user ID.
+    /// </summary>
+    /// <param name="userId">ID of the user to retrieve data for.</param>
+    public void GetUserData(string userId)
+    {
+        DocumentReference docRef = db.Collection("Users").Document(userId);
+
+        docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            GameManager.Instance.UserData = task.Result.ToDictionary();
+        });
     }
 }

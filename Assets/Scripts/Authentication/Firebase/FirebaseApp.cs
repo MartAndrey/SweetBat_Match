@@ -6,9 +6,12 @@ using UnityEngine.Networking;
 
 public class FirebaseApp : MonoBehaviour
 {
+    public static FirebaseApp Instance;
+
     [HideInInspector] public UnityEvent OnSetFirebase;
 
     [SerializeField] LoginController loginController;
+    [SerializeField] MainMenuController mainMenuController;
 
     Dictionary<string, object> userData;
 
@@ -17,6 +20,9 @@ public class FirebaseApp : MonoBehaviour
 
     void Awake()
     {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+
         Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
         {
             var dependencyStatus = task.Result;
@@ -28,6 +34,16 @@ public class FirebaseApp : MonoBehaviour
                 Debug.Log("Success App Fire");
                 // Set a flag here to indicate whether Firebase is ready to use by your app.
                 OnSetFirebase?.Invoke();
+
+                if (UserIsAuthenticated())
+                {
+                    user = Firebase.Auth.FirebaseAuth.DefaultInstance.CurrentUser;
+                    Invoke("GetUserData", .5f);
+                }
+                else
+                {
+                    Invoke("GameReadyToPlay", 1f);
+                }
             }
             else
             {
@@ -36,6 +52,24 @@ public class FirebaseApp : MonoBehaviour
                 // Firebase Unity SDK is not safe to use here.
             }
         });
+    }
+
+    /// <summary>
+    /// Retrieves user data and performs necessary actions for game readiness.
+    /// </summary>
+    void GetUserData()
+    {
+        StartCoroutine(LoadAvatarImage(user.PhotoUrl.ToString()));
+        CloudFirestore.Instance.GetUserData(user.UserId);
+        mainMenuController.CheckLoadingGame();
+    }
+
+    /// <summary>
+    /// Displays the UI for game readiness.
+    /// </summary>
+    void GameReadyToPlay()
+    {
+        mainMenuController.ShowUIGameReadyToPlay();
     }
 
     /// <summary>
@@ -71,7 +105,8 @@ public class FirebaseApp : MonoBehaviour
                 { "url photo", user.PhotoUrl.ToString() }
             };
 
-            loginController.LoginSuccess(userData);
+            GameManager.Instance.UserData = userData;
+            loginController.LoginSuccess();
             StartCoroutine(LoadAvatarImage(user.PhotoUrl.ToString()));
         });
     }
@@ -104,7 +139,7 @@ public class FirebaseApp : MonoBehaviour
             Firebase.Auth.FirebaseUser user = auth.CurrentUser;
 
             // Call the loginController to handle successful login
-            loginController.LoginSuccess(userData);
+            loginController.LoginSuccess();
             // Load the user's avatar image
             StartCoroutine(LoadAvatarImage(user.PhotoUrl.ToString()));
         });
@@ -123,6 +158,7 @@ public class FirebaseApp : MonoBehaviour
         {
             Texture2D texture = DownloadHandlerTexture.GetContent(webRequest);
             Sprite photoUser = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+            GameManager.Instance.UserPhoto = photoUser;
             loginController.PhotoUser = photoUser;
         }
         else
@@ -130,6 +166,12 @@ public class FirebaseApp : MonoBehaviour
             Debug.LogError("Error : " + webRequest.error);
         }
     }
+
+    /// <summary>
+    /// Checks if the user is authenticated.
+    /// </summary>
+    /// <returns>True if the user is authenticated, false otherwise.</returns>
+    bool UserIsAuthenticated() => Firebase.Auth.FirebaseAuth.DefaultInstance.CurrentUser != null;
 
     /// <summary>
     /// Signs out the user from Firebase.
