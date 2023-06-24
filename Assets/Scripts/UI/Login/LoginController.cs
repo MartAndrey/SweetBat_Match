@@ -30,7 +30,6 @@ public class LoginController : MonoBehaviour
     [Header("Sing In")]
     //=================Sing In=========================//
     [SerializeField] TMP_Text welcomeText;
-    [SerializeField] AvatarController avatar;
     [SerializeField] TMP_Text nameUserText;
     [SerializeField] GameObject warningMessage;
 
@@ -44,6 +43,12 @@ public class LoginController : MonoBehaviour
     [Header("Authentications")]
     [SerializeField] GoogleAuth googleAuth;
     [SerializeField] FacebookAuth facebookAuth;
+
+    [Header("Other Settings")]
+    [SerializeField] TMP_Text btnLoginText;
+    [SerializeField] GameObject btnLoginAvatar;
+    string textWhenIsLogin = "MY ACCOUNT";
+    string textWhenNotLogin = "LOGIN";
 
     GenderUser currentGenderUser;
     Sprite photoUser = null;
@@ -156,9 +161,8 @@ public class LoginController : MonoBehaviour
 
         userData.Add("gender", currentGenderUser.ToString());
 
-        if (currentGenderUser == GenderUser.Male) avatar.UserMan(photoUser);
-        else if (currentGenderUser == GenderUser.Female) avatar.UserWomen(photoUser);
-        else if (currentGenderUser == GenderUser.Unknown) avatar.UserUnknown(photoUser);
+        GameManager.Instance.UserData = userData;
+        GameManager.Instance.UpdateAvatars();
 
         SetInformationUser();
 
@@ -171,7 +175,7 @@ public class LoginController : MonoBehaviour
     IEnumerator UpdateAvatarRutiner()
     {
         yield return WhileUserPhoto();
-        avatar.UpdateAvatar(currentGenderUser, photoUser);
+        GameManager.Instance.UpdateAvatars();
     }
 
     /// <summary>
@@ -188,6 +192,9 @@ public class LoginController : MonoBehaviour
 
         welcomeText.text = string.Format($"Hello, {nameUser.Split(' ')[0]}!");
         nameUserText.text = nameUser;
+
+        btnLoginText.text = textWhenIsLogin;
+        btnLoginAvatar.SetActive(true);
     }
 
     /// <summary>
@@ -293,6 +300,8 @@ public class LoginController : MonoBehaviour
 
         MainMenuController mainMenuController = FindObjectOfType<MainMenuController>();
         mainMenuController.CloseUILogin(this.gameObject);
+        btnLoginText.text = textWhenNotLogin;
+        btnLoginAvatar.SetActive(false);
 
         ResetConfirmLogOut();
     }
@@ -329,6 +338,6 @@ public class LoginController : MonoBehaviour
         this.currentGenderUser = (GenderUser)Enum.Parse(typeof(GenderUser), this.userData["gender"].ToString());
         displaySingIn.SetActive(false);
         SetInformationUser(false);
-        avatar.UpdateAvatar(currentGenderUser, photoUser);
+        GameManager.Instance.UpdateAvatars();
     }
 }

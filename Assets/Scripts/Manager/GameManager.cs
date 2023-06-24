@@ -173,4 +173,30 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
     }
+
+    /// <summary>
+    /// Updates the avatars for all players.
+    /// </summary>
+    public void UpdateAvatars()
+    {
+        StartCoroutine(UpdateAvatarsRutiner());
+    }
+
+    /// <summary>
+    /// Coroutine for updating avatars.
+    /// </summary>
+    /// <returns>IEnumerator object.</returns>
+    IEnumerator UpdateAvatarsRutiner()
+    {
+        yield return StartCoroutine(LoadingGameRutiner());
+
+        // Find all AvatarController objects in the scene
+        AvatarController[] avatars = Resources.FindObjectsOfTypeAll<AvatarController>();
+
+        // Update the avatars with the user's gender and photo
+        for (int i = 0; i < avatars.Length; i++)
+        {
+            avatars[i].UpdateAvatar((GenderUser)Enum.Parse(typeof(GenderUser), userData["gender"].ToString()), userPhoto);
+        }
+    }
 }
