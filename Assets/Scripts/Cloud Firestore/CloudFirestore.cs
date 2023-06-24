@@ -1,9 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Firebase.Firestore;
 using Firebase.Extensions;
-using System;
 using System.Threading.Tasks;
 
 public class CloudFirestore : MonoBehaviour
@@ -70,8 +68,7 @@ public class CloudFirestore : MonoBehaviour
 
         if (snapshot.Exists)
         {
-            LoginController loginController = FindObjectOfType<LoginController>();
-            loginController.CurrentGenderUser = (GenderUser)Enum.Parse(typeof(GenderUser), snapshot.GetValue<string>("gender"));
+            GameManager.Instance.UserData = snapshot.ToDictionary();
             return true;
         }
 

@@ -108,7 +108,8 @@ public class LoginController : MonoBehaviour
         if (userExists)
         {
             SetInformationUser();
-            StartCoroutine(UpdateAvatarRutiner());
+            CloudFirestore.Instance.GetUserData(userData["id"].ToString());
+            GameManager.Instance.UpdateAvatars();
             yield break;
         }
 
@@ -161,21 +162,12 @@ public class LoginController : MonoBehaviour
 
         userData.Add("gender", currentGenderUser.ToString());
 
-        GameManager.Instance.UserData = userData;
+        GameManager.Instance.UserData.Add("gender", currentGenderUser.ToString());
         GameManager.Instance.UpdateAvatars();
 
         SetInformationUser();
 
         CreateNewUserDataBase();
-    }
-
-    /// <summary>
-    /// Updates the user avatar based on the gender and photo provided.
-    /// </summary>
-    IEnumerator UpdateAvatarRutiner()
-    {
-        yield return WhileUserPhoto();
-        GameManager.Instance.UpdateAvatars();
     }
 
     /// <summary>
@@ -302,6 +294,8 @@ public class LoginController : MonoBehaviour
         mainMenuController.CloseUILogin(this.gameObject);
         btnLoginText.text = textWhenNotLogin;
         btnLoginAvatar.SetActive(false);
+        photoUser = null;
+        GameManager.Instance.UserPhoto = null;
 
         ResetConfirmLogOut();
     }

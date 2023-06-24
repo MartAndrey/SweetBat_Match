@@ -84,7 +84,7 @@ public class GameManager : MonoBehaviour
     bool uniqueMatches;
 
     // Dictionary containing user data.
-    Dictionary<string, object> userData;
+    Dictionary<string, object> userData = null;
     // Sprite representing the user's photo.
     Sprite userPhoto = null;
 
@@ -168,7 +168,7 @@ public class GameManager : MonoBehaviour
     /// <returns>IEnumerator for coroutine execution.</returns>
     public IEnumerator LoadingGameRutiner()
     {
-        while (userData == null || userPhoto == null)
+        while ((userPhoto == null || userData == null))
         {
             yield return null;
         }
@@ -192,7 +192,7 @@ public class GameManager : MonoBehaviour
 
         // Find all AvatarController objects in the scene
         AvatarController[] avatars = Resources.FindObjectsOfTypeAll<AvatarController>();
-
+        
         // Update the avatars with the user's gender and photo
         for (int i = 0; i < avatars.Length; i++)
         {
