@@ -4,10 +4,25 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
+using System.ComponentModel;
 
 // Define a set of game modes for different game objectives
 public enum GameMode { FeedingObjective, ScoringObjective, TimeObjective, CollectionObjective }
 public enum GamePlayMode { MovesLimited, TimedMatch }
+/// <summary>
+/// Enum representing different error types.
+/// </summary>
+public enum Errors
+{
+    [Description("Something went wrong with the database dependencies. Please try again. If the problem persists, contact the game developer")]
+    F_FA_55,
+    [Description("Something went wrong with authentication. If the problem persists, contact the game developer.")]
+    AUGGC_FA_98,
+    [Description("Something went wrong with authentication. If the problem persists, contact the game developer.")]
+    AUGGF_FA_107,
+    [Description("Something went wrong when downloading the avatar image. If the problem persists, contact the game developer.")]
+    UP_FA_184
+}
 
 public class GameManager : MonoBehaviour
 {
@@ -16,6 +31,8 @@ public class GameManager : MonoBehaviour
     /// Observer Pattern
     [HideInInspector] public UnityEvent<GameMode> OnGameMode;
     [HideInInspector] public UnityEvent OnUniqueMatches;
+    [HideInInspector] public UnityEvent<Errors> OnErrorRetry;
+    [HideInInspector] public UnityEvent<Errors> OnErrorClose;
 
     public int Level { get { return level; } }  // Public getter for the current level
     // Gets or sets the objective game mode.
@@ -88,6 +105,8 @@ public class GameManager : MonoBehaviour
     // Sprite representing the user's photo.
     Sprite userPhoto = null;
 
+    ErrorHandler errorHandler;
+
     /// <summary>
     /// Subscribes to the SceneManager's sceneLoaded event when the script is enabled.
     /// </summary>
@@ -145,6 +164,8 @@ public class GameManager : MonoBehaviour
     /// <param name="mode">The mode used to load the scene</param>
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        errorHandler = GameObject.FindObjectOfType<ErrorHandler>(true);
+
         if (scene.name == "Game")
         {
             OnGameMode?.Invoke(gameMode);
@@ -192,11 +213,47 @@ public class GameManager : MonoBehaviour
 
         // Find all AvatarController objects in the scene
         AvatarController[] avatars = Resources.FindObjectsOfTypeAll<AvatarController>();
-        
+
         // Update the avatars with the user's gender and photo
         for (int i = 0; i < avatars.Length; i++)
         {
             avatars[i].UpdateAvatar((GenderUser)Enum.Parse(typeof(GenderUser), userData["gender"].ToString()), userPhoto);
         }
+    }
+
+    /// <summary>
+    /// Start the coroutine for displaying the error UI.
+    /// </summary>
+    /// <param name="error">The error to display.</param>
+    public void HasFoundError(Errors error)
+    {
+        StartCoroutine(HasFoundErrorRutiner(error));
+    }
+
+    /// <summary>
+    /// Coroutine for handling the error UI display and interaction.
+    /// </summary>
+    /// <param name="error">The error to handle.</param>
+    /// <returns>An enumerator.</returns>
+    IEnumerator HasFoundErrorRutiner(Errors error)
+    {
+        // yield return null;
+
+        while (errorHandler == null)
+        {
+            yield return null;
+        }
+
+        errorHandler.gameObject.SetActive(true);
+        errorHandler.ShowErrorMessage(error);
+    }
+
+    /// <summary>
+    /// Start the coroutine for displaying the error UI.
+    /// </summary>
+    /// <param name="error">The error to display.</param>
+    public void HideDisplayError()
+    {
+        errorHandler.HideDisplayError();
     }
 }

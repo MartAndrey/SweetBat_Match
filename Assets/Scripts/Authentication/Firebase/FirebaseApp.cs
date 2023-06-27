@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Networking;
+using System;
 
 public class FirebaseApp : MonoBehaviour
 {
@@ -12,11 +13,27 @@ public class FirebaseApp : MonoBehaviour
 
     [SerializeField] LoginController loginController;
     [SerializeField] MainMenuController mainMenuController;
+    [SerializeField] Sprite defaultUserPhoto;
 
     Dictionary<string, object> userData;
 
     Firebase.FirebaseApp app;
     Firebase.Auth.FirebaseUser user;
+
+    Dictionary<Errors, Action> errorsRetryHandler;
+    Dictionary<Errors, Action> errorsCloseHandler;
+
+    void OnEnable()
+    {
+        GameManager.Instance.OnErrorRetry.AddListener(OnErrorRetry);
+        GameManager.Instance.OnErrorClose.AddListener(OnErrorClose);
+    }
+
+    void OnDisable()
+    {
+        GameManager.Instance.OnErrorRetry.RemoveListener(OnErrorRetry);
+        GameManager.Instance.OnErrorClose.RemoveListener(OnErrorClose);
+    }
 
     void Awake()
     {
@@ -47,11 +64,27 @@ public class FirebaseApp : MonoBehaviour
             }
             else
             {
-                UnityEngine.Debug.LogError(System.String.Format(
-                  "Could not resolve all Firebase dependencies: {0}", dependencyStatus));
                 // Firebase Unity SDK is not safe to use here.
+                StartCoroutine(ShowErrorUIRutiner(Errors.F_FA_55));
             }
         });
+
+        // Close the error related to user photo.
+        errorsRetryHandler = new Dictionary<Errors, Action>()
+        {
+            { Errors.F_FA_55,  RetryErrorFirebaseDependencies },
+            { Errors.AUGGC_FA_98,  RetryErrorFirebaseAuthGoogle },
+            { Errors.AUGGF_FA_107,  RetryErrorFirebaseAuthGoogle },
+            { Errors.UP_FA_184, RetryErrorUserPhoto }
+        };
+
+        errorsCloseHandler = new Dictionary<Errors, Action>()
+        {
+            { Errors.F_FA_55,  CloseErrorFirebaseDependencies },
+            { Errors.AUGGC_FA_98,  CloseErrorFirebaseAuthGoogle },
+            { Errors.AUGGF_FA_107,  CloseErrorFirebaseAuthGoogle },
+            { Errors.UP_FA_184, CloseErrorUserPhoto }
+        };
     }
 
     /// <summary>
@@ -86,12 +119,12 @@ public class FirebaseApp : MonoBehaviour
         {
             if (task.IsCanceled)
             {
-                Debug.LogError("SignInWithCredentialAsync was canceled.");
+                StartCoroutine(ShowErrorUIRutiner(Errors.AUGGC_FA_98));
                 return;
             }
             if (task.IsFaulted)
             {
-                Debug.LogError("SignInWithCredentialAsync encountered an error: " + task.Exception);
+                StartCoroutine(ShowErrorUIRutiner(Errors.AUGGF_FA_107));
                 return;
             }
 
@@ -159,11 +192,11 @@ public class FirebaseApp : MonoBehaviour
             Texture2D texture = DownloadHandlerTexture.GetContent(webRequest);
             Sprite photoUser = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
             GameManager.Instance.UserPhoto = photoUser;
-            loginController.PhotoUser = photoUser;
+            loginController.UserPhoto = photoUser;
         }
         else
         {
-            Debug.LogError("Error : " + webRequest.error);
+            StartCoroutine(ShowErrorUIRutiner(Errors.UP_FA_184));
         }
     }
 
@@ -178,7 +211,7 @@ public class FirebaseApp : MonoBehaviour
     /// </summary>
     public void SignOut()
     {
-        loginController.PhotoUser = null;
+        loginController.UserPhoto = null;
         Firebase.Auth.FirebaseAuth.DefaultInstance.SignOut();
     }
 
@@ -187,4 +220,97 @@ public class FirebaseApp : MonoBehaviour
     /// </summary>
     /// <returns>True if the user is signed out, false otherwise.</returns>
     public bool IsSignedOut() => Firebase.Auth.FirebaseAuth.DefaultInstance.CurrentUser == null;
+
+    /// <summary>
+    /// Coroutine for displaying the error UI.
+    /// </summary>
+    /// <param name="error">The error to be displayed.</param>
+    /// <returns>An enumerator.</returns>
+    IEnumerator ShowErrorUIRutiner(Errors error)
+    {
+        yield return null;
+
+        GameManager.Instance.HasFoundError(error);
+    }
+
+    /// <summary>
+    /// Handles the retry action for a specific error.
+    /// </summary>
+    /// <param name="error">The error to retry.</param>
+    void OnErrorRetry(Errors error)
+    {
+        if (errorsRetryHandler.ContainsKey(error)) errorsRetryHandler[error]();
+    }
+
+    /// <summary>
+    /// Handles the close action for a specific error.
+    /// </summary>
+    /// <param name="error">The error to close.</param>
+    void OnErrorClose(Errors error)
+    {
+        if (errorsCloseHandler.ContainsKey(error)) errorsCloseHandler[error]();
+    }
+
+    /// <summary>
+    /// Retry the error related to Firebase dependencies.
+    /// </summary>
+    void RetryErrorFirebaseDependencies()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+    }
+
+    /// <summary>
+    /// Close the error related to Firebase dependencies.
+    /// </summary>
+    void CloseErrorFirebaseDependencies()
+    {
+        mainMenuController.ShowUIGameReadyToPlay();
+    }
+
+    /// <summary>
+    /// Retry the error related to Firebase authentication with Google.
+    /// </summary>
+    private void RetryErrorFirebaseAuthGoogle()
+    {
+        GameManager.Instance.HideDisplayError();
+        loginController.SignOutGoogle();
+        StartCoroutine(RetryErrorFirebaseAuthGoogleRutiner());
+    }
+
+    /// <summary>
+    /// Coroutine for retrying the error related to Firebase authentication with Google.
+    /// </summary>
+    /// <returns>An enumerator.</returns>
+    IEnumerator RetryErrorFirebaseAuthGoogleRutiner()
+    {
+        yield return new WaitForSeconds(.1f);
+        loginController.LoginGoogle();
+    }
+
+    /// <summary>
+    /// Close the error related to Firebase authentication with Google.
+    /// </summary>
+    private void CloseErrorFirebaseAuthGoogle()
+    {
+        loginController.SignOutGoogle();
+    }
+
+    /// <summary>
+    /// Retry the error related to user photo.
+    /// </summary>
+    private void RetryErrorUserPhoto()
+    {
+        GameManager.Instance.HideDisplayError();
+        StartCoroutine(LoadAvatarImage(user.PhotoUrl.ToString()));
+    }
+
+    /// <summary>
+    /// Close the error related to user photo.
+    /// </summary>
+    private void CloseErrorUserPhoto()
+    {
+        mainMenuController.ShowUIGameReadyToPlay();
+        loginController.UserPhoto = defaultUserPhoto;
+        GameManager.Instance.UserPhoto = defaultUserPhoto;
+    }
 }

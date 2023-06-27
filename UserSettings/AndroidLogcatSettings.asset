@@ -3,45 +3,87 @@
     "m_SelectedPackage": {
         "deviceId": "146268f60409",
         "name": "com.martandrey.hungrybat",
-        "processId": 15586,
+        "processId": 23611,
         "exited": false
     },
     "m_SelectedPriority": 0,
     "m_KnownPackagesForSerialization": [
         {
             "deviceId": "146268f60409",
-            "name": "com.martandrey.hungrybat",
-            "processId": 25763,
-            "exited": true
-        },
-        {
-            "deviceId": "146268f60409",
-            "name": "com.zhiliaoapp.musically",
-            "processId": 23990,
-            "exited": true
-        },
-        {
-            "deviceId": "146268f60409",
-            "name": "com.martandrey.hungrybat",
-            "processId": 29379,
-            "exited": true
-        },
-        {
-            "deviceId": "146268f60409",
-            "name": "com.martandrey.hungrybat",
-            "processId": 2962,
-            "exited": true
-        },
-        {
-            "deviceId": "146268f60409",
-            "name": "com.martandrey.hungrybat",
-            "processId": 13857,
+            "name": "com.miui.home",
+            "processId": 1980,
             "exited": false
         },
         {
             "deviceId": "146268f60409",
             "name": "com.martandrey.hungrybat",
-            "processId": 15586,
+            "processId": 3889,
+            "exited": true
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 6063,
+            "exited": true
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 30540,
+            "exited": true
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 32521,
+            "exited": true
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 18372,
+            "exited": false
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 12209,
+            "exited": false
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 17497,
+            "exited": false
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 21172,
+            "exited": false
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 26189,
+            "exited": false
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 15100,
+            "exited": false
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 20001,
+            "exited": false
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 23611,
             "exited": false
         }
     ],

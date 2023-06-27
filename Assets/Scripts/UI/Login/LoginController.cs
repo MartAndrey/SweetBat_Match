@@ -13,7 +13,7 @@ public enum GenderUser { Male, Female, Unknown }
 public class LoginController : MonoBehaviour
 {
     // Gets or sets the user's photo sprite.
-    public Sprite PhotoUser { get { return photoUser; } set { photoUser = value; } }
+    public Sprite UserPhoto { get { return userPhoto; } set { userPhoto = value; } }
     public GenderUser CurrentGenderUser { set { currentGenderUser = value; } }
     public Dictionary<string, object> UserData { set { userData = value; } }
 
@@ -51,7 +51,7 @@ public class LoginController : MonoBehaviour
     string textWhenNotLogin = "LOGIN";
 
     GenderUser currentGenderUser;
-    Sprite photoUser = null;
+    Sprite userPhoto = null;
     Animator animator;
 
     Dictionary<string, object> userData;
@@ -201,9 +201,9 @@ public class LoginController : MonoBehaviour
     /// Shows the global loading display until the user's photo is loaded.
     /// </summary>
     /// <returns>An IEnumerator used for coroutine execution.</returns>
-    IEnumerator WhileUserPhoto()
+    public IEnumerator WhileUserPhoto()
     {
-        while (photoUser == null)
+        while (userPhoto == null)
         {
             if (!displayGlobalLoading.activeInHierarchy)
                 ActivateGlobalLoading();
@@ -217,7 +217,7 @@ public class LoginController : MonoBehaviour
 
     void ActivateGlobalLoading() => displayGlobalLoading.SetActive(true);
 
-    void DisableGlobalLoading() => displayGlobalLoading.SetActive(false);
+    public void DisableGlobalLoading() => displayGlobalLoading.SetActive(false);
 
     /// <summary>
     /// Initiates the sign out process.
@@ -252,8 +252,7 @@ public class LoginController : MonoBehaviour
     /// <returns>An IEnumerator used for coroutine execution.</returns>
     IEnumerator ConfirmSignOutRutiner()
     {
-        FirebaseApp.Instance.SignOut();
-        googleAuth.SignOut();
+        SignOutGoogle();
 
         textButtonLogOut.DOFade(0, 0.5f);
         loadingLogOut.SetActive(true);
@@ -278,6 +277,15 @@ public class LoginController : MonoBehaviour
     }
 
     /// <summary>
+    /// Sign out from Google authentication.
+    /// </summary>
+    public void SignOutGoogle()
+    {
+        FirebaseApp.Instance.SignOut();
+        googleAuth.SignOut();
+    }
+
+    /// <summary>
     /// Coroutine to hide the sign out display.
     /// </summary>
     /// <returns>An IEnumerator used for coroutine execution.</returns>
@@ -294,7 +302,7 @@ public class LoginController : MonoBehaviour
         mainMenuController.CloseUILogin(this.gameObject);
         btnLoginText.text = textWhenNotLogin;
         btnLoginAvatar.SetActive(false);
-        photoUser = null;
+        userPhoto = null;
         GameManager.Instance.UserPhoto = null;
 
         ResetConfirmLogOut();
