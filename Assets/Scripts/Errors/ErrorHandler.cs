@@ -1,11 +1,15 @@
 using UnityEngine;
 using TMPro;
 using System.ComponentModel;
+using System;
 
 public class ErrorHandler : MonoBehaviour
 {
     [SerializeField] TMP_Text errorMessage;
     [SerializeField] TMP_Text errorReference;
+    [SerializeField] string emailAddress;
+    [SerializeField] string subject;
+    [SerializeField, TextArea] string body;
 
     Errors error;
 
@@ -46,5 +50,14 @@ public class ErrorHandler : MonoBehaviour
     public void HideDisplayError()
     {
         this.gameObject.SetActive(false);
+    }
+
+    public void Contact()
+    {
+        string encodedSubject = Uri.EscapeDataString(subject);
+        string encodedBody = Uri.EscapeDataString(body);
+
+        string emailUrl = "mailto:" + emailAddress + "?subject=" + encodedSubject + "&body=" + encodedBody;
+        Application.OpenURL(emailUrl);
     }
 }
