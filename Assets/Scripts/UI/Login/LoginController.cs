@@ -162,7 +162,6 @@ public class LoginController : MonoBehaviour
 
         userData.Add("gender", currentGenderUser.ToString());
 
-        GameManager.Instance.UserData.Add("gender", currentGenderUser.ToString());
         GameManager.Instance.UpdateAvatars();
 
         SetInformationUser();

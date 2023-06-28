@@ -3,30 +3,48 @@ using UnityEngine;
 using Firebase.Firestore;
 using Firebase.Extensions;
 using System.Threading.Tasks;
+using System;
+using System.Collections;
 
 public class CloudFirestore : MonoBehaviour
 {
     public static CloudFirestore Instance;
 
-    FirebaseApp firebaseApp;
     FirebaseFirestore db;
+    Dictionary<Errors, Action> errorsRetryHandler;
+    Dictionary<Errors, Action> errorsCloseHandler;
+
+    void OnEnable()
+    {
+        FirebaseApp.Instance.OnSetFirebase.AddListener(InitializeData);
+        GameManager.Instance.OnErrorRetry.AddListener(OnErrorRetry);
+        GameManager.Instance.OnErrorClose.AddListener(OnErrorClose);
+    }
+
+    void OnDisable()
+    {
+        FirebaseApp.Instance.OnSetFirebase.RemoveListener(InitializeData);
+        GameManager.Instance.OnErrorRetry.RemoveListener(OnErrorRetry);
+        GameManager.Instance.OnErrorClose.RemoveListener(OnErrorClose);
+    }
 
     void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        firebaseApp = GameObject.FindObjectOfType<FirebaseApp>();
-    }
+        // Close the error related to user photo.
+        errorsRetryHandler = new Dictionary<Errors, Action>()
+        {
+            { Errors.CNU_CF_70,  RetryErrorCreatedNewUser },
+            { Errors.GUD_CF_103,  RetryErrorGetUserData },
+        };
 
-    void OnEnable()
-    {
-        firebaseApp.OnSetFirebase.AddListener(InitializeData);
-    }
-
-    void OnDisable()
-    {
-        firebaseApp.OnSetFirebase.RemoveListener(InitializeData);
+        errorsCloseHandler = new Dictionary<Errors, Action>()
+        {
+            { Errors.CNU_CF_70,  CloseErrorCreatedNewUser },
+            { Errors.GUD_CF_103,  CloseErrorGetUserData },
+        };
     }
 
     void InitializeData()
@@ -44,13 +62,9 @@ public class CloudFirestore : MonoBehaviour
 
         userRef.SetAsync(userData).ContinueWithOnMainThread(task =>
         {
-            if (task.IsFaulted)
+            if (task.IsFaulted || task.IsCanceled)
             {
-
-            }
-            else
-            {
-
+                StartCoroutine(ShowErrorUIRutiner(Errors.CNU_CF_70));
             }
         });
     }
@@ -85,7 +99,93 @@ public class CloudFirestore : MonoBehaviour
 
         docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
         {
-            GameManager.Instance.UserData = task.Result.ToDictionary();
+            if (task.IsCompletedSuccessfully)
+                GameManager.Instance.UserData = task.Result.ToDictionary();
+            else if (task.IsFaulted || task.IsCanceled)
+                StartCoroutine(ShowErrorUIRutiner(Errors.GUD_CF_103));
+
         });
+    }
+
+    /// <summary>
+    /// Coroutine for displaying the error UI.
+    /// </summary>
+    /// <param name="error">The error to be displayed.</param>
+    /// <returns>An enumerator.</returns>
+    IEnumerator ShowErrorUIRutiner(Errors error)
+    {
+        yield return null;
+
+        GameManager.Instance.HasFoundError(error);
+    }
+
+    /// <summary>
+    /// Handles the retry action for a specific error.
+    /// </summary>
+    /// <param name="error">The error to retry.</param>
+    void OnErrorRetry(Errors error)
+    {
+        if (errorsRetryHandler.ContainsKey(error)) errorsRetryHandler[error]();
+    }
+
+    /// <summary>
+    /// Handles the close action for a specific error.
+    /// </summary>
+    /// <param name="error">The error to close.</param>
+    void OnErrorClose(Errors error)
+    {
+        if (errorsCloseHandler.ContainsKey(error)) errorsCloseHandler[error]();
+    }
+
+    /// <summary>
+    /// Retries the error handling process for user creation.
+    /// </summary>
+    void RetryErrorCreatedNewUser()
+    {
+        GameManager.Instance.HideDisplayError();
+        StartCoroutine(RetryErrorCreatedNewUserRutiner());
+    }
+
+    /// <summary>
+    /// Coroutine for retrying the error handling process for user creation.
+    /// </summary>
+    IEnumerator RetryErrorCreatedNewUserRutiner()
+    {
+        yield return new WaitForSeconds(.1f);
+        CreateNewUser(FirebaseApp.Instance.UserData);
+    }
+
+    /// <summary>
+    /// Closes the error handling process for user creation.
+    /// </summary>
+    void CloseErrorCreatedNewUser()
+    {
+        GameManager.Instance.ResetCurrentSceneAndSignOut();
+    }
+
+    /// <summary>
+    /// Retries the error handling process for retrieving user data.
+    /// </summary>
+    void RetryErrorGetUserData()
+    {
+        GameManager.Instance.HideDisplayError();
+        StartCoroutine(RetryErrorGetUserDataRutiner());
+    }
+
+    /// <summary>
+    /// Retries the error handling process for retrieving user data.
+    /// </summary>
+    IEnumerator RetryErrorGetUserDataRutiner()
+    {
+        yield return new WaitForSeconds(1f);
+        GetUserData(FirebaseApp.Instance.UserData["id"].ToString());
+    }
+
+    /// <summary>
+    /// Closes the error handling process for retrieving user data.
+    /// </summary>
+    void CloseErrorGetUserData()
+    {
+        GameManager.Instance.ResetCurrentSceneAndSignOut();
     }
 }

@@ -1057,6 +1057,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
 --- !u!223 &176950657
 Canvas:
   m_ObjectHideFlags: 0
@@ -7914,6 +7915,10 @@ PrefabInstance:
     - target: {fileID: 7530285428586045725, guid: 450f653ad2b8d8044be5f2ba8021885c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9068206013375791480, guid: 450f653ad2b8d8044be5f2ba8021885c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 4.199951
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []

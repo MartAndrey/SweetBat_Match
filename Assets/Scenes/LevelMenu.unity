@@ -3913,6 +3913,12 @@ MonoBehaviour:
   OnUniqueMatches:
     m_PersistentCalls:
       m_Calls: []
+  OnErrorRetry:
+    m_PersistentCalls:
+      m_Calls: []
+  OnErrorClose:
+    m_PersistentCalls:
+      m_Calls: []
   gameMode: 3
   level: 0
   availableFruits:
@@ -6771,11 +6777,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 621103949}
   m_CullTransparentMesh: 1
---- !u!224 &631721051 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 8408532318414470402, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
-  m_PrefabInstance: {fileID: 8408532317934137689}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &632865390
 GameObject:
   m_ObjectHideFlags: 0
@@ -17344,7 +17345,6 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
 --- !u!223 &1504438227
 Canvas:
   m_ObjectHideFlags: 0
@@ -18111,7 +18111,7 @@ RectTransform:
   - {fileID: 320040478}
   - {fileID: 1706276174}
   - {fileID: 1484898497}
-  - {fileID: 631721051}
+  - {fileID: 8408532317934137690}
   m_Father: {fileID: 1504438228}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -25453,3 +25453,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+--- !u!224 &8408532317934137690 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3927539084890247889, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+  m_PrefabInstance: {fileID: 8408532317934137689}
+  m_PrefabAsset: {fileID: 0}

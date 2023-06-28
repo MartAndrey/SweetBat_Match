@@ -9,6 +9,8 @@ public class FirebaseApp : MonoBehaviour
 {
     public static FirebaseApp Instance;
 
+    public Dictionary<string, object> UserData { get { return userData; } }
+
     [HideInInspector] public UnityEvent OnSetFirebase;
 
     [SerializeField] LoginController loginController;
@@ -65,25 +67,25 @@ public class FirebaseApp : MonoBehaviour
             else
             {
                 // Firebase Unity SDK is not safe to use here.
-                StartCoroutine(ShowErrorUIRutiner(Errors.F_FA_55));
+                StartCoroutine(ShowErrorUIRutiner(Errors.F_FA_68));
             }
         });
 
         // Close the error related to user photo.
         errorsRetryHandler = new Dictionary<Errors, Action>()
         {
-            { Errors.F_FA_55,  RetryErrorFirebaseDependencies },
-            { Errors.AUGGC_FA_98,  RetryErrorFirebaseAuthGoogle },
-            { Errors.AUGGF_FA_107,  RetryErrorFirebaseAuthGoogle },
-            { Errors.UP_FA_184, RetryErrorUserPhoto }
+            { Errors.F_FA_68,  RetryErrorFirebaseDependencies },
+            { Errors.AUGGC_FA_122,  RetryErrorFirebaseAuthGoogle },
+            { Errors.AUGGF_FA_127,  RetryErrorFirebaseAuthGoogle },
+            { Errors.UP_FA_199, RetryErrorUserPhoto }
         };
 
         errorsCloseHandler = new Dictionary<Errors, Action>()
         {
-            { Errors.F_FA_55,  CloseErrorFirebaseDependencies },
-            { Errors.AUGGC_FA_98,  CloseErrorFirebaseAuthGoogle },
-            { Errors.AUGGF_FA_107,  CloseErrorFirebaseAuthGoogle },
-            { Errors.UP_FA_184, CloseErrorUserPhoto }
+            { Errors.F_FA_68,  CloseErrorFirebaseDependencies },
+            { Errors.AUGGC_FA_122,  CloseErrorFirebaseAuthGoogle },
+            { Errors.AUGGF_FA_127,  CloseErrorFirebaseAuthGoogle },
+            { Errors.UP_FA_199, CloseErrorUserPhoto }
         };
     }
 
@@ -119,12 +121,12 @@ public class FirebaseApp : MonoBehaviour
         {
             if (task.IsCanceled)
             {
-                StartCoroutine(ShowErrorUIRutiner(Errors.AUGGC_FA_98));
+                StartCoroutine(ShowErrorUIRutiner(Errors.AUGGC_FA_122));
                 return;
             }
             if (task.IsFaulted)
             {
-                StartCoroutine(ShowErrorUIRutiner(Errors.AUGGF_FA_107));
+                StartCoroutine(ShowErrorUIRutiner(Errors.AUGGF_FA_127));
                 return;
             }
 
@@ -196,7 +198,7 @@ public class FirebaseApp : MonoBehaviour
         }
         else
         {
-            StartCoroutine(ShowErrorUIRutiner(Errors.UP_FA_184));
+            StartCoroutine(ShowErrorUIRutiner(Errors.UP_FA_199));
         }
     }
 

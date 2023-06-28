@@ -15,13 +15,19 @@ public enum GamePlayMode { MovesLimited, TimedMatch }
 public enum Errors
 {
     [Description("Something went wrong with the database dependencies. Please try again. If the problem persists, contact the game developer")]
-    F_FA_55,
+    F_FA_68,
     [Description("Something went wrong with authentication. If the problem persists, contact the game developer.")]
-    AUGGC_FA_98,
+    AUGGC_FA_122,
     [Description("Something went wrong with authentication. If the problem persists, contact the game developer.")]
-    AUGGF_FA_107,
+    AUGGF_FA_127,
     [Description("Something went wrong when downloading the avatar image. If the problem persists, contact the game developer.")]
-    UP_FA_184
+    UP_FA_199,
+    [Description("Something went wrong with authentication. If the problem persists, contact the game developer.")]
+    AUGG_GA_71,
+    [Description("Something went wrong while synchronizing with the database. If the problem persists, contact the game developer.")]
+    CNU_CF_70,
+    [Description("Something went wrong while synchronizing with the database. If the problem persists, contact the game developer.")]
+    GUD_CF_103,
 }
 
 public class GameManager : MonoBehaviour
@@ -101,9 +107,9 @@ public class GameManager : MonoBehaviour
     bool uniqueMatches;
 
     // Dictionary containing user data.
-    Dictionary<string, object> userData = null;
+    Dictionary<string, object> userData;
     // Sprite representing the user's photo.
-    Sprite userPhoto = null;
+    Sprite userPhoto;
 
     ErrorHandler errorHandler;
 
@@ -255,5 +261,14 @@ public class GameManager : MonoBehaviour
     public void HideDisplayError()
     {
         errorHandler.HideDisplayError();
+    }
+
+    /// <summary>
+    /// Closes the error handling process for retrieving user data.
+    /// </summary>
+    public void ResetCurrentSceneAndSignOut()
+    {
+        FirebaseApp.Instance.SignOut();
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
 }
