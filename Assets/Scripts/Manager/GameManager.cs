@@ -173,9 +173,9 @@ public class GameManager : MonoBehaviour
         errorHandler = GameObject.FindObjectOfType<ErrorHandler>(true);
 
         if (scene.name == "Game")
-        {
             OnGameMode?.Invoke(gameMode);
-        }
+        else if (scene.name == "LevelMenu")
+            UpdateAvatars();
     }
 
     /// <summary>

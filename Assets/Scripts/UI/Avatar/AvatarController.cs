@@ -16,6 +16,14 @@ public class AvatarController : MonoBehaviour
     [SerializeField] Sprite overlayMan;
     [SerializeField] Sprite overlayWomen;
     [SerializeField] Sprite overlayUnknown;
+    [Space()]
+    [SerializeField] Image imageFrameMan;
+    [SerializeField] GameObject informationUserMan;
+    [SerializeField] GameObject offsetMan;
+    [SerializeField] Image imageFrameWomen;
+    [SerializeField] GameObject informationUserWomen;
+    [SerializeField] GameObject offsetWomen;
+    [SerializeField] bool showFrame = false;
 
     /// <summary>
     /// Sets the UI and displays the male avatar.
@@ -29,6 +37,13 @@ public class AvatarController : MonoBehaviour
 
         avatar.sprite = overlayMan;
         photoAvatarMan.sprite = photoAvatar;
+
+        if (showFrame)
+        {
+            imageFrameMan.enabled = true;
+            informationUserMan.SetActive(true);
+            offsetMan.SetActive(true);
+        }
     }
 
     /// <summary>
@@ -43,6 +58,13 @@ public class AvatarController : MonoBehaviour
 
         avatar.sprite = overlayWomen;
         photoAvatarWomen.sprite = photoAvatar;
+
+        if (showFrame)
+        {
+            imageFrameWomen.enabled = true;
+            informationUserWomen.SetActive(true);
+            offsetWomen.SetActive(true);
+        }
     }
 
     /// <summary>

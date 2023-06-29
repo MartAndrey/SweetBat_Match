@@ -407,6 +407,10 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 757946215}
     m_Modifications:
+    - target: {fileID: 2796260183675989282, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3927539084890247888, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
       propertyPath: m_Name
       value: Avatar
@@ -446,6 +450,18 @@ PrefabInstance:
     - target: {fileID: 3927539084890247889, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
       propertyPath: m_SizeDelta.y
       value: 282.5365
+      objectReference: {fileID: 0}
+    - target: {fileID: 3927539084890247889, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3927539084890247889, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3927539084890247889, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3927539084890247889, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -499,7 +515,35 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 4202681824926727448, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 9.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7043955076377880366, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7231211866019922110, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8219094865688288119, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 4933045119831697549, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+    - {fileID: 7310679712938467833, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+    - {fileID: 8219094865688288119, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+    - {fileID: 7231211866019922110, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+    - {fileID: 7043955076377880366, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+    - {fileID: 2301577724159926744, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+    - {fileID: 2796260183675989282, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+    - {fileID: 3168131361453047142, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+    - {fileID: 1882626690560742862, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+    - {fileID: 2633780198826946870, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+    - {fileID: 9180903654402591323, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+    - {fileID: 1815462319380585874, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
 --- !u!224 &69622138 stripped
@@ -3214,11 +3258,35 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: 3.100006
       objectReference: {fileID: 0}
+    - target: {fileID: 4202681824926727448, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4202681824926727448, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -15.599998
+      objectReference: {fileID: 0}
+    - target: {fileID: 5260910741041009402, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0
+      objectReference: {fileID: 0}
     - target: {fileID: 6132027245604930620, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 3.100006
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4933045119831697549, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+    - {fileID: 7310679712938467833, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+    - {fileID: 8219094865688288119, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+    - {fileID: 2301577724159926744, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+    - {fileID: 7043955076377880366, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+    - {fileID: 7231211866019922110, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+    - {fileID: 3168131361453047142, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+    - {fileID: 2796260183675989282, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+    - {fileID: 1882626690560742862, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+    - {fileID: 2633780198826946870, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+    - {fileID: 9180903654402591323, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
+    - {fileID: 1815462319380585874, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
 --- !u!224 &695355474 stripped
@@ -8779,7 +8847,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2088217579}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -9435,7 +9503,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7495080115227862180, guid: dade7306939b664438af07967a1db99c, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7495080115227862181, guid: dade7306939b664438af07967a1db99c, type: 3}
       propertyPath: m_Enabled

@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 2560
     height: 989
   m_ShowMode: 4
-  m_Title: Inspector
+  m_Title: Simulator
   m_RootView: {fileID: 7}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -75,7 +75,7 @@ MonoBehaviour:
   m_MinSize: {x: 400, y: 200}
   m_MaxSize: {x: 32384, y: 16192}
   vertical: 0
-  controlID: 97
+  controlID: 54
 --- !u!114 &4
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -416,7 +416,7 @@ MonoBehaviour:
     m_SaveData: []
   m_LockTracker:
     m_IsLocked: 0
-  m_LastSelectedObjectID: 87354
+  m_LastSelectedObjectID: 100544
 --- !u!114 &15
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -634,22 +634,22 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scenes
+    - Assets
     m_Globs: []
     m_OriginalText: 
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Scenes
+  - Assets
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\jeffe\OneDrive\Documentos\Unity\Projects\Hungry Bat
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 102}
-    m_SelectedIDs: 64760000
-    m_LastClickedID: 30308
-    m_ExpandedIDs: 000000004a700000
+    scrollPos: {x: 0, y: 79}
+    m_SelectedIDs: 4a700000
+    m_LastClickedID: 28746
+    m_ExpandedIDs: 000000004a700000667100006e710000b496000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -702,10 +702,10 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: b4760000
-    m_LastClickedInstanceID: 30388
-    m_HadKeyboardFocusLastEvent: 0
-    m_ExpandedInstanceIDs: c623000000000000
+    m_SelectedInstanceIDs: 36850100
+    m_LastClickedInstanceID: 99638
+    m_HadKeyboardFocusLastEvent: 1
+    m_ExpandedInstanceIDs: c623000000000000a49d0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -805,9 +805,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: ecf6ffff
-      m_LastClickedID: -2324
-      m_ExpandedIDs: 22fbffff9a690000c46a0000
+      m_SelectedIDs: 
+      m_LastClickedID: 0
+      m_ExpandedIDs: 4a06ffffa606fffff20dffffaa16fffff618fffffe61ffff5a62ffffa669ffff5e72ffff9c74ffff0082ffff5c82ffffa889ffff6092ffff9e94ffffcaa0ffff26a1ffff72a8ffff2ab1ffff68b3ffff92c3ffffeec3ffff3acbfffff2d3ffff30d6ffff20e2ffff7ee2ffffcae9ffff82f2ffffc0f4ffff22fbffffbe4f01000a500100a8510100368501000e870100169d0100ee9e0100
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1089,9 +1089,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 1107.1927, y: 1621.8309, z: -2.4630933}
+    m_Target: {x: 486.04565, y: 1532.5038, z: 0.7166393}
     speed: 2
-    m_Value: {x: 1107.1927, y: 1621.8309, z: -2.4630933}
+    m_Value: {x: 486.04565, y: 1532.5038, z: 0.7166393}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1141,9 +1141,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 1464.7631
+    m_Target: 1563.3822
     speed: 2
-    m_Value: 1464.7631
+    m_Value: 1563.3822
   m_Ortho:
     m_Target: 1
     speed: 2
