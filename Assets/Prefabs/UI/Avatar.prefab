@@ -2073,7 +2073,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3bebd073e73f6b442bc31f5d1902919c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 51dfa2c3db7be4b4aa6ff5d4792663b5, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2108,9 +2108,15 @@ MonoBehaviour:
   imageFrameMan: {fileID: 6912206654677181964}
   informationUserMan: {fileID: 2895112810014328015}
   offsetMan: {fileID: 8991647339142079760}
+  textNameMan: {fileID: 1880672538232681806}
+  textLevelMan: {fileID: 3901499308157294625}
   imageFrameWomen: {fileID: 796792949509725166}
   informationUserWomen: {fileID: 8657368374219887089}
   offsetWomen: {fileID: 99201966544247675}
+  textNameWomen: {fileID: 3022618178460685323}
+  textLevelWomen: {fileID: 7922627736734354541}
+  textNameUnknown: {fileID: 934890594399306415}
+  textLevelUnknown: {fileID: 8962340077052100503}
   showFrame: 0
 --- !u!223 &7310679712938467833
 Canvas:

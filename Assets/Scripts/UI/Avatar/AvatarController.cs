@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,9 +21,18 @@ public class AvatarController : MonoBehaviour
     [SerializeField] Image imageFrameMan;
     [SerializeField] GameObject informationUserMan;
     [SerializeField] GameObject offsetMan;
+    [SerializeField] TMP_Text textNameMan;
+    [SerializeField] TMP_Text textLevelMan;
+    [Space()]
     [SerializeField] Image imageFrameWomen;
     [SerializeField] GameObject informationUserWomen;
     [SerializeField] GameObject offsetWomen;
+    [SerializeField] TMP_Text textNameWomen;
+    [SerializeField] TMP_Text textLevelWomen;
+    [Space()]
+    [SerializeField] TMP_Text textNameUnknown;
+    [SerializeField] TMP_Text textLevelUnknown;
+
     [SerializeField] bool showFrame = false;
 
     /// <summary>
@@ -43,6 +53,8 @@ public class AvatarController : MonoBehaviour
             imageFrameMan.enabled = true;
             informationUserMan.SetActive(true);
             offsetMan.SetActive(true);
+            textNameMan.text = GameManager.Instance.UserData["name"].ToString().Split(' ')[0];
+            textLevelMan.text = (GameManager.Instance.Level + 1).ToString();
         }
     }
 
@@ -64,6 +76,8 @@ public class AvatarController : MonoBehaviour
             imageFrameWomen.enabled = true;
             informationUserWomen.SetActive(true);
             offsetWomen.SetActive(true);
+            textNameWomen.text = GameManager.Instance.UserData["name"].ToString().Split(' ')[0];
+            textLevelWomen.text = (GameManager.Instance.Level + 1).ToString();
         }
     }
 
@@ -79,6 +93,12 @@ public class AvatarController : MonoBehaviour
 
         avatar.sprite = overlayUnknown;
         photoAvatarUnknown.sprite = photoAvatar;
+
+        if (showFrame)
+        {
+            textNameUnknown.text = GameManager.Instance.UserData["name"].ToString().Split(' ')[0];
+            textLevelUnknown.text = (GameManager.Instance.Level + 1).ToString();
+        }
     }
 
     /// <summary>
