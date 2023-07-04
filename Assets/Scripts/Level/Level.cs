@@ -1,11 +1,28 @@
 
+using System;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Level : MonoBehaviour
 {
     // Declaration of the 'Stars' property, which returns the value of the 'stars' variable
-    // public int Stars { get { return stars; } }
+    public int Stars { get { return stars; } set { stars = value; } }
+    public int Score { get { return score; } set { score = value; } }
+    public string GoalInformation
+    {
+        get { return goalInformation; }
+        set
+        {
+            string goal = value;
+            GameMode gameMode = (GameMode)Enum.Parse(typeof(GameMode), goal);
+            var fieldInfo = gameMode.GetType().GetField(gameMode.ToString());
+            var attributes = fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];
+            goalInformation = attributes[0].Description;
+        }
+    }
+
+    public bool IsActive { set { isActive = value; } }
 
     [SerializeField] Image imageLock; // The Image component for the lock icon
     [SerializeField] Sprite levelUnlocked; // The sprite to use when the level is unlocked
@@ -14,7 +31,8 @@ public class Level : MonoBehaviour
 
     // Declaration of the 'stars' variable of the 'int' data type, 'goal' variable of the 'string' data type, and 'isActive' variable of the 'bool' data type
     int stars;
-    string goal = "Default";
+    int score;
+    string goalInformation = "";
     bool isActive = false;
 
     void Awake()
@@ -43,7 +61,7 @@ public class Level : MonoBehaviour
 
             levelUI.ActiveLevelUI();
             // Sets the level name, number of stars, and goal in the level UI
-            levelUI.SetValueLevel(gameObject.name, stars, goal);
+            levelUI.SetValueLevel(gameObject.name, stars, goalInformation);
         }
     }
 }

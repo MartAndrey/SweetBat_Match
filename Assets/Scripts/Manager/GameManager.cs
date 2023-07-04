@@ -7,7 +7,17 @@ using UnityEngine.Events;
 using System.ComponentModel;
 
 // Define a set of game modes for different game objectives
-public enum GameMode { FeedingObjective, ScoringObjective, TimeObjective, CollectionObjective }
+public enum GameMode
+{
+    [Description("Feed the bat!")]
+    FeedingObjective,
+    [Description("Beat the score!")]
+    ScoringObjective,
+    [Description("Pick the fruits before the time runs out!")]
+    TimeObjective,
+    [Description("Collect all orders!")]
+    CollectionObjective
+}
 public enum GamePlayMode { MovesLimited, TimedMatch }
 /// <summary>
 /// Enum representing different error types.

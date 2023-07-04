@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using DG.Tweening;
+using System;
 
 public class LevelManager : MonoBehaviour
 {
@@ -34,18 +35,62 @@ public class LevelManager : MonoBehaviour
     float nextLevelTime = 1;
     int nextPositionLevels = -250;
 
+    void Awake()
+    {
+        GetUserLevels();
+    }
+
     void Start()
     {
+        // Get the width of the level prefab
         widthLevelPrefab = levelPrefab.GetComponent<RectTransform>().sizeDelta.x;
-
-        CreateLevel(initialLevel); // Create the initial levels
-        UnlockLevel(levelsList[GameManager.Instance.Level]); // Unlock the first level
     }
-    // [ContextMenu("SetLevels")] void SetLevels() => CreateLevel(10);
-    // Creates the specified number of levels starting from the current level
-    void CreateLevel(int amount)
+
+    /// <summary>
+    /// Get the width of the level prefab
+    /// <summary>
+    void GetUserLevels()
     {
+        StartCoroutine(GetUserLevelsRutiner());
+    }
+
+    /// <summary>
+    /// Coroutine to retrieve user levels from the database
+    /// </summary>
+    IEnumerator GetUserLevelsRutiner()
+    {
+        // Check the user levels using the CloudFirestore instance
+        var checkUserLevels = CloudFirestore.Instance.CheckUserLevels(GameManager.Instance.UserData["id"].ToString());
+
+        // Wait until the check is completed
+        yield return new WaitUntil(() => checkUserLevels.IsCompleted);
+
+        // Get the result from the check
+        (bool exitsLevels, List<Dictionary<string, object>> levelsData) = checkUserLevels.Result;
+
+        // If levels exist, create them; otherwise, create initial levels
+        if (exitsLevels)
+        {
+            CreateLevels(initialLevel, false, levelsData);
+            yield break;
+        }
+
+        CreateLevels(initialLevel, true);
+    }
+
+    /// <summary>
+    /// Creates the specified number of levels starting from the current level.
+    /// </summary>
+    /// <param name="amount">The number of levels to create.</param>
+    /// <param name="setDataBase">Flag indicating whether to set level data in the database.</param>
+    /// <param name="listLevels">List of level data if setDataBase is false.</param>
+    void CreateLevels(int amount, bool setDataBase, List<Dictionary<string, object>> listLevels = null)
+    {
+        // Get the current level from the GameManager
         int currentLevel = GameManager.Instance.Level;  // Get the current level from the GameManager
+
+        // Create a list to hold level data
+        List<Dictionary<string, object>> level = new List<Dictionary<string, object>>();
 
         // Create the specified number of levels
         for (int i = 1; i <= amount; i++)
@@ -60,12 +105,45 @@ public class LevelManager : MonoBehaviour
             // Add the level to the levels list
             levelsList.Add(newLevel);
 
+            // Set level data based on setDataBase flag
+            if (setDataBase)
+            {
+                // Create level data for new levels
+                Dictionary<string, object> levelData = new Dictionary<string, object>()
+                {
+                    {"Stars", 0},
+                    {"Score", 0},
+                    {"Game Mode", UnityEngine.Random.Range(0, Enum.GetValues(typeof(GameMode)).Length)},
+                };
+
+                level.Add(levelData);
+            }
+            else
+            {
+                // Set level data from the provided list
+                Level levelUser = newLevel.GetComponent<Level>();
+                Dictionary<string, object> levelData = listLevels[i - 1];
+                levelUser.Stars = Convert.ToInt32(levelData["Stars"]);
+                levelUser.Score = Convert.ToInt32(levelData["Score"]);
+                levelUser.GoalInformation = levelData["Game Mode"].ToString();
+
+            }
+
             // Increase the size of the levels container if there are more than 4 levels and the current level is not 4
             if (i > 4 && currentLevel < 4 || currentLevel > 4)
             {
                 // Increase the width of the levels container by the width of the level prefab
                 rectTransformLevels.sizeDelta = new Vector2(rectTransformLevels.sizeDelta.x + widthLevelPrefab, rectTransformLevels.sizeDelta.y);
             }
+        }
+
+        if (setDataBase)
+        {
+            // Update user levels in the database
+            CloudFirestore.Instance.SetUserLevels(level);
+
+            // Unlock the first level
+            UnlockLevel(levelsList[GameManager.Instance.Level]); // Unlock the first level
         }
     }
 

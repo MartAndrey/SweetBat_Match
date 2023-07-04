@@ -5,9 +5,12 @@ using Firebase.Extensions;
 using System.Threading.Tasks;
 using System;
 using System.Collections;
+using System.Linq;
+using TMPro;
 
 public class CloudFirestore : MonoBehaviour
 {
+    public TMP_Text text;
     public static CloudFirestore Instance;
 
     FirebaseFirestore db;
@@ -45,6 +48,8 @@ public class CloudFirestore : MonoBehaviour
             { Errors.CNU_CF_70,  CloseErrorCreatedNewUser },
             { Errors.GUD_CF_103,  CloseErrorGetUserData },
         };
+
+        DontDestroyOnLoad(gameObject);
     }
 
     void InitializeData()
@@ -104,6 +109,71 @@ public class CloudFirestore : MonoBehaviour
             else if (task.IsFaulted || task.IsCanceled)
                 StartCoroutine(ShowErrorUIRutiner(Errors.GUD_CF_103));
 
+        });
+    }
+
+    /// <summary>
+    /// Asynchronously checks user levels in the database.
+    /// </summary>
+    /// <param name="userId">The ID of the user.</param>
+    /// <returns>A tuple containing a flag indicating whether levels exist and the list of level data.</returns>
+    async public Task<(bool, List<Dictionary<string, object>>)> CheckUserLevels(string userId)
+    {
+        // Get the reference to the user's levels collection
+        CollectionReference userRef = db.Collection("Users").Document(userId).Collection("Levels");
+
+        // Create a list to hold level data
+        List<Dictionary<string, object>> levels = new List<Dictionary<string, object>>();
+
+        // Get the snapshot of the user's levels
+        QuerySnapshot snapshot = await userRef.GetSnapshotAsync();
+
+        // Check if the snapshot and documents exist and if there are any documents
+        if (!(snapshot != null && snapshot.Documents != null && snapshot.Documents.Any()))
+            return (false, null);
+
+        // Iterate over the documents and convert them to dictionaries
+        foreach (DocumentSnapshot document in snapshot.Documents)
+        {
+            Dictionary<string, object> levelData = document.ToDictionary();
+            levels.Add(levelData);
+        }
+
+        return (true, levels);
+    }
+
+    /// <summary>
+    /// Sets the user levels in the database.
+    /// </summary>
+    /// <param name="userData">List of level data to set.</param>
+    public void SetUserLevels(List<Dictionary<string, object>> userData)
+    {
+        // Get the current level
+        int currentLevel = GameManager.Instance.Level + 1;
+        // Get the reference to the user's levels collection
+        CollectionReference userRef = db.Collection("Users").Document(GameManager.Instance.UserData["id"].ToString()).Collection("Levels");
+
+        // Start a batch write operation
+        WriteBatch batch = db.StartBatch();
+
+        // Iterate over the level data and set them in the database
+        userData.ForEach(level =>
+        {
+            // Get the document reference for the level
+            DocumentReference newLevelDoc = userRef.Document($"level {currentLevel}");
+
+            // Set the level data in the batch operation
+            batch.Set(newLevelDoc, level);
+            currentLevel++;
+        });
+
+        // Commit the batch operation asynchronously
+        batch.CommitAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsFaulted || task.IsCanceled)
+            {
+
+            }
         });
     }
 
