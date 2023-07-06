@@ -113,33 +113,34 @@ public class CloudFirestore : MonoBehaviour
     }
 
     /// <summary>
-    /// Asynchronously checks user levels in the database.
+    /// Retrieves the levels associated with a user from the database.
     /// </summary>
     /// <param name="userId">The ID of the user.</param>
-    /// <returns>A tuple containing a flag indicating whether levels exist and the list of level data.</returns>
-    async public Task<(bool, List<Dictionary<string, object>>)> CheckUserLevels(string userId)
+    public void UserLevels(string userId)
     {
         // Get the reference to the user's levels collection
         CollectionReference userRef = db.Collection("Users").Document(userId).Collection("Levels");
 
-        // Create a list to hold level data
-        List<Dictionary<string, object>> levels = new List<Dictionary<string, object>>();
-
         // Get the snapshot of the user's levels
-        QuerySnapshot snapshot = await userRef.GetSnapshotAsync();
-
-        // Check if the snapshot and documents exist and if there are any documents
-        if (!(snapshot != null && snapshot.Documents != null && snapshot.Documents.Any()))
-            return (false, null);
-
-        // Iterate over the documents and convert them to dictionaries
-        foreach (DocumentSnapshot document in snapshot.Documents)
+        userRef.OrderBy("order").GetSnapshotAsync().ContinueWithOnMainThread(task =>
         {
-            Dictionary<string, object> levelData = document.ToDictionary();
-            levels.Add(levelData);
-        }
+            if (task.IsCompletedSuccessfully)
+            {
+                List<Dictionary<string, object>> levels = new List<Dictionary<string, object>>();
 
-        return (true, levels);
+                QuerySnapshot snapshot = task.Result;
+
+                // Iterate through each document snapshot and convert it to a dictionary
+                foreach (DocumentSnapshot documentSnapshot in snapshot.Documents)
+                {
+                    Dictionary<string, object> levelData = documentSnapshot.ToDictionary();
+                    levels.Add(levelData);
+                }
+
+                // Assign the retrieved levels to the GameManager instance
+                GameManager.Instance.LevelsData = levels;
+            }
+        });
     }
 
     /// <summary>
@@ -176,6 +177,53 @@ public class CloudFirestore : MonoBehaviour
             }
         });
     }
+
+    /// <summary>
+    /// Retrieves the collectibles associated with a user from the database.
+    /// </summary>
+    /// <param name="userId">The ID of the user.</param>
+    public void UserCollectibles(string userId)
+    {
+        // Get the reference to the user's collectibles document
+        DocumentReference userRef = db.Collection("Users").Document(userId).Collection("Collectibles").Document("Collectable");
+
+        // Get the snapshot of the user's collectibles
+        userRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                // Assign the retrieved collectibles to the GameManager instance
+                GameManager.Instance.CollectiblesData = task.Result.ToDictionary();
+            }
+        });
+    }
+
+    // public void SetCollectible(Dictionary<string, object> collectableData)
+    // {
+    //     text = GameObject.FindGameObjectWithTag("text").GetComponent<TMP_Text>();
+    //     text.text = "Init";
+    //     DocumentReference docRef = db.Collection("Users").Document(GameManager.Instance.UserData["id"].ToString()).Collection("Collectibles").Document("Collectable");
+
+    //     docRef.SetAsync(collectableData).ContinueWithOnMainThread(task =>
+    //      {
+    //          if (task.IsCompletedSuccessfully)
+    //          {
+    //              text.text = "Success";
+    //          }
+    //          else
+    //          {
+    //              text.text = "Faild";
+    //          }
+    //      });
+
+    //     userRef2.SetAsync(userData).ContinueWithOnMainThread(task =>
+    //   {
+    //       if (task.IsFaulted || task.IsCanceled)
+    //       {
+    //           StartCoroutine(ShowErrorUIRutiner(Errors.CNU_CF_70));
+    //       }
+    //   });
+    // }
 
     /// <summary>
     /// Coroutine for displaying the error UI.

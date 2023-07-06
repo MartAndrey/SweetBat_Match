@@ -80,6 +80,9 @@ public class GameManager : MonoBehaviour
     public Dictionary<string, object> UserData { get { return userData; } set { userData = value; } }
     public Sprite UserPhoto { get { return userPhoto; } set { userPhoto = value; } }
 
+    public List<Dictionary<string, object>> LevelsData { get { return levelsData; } set { levelsData = value; } }
+    public Dictionary<string, object> CollectiblesData { get { return collectiblesData; } set { collectiblesData = value; } }
+
     // Serialized game mode field
     [SerializeField] GameMode gameMode;
 
@@ -120,6 +123,9 @@ public class GameManager : MonoBehaviour
     Dictionary<string, object> userData;
     // Sprite representing the user's photo.
     Sprite userPhoto;
+
+    List<Dictionary<string, object>> levelsData;
+    Dictionary<string, object> collectiblesData;
 
     ErrorHandler errorHandler;
 
@@ -281,4 +287,9 @@ public class GameManager : MonoBehaviour
         FirebaseApp.Instance.SignOut();
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
+
+    // public void SetCollectiblesDataBase()
+    // {
+    //     if()
+    // }
 }

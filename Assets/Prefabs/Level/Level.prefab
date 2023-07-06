@@ -461,6 +461,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   imageLock: {fileID: 6029498984671313870}
   levelUnlocked: {fileID: 21300000, guid: a4eda7229e8a2b849a185697a99699c3, type: 3}
+  starsObject:
+  - {fileID: 6029498986016267674}
+  - {fileID: 6029498984889686026}
+  - {fileID: 6029498986485461723}
 --- !u!61 &5448791238169547857
 BoxCollider2D:
   m_ObjectHideFlags: 0

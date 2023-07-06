@@ -1,4 +1,3 @@
-
 using System;
 using System.ComponentModel;
 using UnityEngine;
@@ -26,6 +25,7 @@ public class Level : MonoBehaviour
 
     [SerializeField] Image imageLock; // The Image component for the lock icon
     [SerializeField] Sprite levelUnlocked; // The sprite to use when the level is unlocked
+    [SerializeField] GameObject[] starsObject;
 
     AudioSource audioSource; // Declaration of the 'audioSource' variable of the 'AudioSource' data type
 
@@ -59,9 +59,34 @@ public class Level : MonoBehaviour
             // Finds the 'LevelUI' component in the scene and calls the 'ActiveLevelUI' method
             LevelUI levelUI = FindObjectOfType<LevelUI>();
 
+            levelUI.ResetInformationLevel();
+
             levelUI.ActiveLevelUI();
             // Sets the level name, number of stars, and goal in the level UI
             levelUI.SetValueLevel(gameObject.name, stars, goalInformation);
+        }
+    }
+
+    /// <summary>
+    /// Checks if the number of stars is greater than 0 and unlocks the level and enables stars.
+    /// </summary>
+    public void CheckLevelToUnlock()
+    {
+        if (stars > 0)
+        {
+            UnlockLevel();
+            EnableStars();
+        }
+    }
+
+    /// <summary>
+    /// Enables stars based on the number of stars.
+    /// </summary>
+    void EnableStars()
+    {
+        for (int i = 0; i < stars; i++)
+        {
+            starsObject[i].SetActive(true);
         }
     }
 }

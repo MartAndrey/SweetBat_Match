@@ -35,44 +35,26 @@ public class LevelManager : MonoBehaviour
     float nextLevelTime = 1;
     int nextPositionLevels = -250;
 
-    void Awake()
-    {
-        GetUserLevels();
-    }
-
     void Start()
     {
         // Get the width of the level prefab
         widthLevelPrefab = levelPrefab.GetComponent<RectTransform>().sizeDelta.x;
+        GetUserLevels();
     }
 
     /// <summary>
-    /// Get the width of the level prefab
-    /// <summary>
+    /// Retrieves user levels and initializes them if they exist; otherwise, creates initial levels.
+    /// </summary>
     void GetUserLevels()
     {
-        StartCoroutine(GetUserLevelsRutiner());
-    }
 
-    /// <summary>
-    /// Coroutine to retrieve user levels from the database
-    /// </summary>
-    IEnumerator GetUserLevelsRutiner()
-    {
-        // Check the user levels using the CloudFirestore instance
-        var checkUserLevels = CloudFirestore.Instance.CheckUserLevels(GameManager.Instance.UserData["id"].ToString());
-
-        // Wait until the check is completed
-        yield return new WaitUntil(() => checkUserLevels.IsCompleted);
-
-        // Get the result from the check
-        (bool exitsLevels, List<Dictionary<string, object>> levelsData) = checkUserLevels.Result;
+        List<Dictionary<string, object>> data = GameManager.Instance.LevelsData;
 
         // If levels exist, create them; otherwise, create initial levels
-        if (exitsLevels)
+        if (data != null && data.Count > 0)
         {
-            CreateLevels(initialLevel, false, levelsData);
-            yield break;
+            CreateLevels(data.Count, false, data);
+            return;
         }
 
         CreateLevels(initialLevel, true);
@@ -114,6 +96,7 @@ public class LevelManager : MonoBehaviour
                     {"Stars", 0},
                     {"Score", 0},
                     {"Game Mode", UnityEngine.Random.Range(0, Enum.GetValues(typeof(GameMode)).Length)},
+                    {"order", i},
                 };
 
                 level.Add(levelData);
@@ -126,7 +109,7 @@ public class LevelManager : MonoBehaviour
                 levelUser.Stars = Convert.ToInt32(levelData["Stars"]);
                 levelUser.Score = Convert.ToInt32(levelData["Score"]);
                 levelUser.GoalInformation = levelData["Game Mode"].ToString();
-
+                levelUser.CheckLevelToUnlock();
             }
 
             // Increase the size of the levels container if there are more than 4 levels and the current level is not 4

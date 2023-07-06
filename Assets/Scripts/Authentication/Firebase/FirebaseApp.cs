@@ -96,6 +96,8 @@ public class FirebaseApp : MonoBehaviour
     {
         StartCoroutine(LoadAvatarImage(user.PhotoUrl.ToString()));
         CloudFirestore.Instance.GetUserData(user.UserId);
+        CloudFirestore.Instance.UserLevels(user.UserId);
+        CloudFirestore.Instance.UserCollectibles(user.UserId);
         mainMenuController.CheckLoadingGame();
     }
 

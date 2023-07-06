@@ -4233,7 +4233,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &374078538
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4251,8 +4251,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -92.6903, y: 23.1725}
-  m_SizeDelta: {x: 385.3806, y: 96.3452}
+  m_AnchoredPosition: {x: -20.5298, y: -488.28}
+  m_SizeDelta: {x: 824.7976, y: 201.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &374078539
 MonoBehaviour:
@@ -4337,7 +4337,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: 0, w: 0.0001067644}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -5612,7 +5612,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 160}
+  m_AnchoredPosition: {x: -26, y: 160}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &523451411
@@ -6588,7 +6588,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &654690187
 RectTransform:
   m_ObjectHideFlags: 0
@@ -15668,6 +15668,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50331539bc9ae504888dcd0bc20fae30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  text: {fileID: 374078539}
   powerUpsObject:
   - {fileID: 13108218}
   - {fileID: 1335615207}
@@ -15743,7 +15744,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1583595621
 RectTransform:
   m_ObjectHideFlags: 0
@@ -16576,7 +16577,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e3b1487b8978540aa121a7a8bb8ecf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: {fileID: 374078539}
   levelPrefab: {fileID: 6029498986367280071, guid: dd2745a3528fb17429a32890808db28f, type: 3}
   initialLevel: 50
   rectTransformLevels: {fileID: 1715428525}

@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
+    public TMP_Text text;
     public static Inventory Instance;
 
     public Dictionary<TypePowerUp, int> InventoryItems { get { return inventoryItems; } set { inventoryItems = value; } }
@@ -24,14 +26,59 @@ public class Inventory : MonoBehaviour
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
     }
 
     void Start()
     {
-        // Initialize the inventoryItems dictionary with each power-up type
-        foreach (TypePowerUp item in Enum.GetValues(typeof(TypePowerUp)))
+        GetUserPowerUps();
+    }
+
+    /// <summary>
+    /// Retrieves user power-ups and initializes them if they exist; otherwise, creates initial power-ups.
+    /// </summary>
+    void GetUserPowerUps()
+    {
+        Dictionary<string, object> data = GameManager.Instance.CollectiblesData;
+
+        // If power-ups exist, set them; otherwise, create initial power-ups
+        if (data != null && data.Count > 0)
         {
-            inventoryItems.Add(item, 0);
+            SetCollectibles(false, data);
+            // text.text = "There's";
+            return;
+        }
+
+        // text.text = "Not There's";
+        SetCollectibles(true);
+    }
+
+    /// <summary>
+    /// Sets the user's collectibles based on the provided data or initializes them if setDataBase is true.
+    /// </summary>
+    /// <param name="setDataBase">Whether to initialize the collectibles in the database.</param>
+    /// <param name="collectiblesData">The data of the user's collectibles.</param>
+    void SetCollectibles(bool setDataBase, Dictionary<string, object> collectiblesData = null)
+    {
+
+        if (collectiblesData != null && collectiblesData.ContainsKey("power ups"))
+        {
+            Dictionary<string, object> powerUpsData = collectiblesData["power ups"] as Dictionary<string, object>;
+        }
+
+        if (setDataBase)
+        {
+            Dictionary<string, object> data = new Dictionary<string, object>();
+
+            // Initialize the inventoryItems dictionary with each power-up type
+            foreach (TypePowerUp item in Enum.GetValues(typeof(TypePowerUp)))
+            {
+                inventoryItems.Add(item, 0);
+            }
+
+            text.text = inventoryItems.Count.ToString();
+
+            // CloudFirestore.Instance.SetCollectible(new Dictionary<string, object> { { "power ups", inventoryItems } });
         }
     }
 

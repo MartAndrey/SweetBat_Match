@@ -51,4 +51,15 @@ public class LevelUI : MonoBehaviour
     {
         StartCoroutine(ScreenChangeTransition.Instance.FadeOut(nameScene));
     }
+
+    /// <summary>
+    /// Resets the information of a level by disabling stars.
+    /// </summary>
+    public void ResetInformationLevel()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            stars[i].enabled = false;
+        }
+    }
 }
