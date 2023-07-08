@@ -35,9 +35,17 @@ public enum Errors
     [Description("Something went wrong with authentication. If the problem persists, contact the game developer.")]
     AUGG_GA_71,
     [Description("Something went wrong while synchronizing with the database. If the problem persists, contact the game developer.")]
-    CNU_CF_70,
+    CNU_CF_80,
     [Description("Something went wrong while synchronizing with the database. If the problem persists, contact the game developer.")]
-    GUD_CF_103,
+    GUD_CF_118,
+    [Description("Something went wrong while synchronizing with the database. If the problem persists, contact the game developer.")]
+    GUL_CF_153,
+    [Description("Something went wrong while synchronizing with the database. If the problem persists, contact the game developer.")]
+    SUL_CF_188,
+    [Description("Something went wrong while synchronizing with the database. If the problem persists, contact the game developer.")]
+    GUC_CF_211,
+    [Description("Something went wrong while synchronizing with the database. If the problem persists, contact the game developer.")]
+    SUC_CF_223,
 }
 
 public class GameManager : MonoBehaviour

@@ -39,14 +39,22 @@ public class CloudFirestore : MonoBehaviour
         // Close the error related to user photo.
         errorsRetryHandler = new Dictionary<Errors, Action>()
         {
-            { Errors.CNU_CF_70,  RetryErrorCreatedNewUser },
-            { Errors.GUD_CF_103,  RetryErrorGetUserData },
+            { Errors.CNU_CF_80,  RetryErrorCreatedNewUser },
+            { Errors.GUD_CF_118,  RetryErrorGetUserData },
+            { Errors.GUD_CF_118,  RetryErrorGetUserLevels },
+            { Errors.SUL_CF_188,  RetryErrorSetUserLevels },
+            { Errors.GUC_CF_211,  RetryErrorGetUserCollectibles },
+            { Errors.GUC_CF_211,  RetryErrorSetUserCollectibles },
         };
 
         errorsCloseHandler = new Dictionary<Errors, Action>()
         {
-            { Errors.CNU_CF_70,  CloseErrorCreatedNewUser },
-            { Errors.GUD_CF_103,  CloseErrorGetUserData },
+            { Errors.CNU_CF_80,  CloseErrorCreatedNewUser },
+            { Errors.GUD_CF_118,  CloseErrorGetUserData },
+            { Errors.GUD_CF_118,  CloseErrorGetUserLevels },
+            { Errors.SUL_CF_188,  CloseErrorSetUserLevels },
+            { Errors.GUC_CF_211,  CloseErrorGetUserCollectibles },
+            { Errors.GUC_CF_211,  CloseErrorSetUserCollectibles },
         };
 
         DontDestroyOnLoad(gameObject);
@@ -69,7 +77,7 @@ public class CloudFirestore : MonoBehaviour
         {
             if (task.IsFaulted || task.IsCanceled)
             {
-                StartCoroutine(ShowErrorUIRutiner(Errors.CNU_CF_70));
+                StartCoroutine(ShowErrorUIRutiner(Errors.CNU_CF_80));
             }
         });
     }
@@ -107,7 +115,7 @@ public class CloudFirestore : MonoBehaviour
             if (task.IsCompletedSuccessfully)
                 GameManager.Instance.UserData = task.Result.ToDictionary();
             else if (task.IsFaulted || task.IsCanceled)
-                StartCoroutine(ShowErrorUIRutiner(Errors.GUD_CF_103));
+                StartCoroutine(ShowErrorUIRutiner(Errors.GUD_CF_118));
 
         });
     }
@@ -139,6 +147,10 @@ public class CloudFirestore : MonoBehaviour
 
                 // Assign the retrieved levels to the GameManager instance
                 GameManager.Instance.LevelsData = levels;
+            }
+            else
+            {
+                StartCoroutine(ShowErrorUIRutiner(Errors.GUL_CF_153));
             }
         });
     }
@@ -173,7 +185,7 @@ public class CloudFirestore : MonoBehaviour
         {
             if (task.IsFaulted || task.IsCanceled)
             {
-
+                StartCoroutine(ShowErrorUIRutiner(Errors.SUL_CF_188));
             }
         });
     }
@@ -185,7 +197,7 @@ public class CloudFirestore : MonoBehaviour
     public void UserCollectibles(string userId)
     {
         // Get the reference to the user's collectibles document
-        DocumentReference userRef = db.Collection("Users").Document(userId).Collection("Collectibles").Document("Collectable");
+        DocumentReference userRef = db.Collection("Users").Document(userId).Collection("Collectibles").Document("collectable");
 
         // Get the snapshot of the user's collectibles
         userRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
@@ -195,35 +207,27 @@ public class CloudFirestore : MonoBehaviour
                 // Assign the retrieved collectibles to the GameManager instance
                 GameManager.Instance.CollectiblesData = task.Result.ToDictionary();
             }
+            else if (task.IsCanceled || task.IsFaulted)
+                StartCoroutine(ShowErrorUIRutiner(Errors.GUC_CF_211));
         });
     }
 
-    // public void SetCollectible(Dictionary<string, object> collectableData)
-    // {
-    //     text = GameObject.FindGameObjectWithTag("text").GetComponent<TMP_Text>();
-    //     text.text = "Init";
-    //     DocumentReference docRef = db.Collection("Users").Document(GameManager.Instance.UserData["id"].ToString()).Collection("Collectibles").Document("Collectable");
+    /// <summary>
+    /// Sets the collectible data in the database.
+    /// </summary>
+    /// <param name="collectableData">The data to be set in the database.</p
+    public void SetCollectible(Dictionary<string, object> collectableData)
+    {
+        DocumentReference docRef = db.Collection("Users").Document(GameManager.Instance.UserData["id"].ToString()).Collection("Collectibles").Document("collectable");
 
-    //     docRef.SetAsync(collectableData).ContinueWithOnMainThread(task =>
-    //      {
-    //          if (task.IsCompletedSuccessfully)
-    //          {
-    //              text.text = "Success";
-    //          }
-    //          else
-    //          {
-    //              text.text = "Faild";
-    //          }
-    //      });
-
-    //     userRef2.SetAsync(userData).ContinueWithOnMainThread(task =>
-    //   {
-    //       if (task.IsFaulted || task.IsCanceled)
-    //       {
-    //           StartCoroutine(ShowErrorUIRutiner(Errors.CNU_CF_70));
-    //       }
-    //   });
-    // }
+        docRef.SetAsync(collectableData, SetOptions.MergeAll).ContinueWithOnMainThread(task =>
+         {
+             if (task.IsCanceled && task.IsFaulted)
+             {
+                 StartCoroutine(ShowErrorUIRutiner(Errors.SUC_CF_223));
+             }
+         });
+    }
 
     /// <summary>
     /// Coroutine for displaying the error UI.
@@ -303,6 +307,98 @@ public class CloudFirestore : MonoBehaviour
     /// Closes the error handling process for retrieving user data.
     /// </summary>
     void CloseErrorGetUserData()
+    {
+        GameManager.Instance.ResetCurrentSceneAndSignOut();
+    }
+
+    /// <summary>
+    /// Retries the process of getting user levels after an error occurred.
+    /// </summary>
+    void RetryErrorGetUserLevels()
+    {
+        GameManager.Instance.HideDisplayError();
+        StartCoroutine(RetryErrorGetUserLevelsRutiner());
+    }
+
+    IEnumerator RetryErrorGetUserLevelsRutiner()
+    {
+        yield return new WaitForSeconds(.1f);
+        UserLevels(GameManager.Instance.UserData["id"].ToString());
+    }
+
+    /// <summary>
+    /// Closes the error display and resets the current scene and sign out the user after an error occurred while getting user levels.
+    /// </summary>
+    void CloseErrorGetUserLevels()
+    {
+        GameManager.Instance.ResetCurrentSceneAndSignOut();
+    }
+
+    /// <summary>
+    /// Retries the process of setting user levels after an error occurred.
+    /// </summary>
+    void RetryErrorSetUserLevels()
+    {
+        GameManager.Instance.HideDisplayError();
+        StartCoroutine(RetryErrorSetUserLevelsRutiner());
+    }
+
+    IEnumerator RetryErrorSetUserLevelsRutiner()
+    {
+        yield return new WaitForSeconds(.1f);
+        SetUserLevels(GameManager.Instance.LevelsData);
+    }
+
+    /// <summary>
+    /// Closes the error display and resets the current scene and sign out the user after an error occurred while setting user levels.
+    /// </summary>
+    void CloseErrorSetUserLevels()
+    {
+        GameManager.Instance.ResetCurrentSceneAndSignOut();
+    }
+
+    /// <summary>
+    /// Retries the process of getting user collectibles after an error occurred.
+    /// </summary>
+    void RetryErrorGetUserCollectibles()
+    {
+        GameManager.Instance.HideDisplayError();
+        StartCoroutine(RetryErrorGetUserCollectiblesRutiner());
+    }
+
+    IEnumerator RetryErrorGetUserCollectiblesRutiner()
+    {
+        yield return new WaitForSeconds(.1f);
+        UserCollectibles(GameManager.Instance.UserData["id"].ToString());
+    }
+
+    /// <summary>
+    /// Closes the error display and resets the current scene and sign out the user after an error occurred while getting user collectibles.
+    /// </summary>
+    void CloseErrorGetUserCollectibles()
+    {
+        GameManager.Instance.ResetCurrentSceneAndSignOut();
+    }
+
+    /// <summary>
+    /// Retries the process of setting user collectibles after an error occurred.
+    /// </summary>
+    void RetryErrorSetUserCollectibles()
+    {
+        GameManager.Instance.HideDisplayError();
+        StartCoroutine(RetryErrorSetUserCollectiblesRutiner());
+    }
+
+    IEnumerator RetryErrorSetUserCollectiblesRutiner()
+    {
+        yield return new WaitForSeconds(.1f);
+        SetCollectible(GameManager.Instance.CollectiblesData);
+    }
+
+    /// <summary>
+    /// Closes the error display and resets the current scene and sign out the user after an error occurred while setting user collectibles.
+    /// </summary>
+    void CloseErrorSetUserCollectibles()
     {
         GameManager.Instance.ResetCurrentSceneAndSignOut();
     }
