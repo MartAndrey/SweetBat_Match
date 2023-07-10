@@ -49,9 +49,9 @@ public class Inventory : MonoBehaviour
                 Dictionary<string, object> powerUpsData = data["power ups"] as Dictionary<string, object>;
 
                 SetCollectibles(false, powerUpsData);
-            }
 
-            return;
+                return;
+            }
         }
 
         SetCollectibles(true);

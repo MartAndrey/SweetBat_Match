@@ -49,8 +49,9 @@ public class LifeController : Timer
 
     void Start()
     {
-        ChangeLives(0);
+        GetLives();
     }
+
 
     void Update()
     {
@@ -88,6 +89,14 @@ public class LifeController : Timer
             return;
         }
 
+        FullLives();
+    }
+
+    /// <summary>
+    /// Updates the UI to display "FULL" for lives.
+    /// </summary>
+    void FullLives()
+    {
         timerText.text = "FULL";
         restartTimer = false;
     }
@@ -109,4 +118,41 @@ public class LifeController : Timer
 
     // Method tells us if the counter needs to be reset
     bool CheckRestartTimer() => lives < 5;
+
+    /// <summary>
+    /// Retrieves the number of lives from the CollectiblesData dictionary and sets the initial coins.
+    /// If the lives data is not available, it sets the lives to 0 and initializes coins accordingly.
+    /// </summary>
+    void GetLives()
+    {
+        Dictionary<string, object> data = GameManager.Instance.CollectiblesData;
+        if (data != null && data.Count > 0)
+        {
+            if (data.ContainsKey("lives"))
+            {
+                int lives = Convert.ToInt32(data["lives"]);
+
+                SetInitialLives(lives);
+
+                return;
+            }
+        }
+
+        CloudFirestore.Instance.SetCollectible(new Dictionary<string, object> { { "lives", 0 } });
+        SetInitialLives(0);
+    }
+
+    /// <summary>
+    /// Sets the initial number of lives and updates the lives text UI element.
+    /// If the restart timer condition is not met, calls FullLives method; otherwise, sets the timer.
+    /// </summary>
+    /// <param name="lives">The number of lives to set.</param>
+    void SetInitialLives(int lives)
+    {
+        this.lives = lives;
+        livesText.text = lives.ToString();
+
+        if (!CheckRestartTimer()) FullLives();
+        else SetTimer(waitTimeInMinutes);
+    }
 }

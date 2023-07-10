@@ -139,12 +139,13 @@ public class FirebaseApp : MonoBehaviour
                 { "name", user.DisplayName },
                 { "id", user.UserId },
                 { "email", user.Email },
-                { "url photo", user.PhotoUrl.ToString() }
+                { "url photo", user.PhotoUrl.ToString() },
             };
 
             GameManager.Instance.UserData = userData;
             loginController.LoginSuccess();
             StartCoroutine(LoadAvatarImage(user.PhotoUrl.ToString()));
+            GameManager.Instance.GetCurrentLevelUser();
         });
     }
 

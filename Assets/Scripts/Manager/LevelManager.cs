@@ -125,9 +125,9 @@ public class LevelManager : MonoBehaviour
             // Update user levels in the database
             CloudFirestore.Instance.SetUserLevels(level);
 
-            // Unlock the first level
-            UnlockLevel(levelsList[GameManager.Instance.Level]); // Unlock the first level
         }
+        // Unlock the first level
+        UnlockLevel(levelsList[GameManager.Instance.Level]); // Unlock current level
     }
 
     // Called when the user scrolls through the level objects

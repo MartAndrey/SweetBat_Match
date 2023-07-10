@@ -336,6 +336,7 @@ public class LoginController : MonoBehaviour
     public void UserAlreadyAuthenticated()
     {
         this.userData = GameManager.Instance.UserData;
+        GameManager.Instance.GetCurrentLevelUser();
         this.currentGenderUser = (GenderUser)Enum.Parse(typeof(GenderUser), this.userData["gender"].ToString());
         displaySingIn.SetActive(false);
         SetInformationUser(false);

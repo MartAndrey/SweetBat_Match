@@ -296,8 +296,15 @@ public class GameManager : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
 
-    // public void SetCollectiblesDataBase()
-    // {
-    //     if()
-    // }
+    /// <summary>
+    /// Retrieves the current user's level from the userData dictionary.
+    /// If the level data is not available, it updates the user's level to 0.
+    /// </summary>
+    public void GetCurrentLevelUser()
+    {
+        if (userData.ContainsKey("level"))
+            level = Convert.ToInt32(userData["level"]);
+        else
+            CloudFirestore.Instance.UpdateLevelUser(new Dictionary<string, object> { { "level", 0 } });
+    }
 }

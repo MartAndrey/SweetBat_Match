@@ -41,20 +41,20 @@ public class CloudFirestore : MonoBehaviour
         {
             { Errors.CNU_CF_80,  RetryErrorCreatedNewUser },
             { Errors.GUD_CF_118,  RetryErrorGetUserData },
-            { Errors.GUD_CF_118,  RetryErrorGetUserLevels },
+            { Errors.GUL_CF_153,  RetryErrorGetUserLevels },
             { Errors.SUL_CF_188,  RetryErrorSetUserLevels },
             { Errors.GUC_CF_211,  RetryErrorGetUserCollectibles },
-            { Errors.GUC_CF_211,  RetryErrorSetUserCollectibles },
+            { Errors.SUC_CF_223,  RetryErrorSetUserCollectibles },
         };
 
         errorsCloseHandler = new Dictionary<Errors, Action>()
         {
             { Errors.CNU_CF_80,  CloseErrorCreatedNewUser },
             { Errors.GUD_CF_118,  CloseErrorGetUserData },
-            { Errors.GUD_CF_118,  CloseErrorGetUserLevels },
+            { Errors.GUL_CF_153,  CloseErrorGetUserLevels },
             { Errors.SUL_CF_188,  CloseErrorSetUserLevels },
             { Errors.GUC_CF_211,  CloseErrorGetUserCollectibles },
-            { Errors.GUC_CF_211,  CloseErrorSetUserCollectibles },
+            { Errors.SUC_CF_223,  CloseErrorSetUserCollectibles },
         };
 
         DontDestroyOnLoad(gameObject);
@@ -227,6 +227,31 @@ public class CloudFirestore : MonoBehaviour
                  StartCoroutine(ShowErrorUIRutiner(Errors.SUC_CF_223));
              }
          });
+    }
+
+    /// <summary>
+    /// Updates the user's data with the provided userData dictionary.
+    /// It uses a DocumentReference to update the data in Firestore and handles the completion status.
+    /// </summary>
+    /// <param name="userData">The dictionary containing the updated user data.</param>
+    public void UpdateLevelUser(Dictionary<string, object> userData)
+    {
+        text = GameObject.FindGameObjectWithTag("text").GetComponent<TMP_Text>();
+        DocumentReference userRef = db.Collection("Users").Document(userData["id"].ToString());
+        text.text = "Init";
+        userRef.UpdateAsync(userData).ContinueWithOnMainThread(task =>
+        {
+            text.text = "Enter";
+            if (task.IsFaulted || task.IsCanceled)
+            {
+                text.text = "Fault";
+                // StartCoroutine(ShowErrorUIRutiner(Errors.CNU_CF_80));
+            }
+            else if (task.IsCompletedSuccessfully)
+            {
+                text.text = "Success";
+            }
+        });
     }
 
     /// <summary>

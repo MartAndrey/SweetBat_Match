@@ -68,10 +68,15 @@ public class LifeShop : MonoBehaviour
         }
     }
 
-    // It sends us to the coin shop
+    /// <summary>
+    /// Navigates to the coin shop by activating the CoinShop object and disabling the current object.
+    /// </summary>
     public void SendCoinShop()
     {
-        Debug.LogWarning("TODO: Send Coin Shop");
+        LevelMenuController levelMenuController = FindObjectOfType<LevelMenuController>(true);
+        levelMenuController.OnScreenAdvance(FindObjectOfType<CoinShop>(true).gameObject);
+        gameObject.SetActive(false);
+        levelMenuController.OffScreen(gameObject);
     }
 
     // It gives us a life in exchange for seeing an ad
