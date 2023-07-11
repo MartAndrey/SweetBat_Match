@@ -16,6 +16,8 @@ public class LevelUI : MonoBehaviour
 
     [SerializeField] GameObject boxSelectPower;
 
+    GameMode gameMode;
+
     // Method to activate the level UI by setting the 'container' and 'overlay' game objects to active
     public void ActiveLevelUI()
     {
@@ -23,8 +25,14 @@ public class LevelUI : MonoBehaviour
         overlay.SetActive(true);
     }
 
-    // Method to set the name, number of stars, and goal of the level in the UI
-    public void SetValueLevel(string nameText, int amountStars, string goalText)
+    /// <summary>
+    /// Sets the name, number of stars, and goal of the level in the UI.
+    /// </summary>
+    /// <param name="nameText">The level name.</param>
+    /// <param name="amountStars">The number of stars collected.</param>
+    /// <param name="goalText">The goal text.</param>
+    /// <param name="gameMode">The game mode.</param>
+    public void SetValueLevel(string nameText, int amountStars, string goalText, GameMode gameMode)
     {
         nameLevelText.text = nameText; // Sets the level name
 
@@ -35,6 +43,8 @@ public class LevelUI : MonoBehaviour
         }
 
         goal.text = goalText;  // Sets the goal text
+
+        this.gameMode = gameMode;
 
         List<GameObject> powerUps = Inventory.Instance.GetAvailablePowerUps();
 
@@ -49,6 +59,7 @@ public class LevelUI : MonoBehaviour
 
     public void PlayLevel(string nameScene)
     {
+        GameManager.Instance.GameMode = gameMode;
         StartCoroutine(ScreenChangeTransition.Instance.FadeOut(nameScene));
     }
 

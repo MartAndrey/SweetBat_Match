@@ -233,23 +233,16 @@ public class CloudFirestore : MonoBehaviour
     /// Updates the user's data with the provided userData dictionary.
     /// It uses a DocumentReference to update the data in Firestore and handles the completion status.
     /// </summary>
-    /// <param name="userData">The dictionary containing the updated user data.</param>
-    public void UpdateLevelUser(Dictionary<string, object> userData)
+    /// <param name="UserLevel">The dictionary containing the updated user data.</param>
+    public void UpdateLevelUser(Dictionary<string, object> UserLevel)
     {
-        text = GameObject.FindGameObjectWithTag("text").GetComponent<TMP_Text>();
-        DocumentReference userRef = db.Collection("Users").Document(userData["id"].ToString());
-        text.text = "Init";
-        userRef.UpdateAsync(userData).ContinueWithOnMainThread(task =>
+        DocumentReference userRef = db.Collection("Users").Document(GameManager.Instance.UserData["id"].ToString());
+
+        userRef.UpdateAsync(UserLevel).ContinueWithOnMainThread(task =>
         {
-            text.text = "Enter";
             if (task.IsFaulted || task.IsCanceled)
             {
-                text.text = "Fault";
                 // StartCoroutine(ShowErrorUIRutiner(Errors.CNU_CF_80));
-            }
-            else if (task.IsCompletedSuccessfully)
-            {
-                text.text = "Success";
             }
         });
     }

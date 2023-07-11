@@ -15,6 +15,7 @@ public class Level : MonoBehaviour
         {
             string goal = value;
             GameMode gameMode = (GameMode)Enum.Parse(typeof(GameMode), goal);
+            this.gameMode = gameMode;
             var fieldInfo = gameMode.GetType().GetField(gameMode.ToString());
             var attributes = fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];
             goalInformation = attributes[0].Description;
@@ -34,6 +35,7 @@ public class Level : MonoBehaviour
     int score;
     string goalInformation = "";
     bool isActive = false;
+    GameMode gameMode;
 
     void Awake()
     {
@@ -63,7 +65,7 @@ public class Level : MonoBehaviour
 
             levelUI.ActiveLevelUI();
             // Sets the level name, number of stars, and goal in the level UI
-            levelUI.SetValueLevel(gameObject.name, stars, goalInformation);
+            levelUI.SetValueLevel(gameObject.name, stars, goalInformation, gameMode);
         }
     }
 

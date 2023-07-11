@@ -3,7 +3,7 @@
     "m_SelectedPackage": {
         "deviceId": "146268f60409",
         "name": "com.martandrey.hungrybat",
-        "processId": 30175,
+        "processId": 6360,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -11,49 +11,43 @@
         {
             "deviceId": "146268f60409",
             "name": "com.miui.home",
-            "processId": 1946,
+            "processId": 1956,
             "exited": false
         },
         {
             "deviceId": "146268f60409",
+            "name": "com.zhiliaoapp.musically",
+            "processId": 26432,
+            "exited": true
+        },
+        {
+            "deviceId": "146268f60409",
             "name": "com.martandrey.hungrybat",
-            "processId": 20917,
+            "processId": 28187,
             "exited": true
         },
         {
             "deviceId": "146268f60409",
             "name": "com.zhiliaoapp.musically",
-            "processId": 17073,
+            "processId": 29473,
             "exited": true
         },
         {
             "deviceId": "146268f60409",
             "name": "com.martandrey.hungrybat",
-            "processId": 22729,
-            "exited": true
-        },
-        {
-            "deviceId": "146268f60409",
-            "name": "com.martandrey.hungrybat",
-            "processId": 23305,
+            "processId": 31490,
             "exited": true
         },
         {
             "deviceId": "146268f60409",
             "name": "com.zhiliaoapp.musically",
-            "processId": 25492,
+            "processId": 4357,
             "exited": false
         },
         {
             "deviceId": "146268f60409",
             "name": "com.martandrey.hungrybat",
-            "processId": 27950,
-            "exited": false
-        },
-        {
-            "deviceId": "146268f60409",
-            "name": "com.martandrey.hungrybat",
-            "processId": 30175,
+            "processId": 6360,
             "exited": false
         }
     ],

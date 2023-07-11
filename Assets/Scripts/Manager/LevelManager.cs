@@ -53,23 +53,21 @@ public class LevelManager : MonoBehaviour
         // If levels exist, create them; otherwise, create initial levels
         if (data != null && data.Count > 0)
         {
-            CreateLevels(data.Count, false, data);
+            CreateAndSetLevels(data);
             return;
         }
 
-        CreateLevels(initialLevel, true);
+        CreateNewLevels(initialLevel);
     }
 
     /// <summary>
     /// Creates the specified number of levels starting from the current level.
     /// </summary>
     /// <param name="amount">The number of levels to create.</param>
-    /// <param name="setDataBase">Flag indicating whether to set level data in the database.</param>
-    /// <param name="listLevels">List of level data if setDataBase is false.</param>
-    void CreateLevels(int amount, bool setDataBase, List<Dictionary<string, object>> listLevels = null)
+    void CreateNewLevels(int amount)
     {
         // Get the current level from the GameManager
-        int currentLevel = GameManager.Instance.Level;  // Get the current level from the GameManager
+        int currentLevel = GameManager.Instance.Level;
 
         // Create a list to hold level data
         List<Dictionary<string, object>> level = new List<Dictionary<string, object>>();
@@ -88,46 +86,77 @@ public class LevelManager : MonoBehaviour
             levelsList.Add(newLevel);
 
             // Set level data based on setDataBase flag
-            if (setDataBase)
+            // Create level data for new levels
+            Dictionary<string, object> levelData = new Dictionary<string, object>()
             {
-                // Create level data for new levels
-                Dictionary<string, object> levelData = new Dictionary<string, object>()
-                {
-                    {"Stars", 0},
-                    {"Score", 0},
-                    {"Game Mode", UnityEngine.Random.Range(0, Enum.GetValues(typeof(GameMode)).Length)},
-                    {"order", i},
-                };
+                {"Stars", 0},
+                {"Score", 0},
+                {"Game Mode", UnityEngine.Random.Range(0, Enum.GetValues(typeof(GameMode)).Length)},
+                {"order", i},
+            };
 
-                level.Add(levelData);
-            }
-            else
-            {
-                // Set level data from the provided list
-                Level levelUser = newLevel.GetComponent<Level>();
-                Dictionary<string, object> levelData = listLevels[i - 1];
-                levelUser.Stars = Convert.ToInt32(levelData["Stars"]);
-                levelUser.Score = Convert.ToInt32(levelData["Score"]);
-                levelUser.GoalInformation = levelData["Game Mode"].ToString();
-                levelUser.CheckLevelToUnlock();
-            }
+            level.Add(levelData);
 
-            // Increase the size of the levels container if there are more than 4 levels and the current level is not 4
-            if (i > 4 && currentLevel < 4 || currentLevel > 4)
-            {
-                // Increase the width of the levels container by the width of the level prefab
-                rectTransformLevels.sizeDelta = new Vector2(rectTransformLevels.sizeDelta.x + widthLevelPrefab, rectTransformLevels.sizeDelta.y);
-            }
+            SetInformationAndIncreaseSizeLevelsContainer(i, currentLevel, newLevel, levelData);
         }
 
-        if (setDataBase)
-        {
-            // Update user levels in the database
-            CloudFirestore.Instance.SetUserLevels(level);
+        // Update user levels in the database
+        CloudFirestore.Instance.SetUserLevels(level);
 
-        }
-        // Unlock the first level
         UnlockLevel(levelsList[GameManager.Instance.Level]); // Unlock current level
+    }
+
+    /// <summary>
+    /// Creates and sets levels based on the provided list of level data.
+    /// </summary>
+    /// <param name="listLevels">The list of level data.</param>
+    void CreateAndSetLevels(List<Dictionary<string, object>> listLevels)
+    {
+        // Get the current level from the GameManager
+        int currentLevel = GameManager.Instance.Level;
+
+        for (int i = 0; i < listLevels.Count; i++)
+        {
+            // Instantiate a copy of the level prefab
+            GameObject newLevel = Instantiate(levelPrefab, transform);
+
+            // Add the level to the levels list
+            levelsList.Add(newLevel);
+
+            Dictionary<string, object> levelData = listLevels[i];
+
+            SetInformationAndIncreaseSizeLevelsContainer(i, currentLevel, newLevel, levelData);
+            newLevel.GetComponentInChildren<TextMeshProUGUI>().text = levelData["order"].ToString();
+
+        }
+
+        UnlockLevel(levelsList[GameManager.Instance.Level]); // Unlock current level
+    }
+
+    /// <summary>
+    /// Sets the information and increases the size of the levels container.
+    /// </summary>
+    /// <param name="i">The index of the level.</param>
+    /// <param name="currentLevel">The current level.</param>
+    /// <param name="newLevel">The new level object.</param>
+    /// <param name="levelData">The level data.</param>
+    /// <param name="getDataBase">Flag indicating whether to get data from the database.</param>
+    void SetInformationAndIncreaseSizeLevelsContainer(int i, int currentLevel, GameObject newLevel, Dictionary<string, object> levelData, bool getDataBase = false)
+    {
+        Level levelUser = newLevel.GetComponent<Level>();
+        levelUser.Stars = Convert.ToInt32(levelData["Stars"]);
+        levelUser.Score = Convert.ToInt32(levelData["Score"]);
+        levelUser.GoalInformation = levelData["Game Mode"].ToString();
+        levelUser.name = $"Level {levelData["order"]}";
+
+        if (getDataBase) levelUser.CheckLevelToUnlock();
+
+        // Increase the size of the levels container if there are more than 4 levels and the current level is not 4
+        if (i > 4 && currentLevel < 4 || currentLevel > 4)
+        {
+            // Increase the width of the levels container by the width of the level prefab
+            rectTransformLevels.sizeDelta = new Vector2(rectTransformLevels.sizeDelta.x + widthLevelPrefab, rectTransformLevels.sizeDelta.y);
+        }
     }
 
     // Called when the user scrolls through the level objects

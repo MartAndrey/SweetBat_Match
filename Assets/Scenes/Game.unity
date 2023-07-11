@@ -2799,7 +2799,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7495080115227862180, guid: dade7306939b664438af07967a1db99c, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7495080115227862181, guid: dade7306939b664438af07967a1db99c, type: 3}
       propertyPath: m_Enabled
@@ -5600,7 +5600,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 10
   m_TargetDisplay: 0
 --- !u!95 &815447015
 Animator:
@@ -6034,7 +6034,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 10
   m_TargetDisplay: 0
 --- !u!1 &874920478
 GameObject:
@@ -6370,7 +6370,13 @@ MonoBehaviour:
   OnUniqueMatches:
     m_PersistentCalls:
       m_Calls: []
-  gameMode: 3
+  OnErrorRetry:
+    m_PersistentCalls:
+      m_Calls: []
+  OnErrorClose:
+    m_PersistentCalls:
+      m_Calls: []
+  gameMode: 1
   level: 0
   availableFruits:
   - {fileID: 9003223963689281457, guid: dcfa150433e47994ebf8b1bc2346b4f9, type: 3}
@@ -13903,7 +13909,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2088258335
 RectTransform:
   m_ObjectHideFlags: 0
@@ -14768,7 +14774,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 10
   m_TargetDisplay: 0
 --- !u!82 &48206698039242093
 AudioSource:
@@ -16924,7 +16930,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 10
   m_TargetDisplay: 0
 --- !u!1 &1059221448977760571
 GameObject:
