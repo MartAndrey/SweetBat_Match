@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
 using System.ComponentModel;
+using TMPro;
 
 // Define a set of game modes for different game objectives
 public enum GameMode
@@ -58,7 +59,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public UnityEvent<Errors> OnErrorRetry;
     [HideInInspector] public UnityEvent<Errors> OnErrorClose;
 
-    public int Level { get { return level; } }  // Public getter for the current level
+    public int Level { get { return level; } set { level = value; } }  // Public getter for the current level
     // Gets or sets the objective game mode.
     public GameMode GameMode { get { return gameMode; } set { gameMode = value; } }
     // Gets the list of available fruits.
@@ -90,6 +91,8 @@ public class GameManager : MonoBehaviour
 
     public List<Dictionary<string, object>> LevelsData { get { return levelsData; } set { levelsData = value; } }
     public Dictionary<string, object> CollectiblesData { get { return collectiblesData; } set { collectiblesData = value; } }
+
+    public int CurrentLevel { get { return currentLevel; } set { currentLevel = value; } }  // Public getter for the current level
 
     // Serialized game mode field
     [SerializeField] GameMode gameMode;
@@ -137,6 +140,8 @@ public class GameManager : MonoBehaviour
 
     ErrorHandler errorHandler;
 
+    int currentLevel;
+
     /// <summary>
     /// Subscribes to the SceneManager's sceneLoaded event when the script is enabled.
     /// </summary>
@@ -167,20 +172,46 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Increases the level count and starts the next level routine.
     /// </summary>
-    public void NextLevel()
+    public void NextLevel(int stars)
     {
-        // Increases the level count
-        level++;
-        // Starts the next level routine
-        StartCoroutine(NextLevelRutiner());
+        Dictionary<string, object> currentLevel = levelsData[this.currentLevel];
+
+        if (this.currentLevel == level)
+        {
+            UpdateLevelComplete(currentLevel, stars, true);
+            // Starts the next level routine
+            StartCoroutine(NextLevelRoutine());
+        }
+        else
+        {
+            if (stars > Convert.ToInt32(currentLevel["Stars"]))
+            {
+                UpdateLevelComplete(currentLevel, stars, false);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Updates the completion status of the current level.
+    /// </summary>
+    /// <param name="currentLevel">The dictionary representing the current level.</param>
+    /// <param name="stars">The number of stars obtained by the player.</param>
+    /// <param name="updateLevelDataBase">Indicates whether to update the level data in the database.</param>
+    void UpdateLevelComplete(Dictionary<string, object> currentLevel, int stars, bool updateLevelDataBase)
+    {
+        currentLevel["Stars"] = stars;
+        CloudFirestore.Instance.UpdateDocumentLevel(string.Format($"level {this.currentLevel + 1}"), currentLevel);
+
+        if (updateLevelDataBase)
+            CloudFirestore.Instance.UpdateLevelUser(new Dictionary<string, object> { { "level", this.currentLevel + 1 } });
     }
 
     /// <summary>
     /// Waits for 2 seconds and finds the LevelManager object.
     /// </summary>
-    IEnumerator NextLevelRutiner()
+    IEnumerator NextLevelRoutine()
     {
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(2.5f);
 
         // Finds the LevelManager object
         LevelManager levelManager = FindObjectOfType<LevelManager>();
@@ -305,6 +336,9 @@ public class GameManager : MonoBehaviour
         if (userData.ContainsKey("level"))
             level = Convert.ToInt32(userData["level"]);
         else
+        {
             CloudFirestore.Instance.UpdateLevelUser(new Dictionary<string, object> { { "level", 0 } });
+            level = 0;
+        }
     }
 }

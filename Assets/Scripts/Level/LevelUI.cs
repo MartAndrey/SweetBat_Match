@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System;
 
 public class LevelUI : MonoBehaviour
 {
@@ -57,9 +58,14 @@ public class LevelUI : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Starts playing the specified level.
+    /// </summary>
+    /// <param name="nameScene">The name of the scene to load.</param>
     public void PlayLevel(string nameScene)
     {
         GameManager.Instance.GameMode = gameMode;
+        GameManager.Instance.CurrentLevel = Convert.ToInt32(nameLevelText.text.Split(' ')[1]) - 1;
         StartCoroutine(ScreenChangeTransition.Instance.FadeOut(nameScene));
     }
 

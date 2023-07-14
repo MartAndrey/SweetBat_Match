@@ -248,6 +248,24 @@ public class CloudFirestore : MonoBehaviour
     }
 
     /// <summary>
+    /// Updates the level document in the database.
+    /// </summary>
+    /// <param name="nameLevel">The name of the level document.</param>
+    /// <param name="level">The updated level data.</param>
+    public void UpdateDocumentLevel(string nameLevel, Dictionary<string, object> level)
+    {
+        DocumentReference levelRef = db.Collection("Users").Document(GameManager.Instance.UserData["id"].ToString()).Collection("Levels").Document(nameLevel);
+
+        levelRef.UpdateAsync(level).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsFaulted || task.IsCanceled)
+            {
+                // StartCoroutine(ShowErrorUIRutiner(Errors.CNU_CF_80));
+            }
+        });
+    }
+
+    /// <summary>
     /// Coroutine for displaying the error UI.
     /// </summary>
     /// <param name="error">The error to be displayed.</param>

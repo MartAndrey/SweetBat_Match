@@ -4,9 +4,11 @@ using UnityEngine;
 using TMPro;
 using DG.Tweening;
 using System;
+using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
+    public TMP_Text text;
     // The prefab for the level objects
     [SerializeField] GameObject levelPrefab;
     // The starting levels
@@ -47,7 +49,6 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     void GetUserLevels()
     {
-
         List<Dictionary<string, object>> data = GameManager.Instance.LevelsData;
 
         // If levels exist, create them; otherwise, create initial levels
@@ -97,13 +98,13 @@ public class LevelManager : MonoBehaviour
 
             level.Add(levelData);
 
-            SetInformationAndIncreaseSizeLevelsContainer(i, currentLevel, newLevel, levelData);
+            SetInformationAndIncreaseSizeLevelsContainer(i, newLevel, levelData);
         }
 
         // Update user levels in the database
         CloudFirestore.Instance.SetUserLevels(level);
 
-        UnlockLevel(levelsList[GameManager.Instance.Level]); // Unlock current level
+        UnlockLevelAndUpdateAvatar();
     }
 
     /// <summary>
@@ -112,9 +113,6 @@ public class LevelManager : MonoBehaviour
     /// <param name="listLevels">The list of level data.</param>
     void CreateAndSetLevels(List<Dictionary<string, object>> listLevels)
     {
-        // Get the current level from the GameManager
-        int currentLevel = GameManager.Instance.Level;
-
         for (int i = 0; i < listLevels.Count; i++)
         {
             // Instantiate a copy of the level prefab
@@ -125,12 +123,42 @@ public class LevelManager : MonoBehaviour
 
             Dictionary<string, object> levelData = listLevels[i];
 
-            SetInformationAndIncreaseSizeLevelsContainer(i, currentLevel, newLevel, levelData);
+            SetInformationAndIncreaseSizeLevelsContainer(i, newLevel, levelData, true);
             newLevel.GetComponentInChildren<TextMeshProUGUI>().text = levelData["order"].ToString();
 
         }
 
+        UnlockLevelAndUpdateAvatar();
+    }
+
+    /// <summary>
+    /// Unlocks the next level and updates the avatar.
+    /// </summary>
+    void UnlockLevelAndUpdateAvatar()
+    {
+        StartCoroutine(UnlockLevelAndUpdateAvatarRoutine());
+    }
+
+    /// <summary>
+    /// Coroutine that unlocks the next level and updates the avatar.
+    /// </summary>
+    IEnumerator UnlockLevelAndUpdateAvatarRoutine()
+    {
+        yield return new WaitForEndOfFrame();
         UnlockLevel(levelsList[GameManager.Instance.Level]); // Unlock current level
+        UpdatePositionProfileMarker();
+        SetScrollRect();
+    }
+
+    /// <summary>
+    /// Adjusts the scroll rect position based on the level focus.
+    /// </summary>
+    void SetScrollRect()
+    {
+        float distance = focusLevel.transform.localPosition.x - profileMarker.transform.localPosition.x;
+
+        ScrollRect scrollRect = gameObject.GetComponentInParent<ScrollRect>();
+        scrollRect.content.anchoredPosition = new Vector2(scrollRect.content.anchoredPosition.x + distance, 0);
     }
 
     /// <summary>
@@ -141,7 +169,7 @@ public class LevelManager : MonoBehaviour
     /// <param name="newLevel">The new level object.</param>
     /// <param name="levelData">The level data.</param>
     /// <param name="getDataBase">Flag indicating whether to get data from the database.</param>
-    void SetInformationAndIncreaseSizeLevelsContainer(int i, int currentLevel, GameObject newLevel, Dictionary<string, object> levelData, bool getDataBase = false)
+    void SetInformationAndIncreaseSizeLevelsContainer(int i, GameObject newLevel, Dictionary<string, object> levelData, bool getDataBase = false)
     {
         Level levelUser = newLevel.GetComponent<Level>();
         levelUser.Stars = Convert.ToInt32(levelData["Stars"]);
@@ -152,7 +180,7 @@ public class LevelManager : MonoBehaviour
         if (getDataBase) levelUser.CheckLevelToUnlock();
 
         // Increase the size of the levels container if there are more than 4 levels and the current level is not 4
-        if (i > 4 && currentLevel < 4 || currentLevel > 4)
+        if (i > 4)
         {
             // Increase the width of the levels container by the width of the level prefab
             rectTransformLevels.sizeDelta = new Vector2(rectTransformLevels.sizeDelta.x + widthLevelPrefab, rectTransformLevels.sizeDelta.y);
@@ -209,7 +237,9 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public void NextLevel()
     {
-        GameObject nextLevel = levelsList[GameManager.Instance.Level];
+        GameObject nextLevel = levelsList[GameManager.Instance.Level + 1];
+
+        GameManager.Instance.Level++;
 
         // Unlocks the next level
         nextLevel.GetComponent<Level>().UnlockLevel();
@@ -222,7 +252,7 @@ public class LevelManager : MonoBehaviour
             {
                 // Sets focus on the next level and animates the movement of the levels list
                 focusLevel.GetComponent<FocusLevel>().SetLevelFocus(nextLevel.GetComponent<Collider2D>());
-                rectTransformLevels.DOAnchorPosX(nextPositionLevels, nextLevelTime);
+                rectTransformLevels.DOAnchorPosX(rectTransformLevels.anchoredPosition.x + nextPositionLevels, nextLevelTime);
             });
         });
     }

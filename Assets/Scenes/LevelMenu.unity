@@ -16305,6 +16305,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09e3b1487b8978540aa121a7a8bb8ecf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  text: {fileID: 0}
   levelPrefab: {fileID: 6029498986367280071, guid: dd2745a3528fb17429a32890808db28f, type: 3}
   initialLevel: 50
   rectTransformLevels: {fileID: 1715428525}

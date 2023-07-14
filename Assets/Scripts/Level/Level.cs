@@ -84,7 +84,7 @@ public class Level : MonoBehaviour
     /// <summary>
     /// Enables stars based on the number of stars.
     /// </summary>
-    void EnableStars()
+    public void EnableStars()
     {
         for (int i = 0; i < stars; i++)
         {
