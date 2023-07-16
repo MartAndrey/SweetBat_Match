@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MultiplicationFactor : MonoBehaviour
@@ -30,13 +29,19 @@ public class MultiplicationFactor : MonoBehaviour
     void OnEnable()
     {
         if (GameManager.Instance.GameMode == GameMode.ScoringObjective)
+        {
+            GameManager.Instance.UniqueMatches = true;
             GameManager.Instance.OnUniqueMatches.AddListener(IncreaseMultiplicationFactor);
+        }
     }
 
     void OnDisable()
     {
         if (GameManager.Instance.GameMode == GameMode.ScoringObjective)
+        {
+            GameManager.Instance.UniqueMatches = false;
             GameManager.Instance.OnUniqueMatches.RemoveListener(IncreaseMultiplicationFactor);
+        }
     }
 
     void Awake()

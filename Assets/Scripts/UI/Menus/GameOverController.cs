@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
@@ -35,7 +33,7 @@ public class GameOverController : MonoBehaviour
     public void OnGameOver()
     {
         particleSystemEnergy.SetActive(true);
-        levelText.text = string.Format($"Level {GameManager.Instance.Level}");
+        levelText.text = string.Format($"Level {GameManager.Instance.CurrentLevel + 1}");
         audioSourceCamera.Stop();
         boxGameOver.SetActive(true);
         overlay.SetActive(true);

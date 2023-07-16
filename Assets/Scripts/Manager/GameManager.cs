@@ -200,7 +200,7 @@ public class GameManager : MonoBehaviour
     void UpdateLevelComplete(Dictionary<string, object> currentLevel, int stars, bool updateLevelDataBase)
     {
         currentLevel["Stars"] = stars;
-        CloudFirestore.Instance.UpdateDocumentLevel(string.Format($"level {this.currentLevel + 1}"), currentLevel);
+        CloudFirestore.Instance.UpdateDocumentLevel($"level {this.currentLevel + 1}", currentLevel);
 
         if (updateLevelDataBase)
             CloudFirestore.Instance.UpdateLevelUser(new Dictionary<string, object> { { "level", this.currentLevel + 1 } });

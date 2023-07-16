@@ -65,6 +65,7 @@ public class LevelUI : MonoBehaviour
     public void PlayLevel(string nameScene)
     {
         GameManager.Instance.GameMode = gameMode;
+        GameManager.Instance.ObjectiveComplete = false;
         GameManager.Instance.CurrentLevel = Convert.ToInt32(nameLevelText.text.Split(' ')[1]) - 1;
         StartCoroutine(ScreenChangeTransition.Instance.FadeOut(nameScene));
     }

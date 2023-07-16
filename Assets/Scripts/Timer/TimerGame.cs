@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
@@ -44,5 +43,7 @@ public class TimerGame : MonoBehaviour
         timerText.text = "00";
 
         yield return null;
+
+        StartCoroutine(GUIManager.Instance.CheckGameStatus());
     }
 }

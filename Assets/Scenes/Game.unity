@@ -1175,7 +1175,7 @@ MonoBehaviour:
   imageAudio: {fileID: 1630216334}
   rectTransformButton: {fileID: 1470885516}
   isMute: 0
-  timeTransitionToggle: 0.8
+  timeTransitionToggle: 0.5
   buttonToggle: {fileID: 1470885516}
   popCompleteAudio: {fileID: 8300000, guid: f1f1232f49e312346ac4fe3c1e5cee9f, type: 3}
 --- !u!114 &171142770
@@ -9289,7 +9289,7 @@ MonoBehaviour:
   imageAudio: {fileID: 1077112991}
   rectTransformButton: {fileID: 1470885515}
   isMute: 0
-  timeTransitionToggle: 0.8
+  timeTransitionToggle: 0.5
   buttonToggle: {fileID: 1470885515}
   popCompleteAudio: {fileID: 8300000, guid: f1f1232f49e312346ac4fe3c1e5cee9f, type: 3}
 --- !u!114 &1362692084

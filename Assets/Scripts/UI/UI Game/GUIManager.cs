@@ -175,7 +175,7 @@ public class GUIManager : MonoBehaviour
     /// <summary>
     /// Wait until the board has finished changing before displaying the finished game or game completed menu.
     /// </summary>
-    IEnumerator CheckGameStatus()
+    public IEnumerator CheckGameStatus()
     {
         yield return new WaitForEndOfFrame();
         yield return new WaitUntil(() => !BoardManager.Instance.IsShifting);
