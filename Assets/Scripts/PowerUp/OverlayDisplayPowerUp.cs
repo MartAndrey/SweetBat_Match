@@ -26,6 +26,9 @@ public class OverlayDisplayPowerUp : MonoBehaviour
     {
         overlay.enabled = !overlay.enabled;
         containerInfo.SetActive(!containerInfo.activeSelf);
-        imageDisplay.sprite = spritePowerUp;
+        if (spritePowerUp != null)
+            imageDisplay.sprite = spritePowerUp;
+        GameManager.Instance.PowerUpActivate = !GameManager.Instance.PowerUpActivate;
+        BoardManager.Instance.BoardCollider.enabled = !BoardManager.Instance.BoardCollider.enabled;
     }
 }

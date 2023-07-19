@@ -93,6 +93,9 @@ public class GameManager : MonoBehaviour
     public Dictionary<string, object> CollectiblesData { get { return collectiblesData; } set { collectiblesData = value; } }
 
     public int CurrentLevel { get { return currentLevel; } set { currentLevel = value; } }  // Public getter for the current level
+    public bool PowerUpActivate { get { return powerUpActivate; } set { powerUpActivate = value; } }
+    public TypePowerUp CurrentPowerUp { get { return currentPowerUp; } set { currentPowerUp = value; } }
+    public GameObject CurrentGameObjectPowerUp { get { return currentGameObjectPowerUp; } set { currentGameObjectPowerUp = value; } }
 
     // Serialized game mode field
     [SerializeField] GameMode gameMode;
@@ -141,6 +144,10 @@ public class GameManager : MonoBehaviour
     ErrorHandler errorHandler;
 
     int currentLevel;
+
+    bool powerUpActivate;
+    TypePowerUp currentPowerUp;
+    GameObject currentGameObjectPowerUp;
 
     /// <summary>
     /// Subscribes to the SceneManager's sceneLoaded event when the script is enabled.

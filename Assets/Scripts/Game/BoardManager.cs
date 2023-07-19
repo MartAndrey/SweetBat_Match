@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class BoardManager : MonoBehaviour
+public class BoardManager : MonoBehaviour, IPointerDownHandler
 {
     // Singleton
     public static BoardManager Instance;
@@ -19,6 +20,7 @@ public class BoardManager : MonoBehaviour
     // Variable to which the score is added and then multiplied by the multiplication factor
     public int SumScore { get; set; }
     public Sprite SpriteCollectionObjective { get { return spriteCollectionObjective; } }
+    public Collider2D BoardCollider { get { return boardCollider; } set { boardCollider = value; } }
 
     [Tooltip("Reference fruit")]
     [SerializeField] GameObject currentFruit;
@@ -34,6 +36,11 @@ public class BoardManager : MonoBehaviour
     [SerializeField] AudioClip fruitCrackAudio;
     [SerializeField] AudioClip missMove;
     [SerializeField] CharacterBatUI characterBatUI;
+    [Header("Power Ups Prefabs")]
+    [SerializeField] GameObject powerUpBombPrefab;
+    [SerializeField] GameObject powerUpLightningPrefab;
+    [SerializeField] GameObject powerUpPotionPrefab;
+    [SerializeField] float detectionRadiusBomb;
 
     // All prefabs available fruits
     List<GameObject> prefabs = new List<GameObject>();
@@ -616,5 +623,83 @@ public class BoardManager : MonoBehaviour
         newFruit.SetActive(true);
 
         return newFruit;
+    }
+
+    /// <summary>
+    /// Handles the logic when the player taps on the screen (pointer down event).
+    /// </summary>
+    /// <param name="eventData">The PointerEventData associated with the pointer down event.</param>
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        // Check if the PowerUp is not activated or if the game is already in the process of shifting tiles.
+        if (!GameManager.Instance.PowerUpActivate || IsShifting) return;
+
+        // Set the IsShifting flag to true to prevent further interactions while tiles are shifting.
+        IsShifting = true;
+
+        // Find the OverlayDisplayPowerUp object in the scene.
+        OverlayDisplayPowerUp overlay = GameObject.FindObjectOfType<OverlayDisplayPowerUp>();
+        // Adjust the sorting order of the current PowerUp's GameObject based on the OverlayDisplayPowerUp state.
+        GameManager.Instance.CurrentGameObjectPowerUp.GetComponent<Canvas>().sortingOrder = overlay.OverlayEnable ? 0 : 5;
+        // Switch the PowerUp state in the OverlayDisplayPowerUp object to activate the corresponding UI elements.
+        overlay.SwitchState(null);
+
+        // Perform actions based on the type of PowerUp currently active in the GameManager.
+        switch (GameManager.Instance.CurrentPowerUp)
+        {
+            case TypePowerUp.Bomb:
+                PowerUpBomb(eventData.pointerCurrentRaycast.worldPosition);
+                break;
+
+            case TypePowerUp.Lightning:
+                PowerUpLightning();
+                break;
+
+            case TypePowerUp.Potion:
+                PowerUpPotion();
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Activates the Bomb PowerUp at the specified position.
+    /// </summary>
+    /// <param name="position">The position in the world where the Bomb PowerUp will be activated.</param>
+    void PowerUpBomb(Vector3 position)
+    {
+        // Create a list to store GameObjects of the fruits affected by the Bomb PowerUp.
+        List<GameObject> fruits = new List<GameObject>();
+
+        // Instantiate the Bomb PowerUp prefab at the specified position in the world.
+        GameObject powerUp = Instantiate(powerUpBombPrefab, position, Quaternion.identity);
+
+        // Find all colliders within a certain radius from the Bomb PowerUp's position.
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(powerUp.transform.position, detectionRadiusBomb);
+
+        // Loop through the colliders to check if they belong to fruits and add them to the fruits list.
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            Fruit fruit = colliders[i].GetComponent<Fruit>();
+
+            if (fruit != null)
+            {
+                fruits.Add(fruit.gameObject);
+            }
+        }
+
+        // Perform actions to clear the matched fruits and start the coroutine to handle cascading effects.
+        ClearSingleFruitMatch(fruits);
+        StartCoroutine(FoundMatchesRutiner(fruits));
+    }
+
+
+    void PowerUpLightning()
+    {
+
+    }
+
+    void PowerUpPotion()
+    {
+
     }
 }

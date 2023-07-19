@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System;
@@ -123,11 +121,14 @@ public class PowerUp : Timer
         }
         else if (statePowerUp == StatePowerUp.Game)
         {
+            if (BoardManager.Instance.IsShifting) return;
             // Updates the sorting order of the canvas based on the overlay display state,
             // and triggers the overlay switch with the provided power-up sprite.
             OverlayDisplayPowerUp overlay = GameObject.FindObjectOfType<OverlayDisplayPowerUp>();
             this.GetComponent<Canvas>().sortingOrder = overlay.OverlayEnable ? 0 : 5;
             overlay.SwitchState(spritePowerUp.sprite);
+            GameManager.Instance.CurrentPowerUp = typePowerUp;
+            GameManager.Instance.CurrentGameObjectPowerUp = this.gameObject;
         }
     }
 

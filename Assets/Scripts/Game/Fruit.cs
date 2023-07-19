@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using DG.Tweening;
@@ -145,7 +143,6 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
             transform.DOScale(Vector3.zero, 0.1f).onComplete = () =>
             {
                 gameObject.SetActive(false);
-                // hasFruitDisable = true;
             };
         });
     }
