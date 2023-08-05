@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using DigitalRuby.LightningBolt;
 
 public class BoardManager : MonoBehaviour, IPointerDownHandler
 {
@@ -38,7 +39,8 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
     [SerializeField] CharacterBatUI characterBatUI;
     [Header("Power Ups Prefabs")]
     [SerializeField] GameObject powerUpBombPrefab;
-    [SerializeField] GameObject powerUpLightningPrefab;
+    [SerializeField] GameObject powerUpLightningPrefabBefore;
+    [SerializeField] GameObject powerUpLightningPrefabAfter;
     [SerializeField] GameObject powerUpPotionPrefab;
     [SerializeField] float detectionRadiusBomb;
 
@@ -151,6 +153,9 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
         IsShifting = false;
 
         yield return null;
+
+        Physics2D.simulationMode = SimulationMode2D.FixedUpdate;
+
     }
 
     // Check if the fruit is on the table, if not, destroy it.
@@ -171,8 +176,8 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
         IsShifting = true;
         // Cast a ray in the given direction to find the next fruit to be swapped
         RaycastHit2D hit = Physics2D.Raycast(fruit.transform.position, direction);
-
         // If no fruit is found in the given direction, set IsShifting to false and return
+
         if (hit.collider == null)
         {
             audioSource.PlayOneShot(missMove);
@@ -181,6 +186,7 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
         }
         // Get the next fruit game object
         GameObject nextFruit = hit.collider.gameObject;
+        Debug.LogWarning(nextFruit);
 
         // If the two fruits have the same ID, set IsShifting to false and return
         if (fruit.GetComponent<Fruit>().Id == nextFruit.GetComponent<Fruit>().Id)
@@ -652,11 +658,11 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
                 break;
 
             case TypePowerUp.Lightning:
-                PowerUpLightning();
+                PowerUpLightning(eventData.pointerCurrentRaycast.worldPosition);
                 break;
 
             case TypePowerUp.Potion:
-                PowerUpPotion();
+                PowerUpPotion(eventData.pointerCurrentRaycast.worldPosition);
                 break;
         }
     }
@@ -693,12 +699,14 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
     }
 
 
-    void PowerUpLightning()
+    void PowerUpLightning(Vector3 position)
     {
+        List<GameObject> fruits = new List<GameObject>();
 
+        Debug.Log(position);
     }
 
-    void PowerUpPotion()
+    void PowerUpPotion(Vector3 position)
     {
 
     }

@@ -42,7 +42,7 @@ public class LoginController : MonoBehaviour
 
     [Header("Authentications")]
     [SerializeField] GoogleAuth googleAuth;
-    [SerializeField] FacebookAuth facebookAuth;
+    // [SerializeField] FacebookAuth facebookAuth;
 
     [Header("Other Settings")]
     [SerializeField] TMP_Text btnLoginText;

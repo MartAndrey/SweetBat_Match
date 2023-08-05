@@ -22,6 +22,7 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
     Vector2[] adjacentDirections = new Vector2[] { Vector2.up, Vector2.down, Vector2.left, Vector2.right };
 
     SpriteRenderer spriteRenderer;
+    Rigidbody2D rb;
 
     // Time it takes to change the positions of the fruits when they are moved
     float timeChangePositionFruits = 0.25f;
@@ -46,6 +47,7 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
 
     void Awake()
     {
+        rb = GetComponent<Rigidbody2D>();
         audioSource = GetComponent<AudioSource>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
@@ -151,5 +153,39 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
     IEnumerator ChangeOnTheBoard()
     {
         yield return new WaitUntil(() => !BoardManager.Instance.IsShifting);
+    }
+
+    [ContextMenu("AFsf")]
+    public void Move()
+    {
+        StopAllCoroutines();
+        StartCoroutine(MoveRu());
+    }
+
+    public IEnumerator MoveRu()
+    {
+        yield return null;
+        while (true)
+        {
+            this.gameObject.transform.position = new Vector2(this.gameObject.transform.position.x + .1f, this.gameObject.transform.position.y);
+            yield return null;
+        }
+    }
+
+    [ContextMenu("AFsfLeft")]
+    public void Movele()
+    {
+        StopAllCoroutines();
+        StartCoroutine(MoveRud());
+    }
+
+    public IEnumerator MoveRud()
+    {
+        yield return null;
+        while (true)
+        {
+            rb.transform.position = new Vector2(rb.transform.position.x - .1f, this.gameObject.transform.position.y);
+            yield return null;
+        }
     }
 }
