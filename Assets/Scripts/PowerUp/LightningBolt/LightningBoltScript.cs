@@ -98,22 +98,6 @@ namespace DigitalRuby.LightningBolt
         private int animationPingPongDirection = 1;
         private bool orthographic;
 
-        [ContextMenu("AFsf")]
-        public void Move()
-        {
-            StartCoroutine(MoveRu());
-        }
-
-        public IEnumerator MoveRu()
-        {
-            yield return null;
-            while (true)
-            {
-                this.gameObject.transform.position = new Vector2(this.gameObject.transform.position.x + .1f, this.gameObject.transform.position.y);
-                yield return null;
-            }
-        }
-
         private void GetPerpendicularVector(ref Vector3 directionNormalized, out Vector3 side)
         {
             if (directionNormalized == Vector3.zero)

@@ -2829,7 +2829,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7495080115227862180, guid: dade7306939b664438af07967a1db99c, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7495080115227862181, guid: dade7306939b664438af07967a1db99c, type: 3}
       propertyPath: m_Enabled
@@ -7556,7 +7556,7 @@ MonoBehaviour:
   characterBatUI: {fileID: 1237095861}
   powerUpBombPrefab: {fileID: 2433282508537954060, guid: 180208929d09d744d8f89ca215bcb06f, type: 3}
   powerUpLightningPrefabBefore: {fileID: 100008, guid: 1ca16f2a31fb6a548ad8954bed1d321f, type: 3}
-  powerUpLightningPrefabAfter: {fileID: 6748093590659695180, guid: 8fddc71f7233a2142811ec7a14964332, type: 3}
+  powerUpLightningPrefabAfter: {fileID: 2367036102047928156, guid: 8fddc71f7233a2142811ec7a14964332, type: 3}
   powerUpPotionPrefab: {fileID: 100004, guid: 7867af58a6ec48846ae807eb4022fbaa, type: 3}
   detectionRadiusBomb: 0.6
 --- !u!82 &1141675369
@@ -8462,75 +8462,6 @@ Transform:
   - {fileID: 1363658964}
   m_Father: {fileID: 1052656991}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &1255572941
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2367036102047671754, guid: 8fddc71f7233a2142811ec7a14964332, type: 3}
-      propertyPath: m_RootOrder
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 2367036102047671754, guid: 8fddc71f7233a2142811ec7a14964332, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2367036102047671754, guid: 8fddc71f7233a2142811ec7a14964332, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2367036102047671754, guid: 8fddc71f7233a2142811ec7a14964332, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2367036102047671754, guid: 8fddc71f7233a2142811ec7a14964332, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2367036102047671754, guid: 8fddc71f7233a2142811ec7a14964332, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2367036102047671754, guid: 8fddc71f7233a2142811ec7a14964332, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2367036102047671754, guid: 8fddc71f7233a2142811ec7a14964332, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2367036102047671754, guid: 8fddc71f7233a2142811ec7a14964332, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2367036102047671754, guid: 8fddc71f7233a2142811ec7a14964332, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2367036102047671754, guid: 8fddc71f7233a2142811ec7a14964332, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2367036102047928156, guid: 8fddc71f7233a2142811ec7a14964332, type: 3}
-      propertyPath: m_Name
-      value: SimpleLightningBoltAnimatedPrefab
-      objectReference: {fileID: 0}
-    - target: {fileID: 2367036102047928156, guid: 8fddc71f7233a2142811ec7a14964332, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2367036102058647200, guid: 8fddc71f7233a2142811ec7a14964332, type: 3}
-      propertyPath: EndPosition.x
-      value: -2
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 8fddc71f7233a2142811ec7a14964332, type: 3}
 --- !u!1001 &1277501138
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19447,4 +19378,3 @@ SceneRoots:
   - {fileID: 1486905756}
   - {fileID: 1630967835}
   - {fileID: 956948156}
-  - {fileID: 1255572941}

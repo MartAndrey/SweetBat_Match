@@ -155,37 +155,5 @@ public class Fruit : MonoBehaviour, IDragHandler, IEndDragHandler
         yield return new WaitUntil(() => !BoardManager.Instance.IsShifting);
     }
 
-    [ContextMenu("AFsf")]
-    public void Move()
-    {
-        StopAllCoroutines();
-        StartCoroutine(MoveRu());
-    }
-
-    public IEnumerator MoveRu()
-    {
-        yield return null;
-        while (true)
-        {
-            this.gameObject.transform.position = new Vector2(this.gameObject.transform.position.x + .1f, this.gameObject.transform.position.y);
-            yield return null;
-        }
-    }
-
-    [ContextMenu("AFsfLeft")]
-    public void Movele()
-    {
-        StopAllCoroutines();
-        StartCoroutine(MoveRud());
-    }
-
-    public IEnumerator MoveRud()
-    {
-        yield return null;
-        while (true)
-        {
-            rb.transform.position = new Vector2(rb.transform.position.x - .1f, this.gameObject.transform.position.y);
-            yield return null;
-        }
-    }
+    
 }

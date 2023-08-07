@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using DigitalRuby.LightningBolt;
+using DG.Tweening;
 
 public class BoardManager : MonoBehaviour, IPointerDownHandler
 {
@@ -45,7 +45,7 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
     [SerializeField] float detectionRadiusBomb;
 
     // All prefabs available fruits
-    List<GameObject> prefabs = new List<GameObject>();
+    List<GameObject> prefabs = new();
     // All the fruits on the board
     GameObject[,] fruits;
     // List<GameObject> check = new List<GameObject>();
@@ -641,7 +641,7 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
         if (!GameManager.Instance.PowerUpActivate || IsShifting) return;
 
         // Set the IsShifting flag to true to prevent further interactions while tiles are shifting.
-        IsShifting = true;
+        // IsShifting = true;
 
         // Find the OverlayDisplayPowerUp object in the scene.
         OverlayDisplayPowerUp overlay = GameObject.FindObjectOfType<OverlayDisplayPowerUp>();
@@ -703,7 +703,46 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
     {
         List<GameObject> fruits = new List<GameObject>();
 
-        Debug.Log(position);
+        Instantiate(powerUpLightningPrefabBefore, position, Quaternion.identity);
+
+        fruits = fruits.Union(RaycastLightning(position, new Vector2(.2f, 14), 0f)).ToList();
+        fruits = fruits.Union(RaycastLightning(position, new Vector2(.2f, 14), 90f)).ToList();
+
+        ClearSingleFruitMatch(fruits);
+        StartCoroutine(FoundMatchesRutiner(fruits));
+    }
+
+    List<GameObject> RaycastLightning(Vector2 position, Vector2 size, float angle)
+    {
+        List<GameObject> fruits = new();
+
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(position, size, angle);
+        GameObject powerUp = Instantiate(powerUpLightningPrefabAfter, position, Quaternion.Euler(0, 0, angle));
+
+        if (angle == 0)
+            powerUp.transform.position = new Vector2(powerUp.transform.position.x, powerUp.transform.position.y + 2);
+        else if (angle == 90)
+            powerUp.transform.position = new Vector2(powerUp.transform.position.x - 2, powerUp.transform.position.y);
+
+        if (powerUp != null)
+        {
+            powerUp.transform.DOScaleX(2, .4f).OnComplete(() =>
+            {
+                Destroy(powerUp.gameObject);
+            });
+        }
+
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            Fruit fruit = colliders[i].GetComponent<Fruit>();
+
+            if (fruit != null)
+            {
+                fruits.Add(fruit.gameObject);
+            }
+        }
+
+        return fruits;
     }
 
     void PowerUpPotion(Vector3 position)
