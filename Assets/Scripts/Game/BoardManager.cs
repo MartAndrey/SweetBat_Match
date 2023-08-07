@@ -43,6 +43,7 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
     [SerializeField] GameObject powerUpLightningPrefabAfter;
     [SerializeField] GameObject powerUpPotionPrefab;
     [SerializeField] float detectionRadiusBomb;
+    [SerializeField] float detectionRadiusPotion;
 
     // All prefabs available fruits
     List<GameObject> prefabs = new();
@@ -51,7 +52,7 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
     // List<GameObject> check = new List<GameObject>();
     Collider2D boardCollider;
 
-    Fruit selectedFruit;
+    // Fruit selectedFruit;
 
     AudioSource audioSource;
 
@@ -186,7 +187,6 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
         }
         // Get the next fruit game object
         GameObject nextFruit = hit.collider.gameObject;
-        Debug.LogWarning(nextFruit);
 
         // If the two fruits have the same ID, set IsShifting to false and return
         if (fruit.GetComponent<Fruit>().Id == nextFruit.GetComponent<Fruit>().Id)
@@ -241,7 +241,7 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
         Fruit currentFruit = fruit.GetComponent<Fruit>();
         RaycastHit2D hit = Physics2D.Raycast(fruit.transform.position, direction);
 
-        while (hit.collider != null && hit.collider.gameObject.GetComponent<Fruit>().Id == currentFruit.Id)
+        while (hit.collider != null && hit.collider.gameObject.GetComponent<Fruit>().Id == currentFruit.Id && fruit.gameObject.activeSelf)
         {
             fruitMatches.Add(hit.collider.gameObject);
 
@@ -641,7 +641,7 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
         if (!GameManager.Instance.PowerUpActivate || IsShifting) return;
 
         // Set the IsShifting flag to true to prevent further interactions while tiles are shifting.
-        // IsShifting = true;
+        IsShifting = true;
 
         // Find the OverlayDisplayPowerUp object in the scene.
         OverlayDisplayPowerUp overlay = GameObject.FindObjectOfType<OverlayDisplayPowerUp>();
@@ -698,32 +698,52 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
         StartCoroutine(FoundMatchesRutiner(fruits));
     }
 
-
+    /// <summary>
+    /// Activates the lightning power-up at the specified position.
+    /// </summary>
+    /// <param name="position">The position where the power-up is activated.</param>
     void PowerUpLightning(Vector3 position)
     {
+        // Create a list to store the fruits affected by the lightning power-up.
         List<GameObject> fruits = new List<GameObject>();
 
+        // Instantiate the lightning power-up before effect.
         Instantiate(powerUpLightningPrefabBefore, position, Quaternion.identity);
 
+        // Raycast in two directions to detect fruits affected by the lightning power-up.
         fruits = fruits.Union(RaycastLightning(position, new Vector2(.2f, 14), 0f)).ToList();
         fruits = fruits.Union(RaycastLightning(position, new Vector2(.2f, 14), 90f)).ToList();
 
+        // Clear the matched fruits and start the coroutine to handle the matches.
         ClearSingleFruitMatch(fruits);
         StartCoroutine(FoundMatchesRutiner(fruits));
     }
 
+    /// <summary>
+    /// Performs a raycast in a specific direction to detect fruits affected by the lightning power-up.
+    /// </summary>
+    /// <param name="position">The starting position of the raycast.</param>
+    /// <param name="size">The size of the raycast.</param>
+    /// <param name="angle">The angle of the raycast.</param>
+    /// <returns>A list of fruits affected by the lightning power-up.</returns>
     List<GameObject> RaycastLightning(Vector2 position, Vector2 size, float angle)
     {
+        // Create a list to store the fruits affected by the lightning power-up.
         List<GameObject> fruits = new();
 
+        // Perform an overlap box cast to detect fruits in the specified area and angle.
         Collider2D[] colliders = Physics2D.OverlapBoxAll(position, size, angle);
+        // Instantiate the lightning power-up after effect at the position of the detected fruits.
         GameObject powerUp = Instantiate(powerUpLightningPrefabAfter, position, Quaternion.Euler(0, 0, angle));
 
+
+        // Offset the power-up position if it is along the x or y axis.
         if (angle == 0)
             powerUp.transform.position = new Vector2(powerUp.transform.position.x, powerUp.transform.position.y + 2);
         else if (angle == 90)
             powerUp.transform.position = new Vector2(powerUp.transform.position.x - 2, powerUp.transform.position.y);
 
+        // If the power-up object is not null, animate and destroy it after scaling.
         if (powerUp != null)
         {
             powerUp.transform.DOScaleX(2, .4f).OnComplete(() =>
@@ -732,6 +752,7 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
             });
         }
 
+        // Loop through the detected colliders to find fruits and add them to the list.
         for (int i = 0; i < colliders.Length; i++)
         {
             Fruit fruit = colliders[i].GetComponent<Fruit>();
@@ -745,8 +766,80 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
         return fruits;
     }
 
+    /// <summary>
+    /// Activates the potion power-up at the specified position.
+    /// </summary>
+    /// <param name="position">The position where the power-up is activated.</param>
     void PowerUpPotion(Vector3 position)
     {
+        // Create lists to store fruits affected by the potion power-up and the changed fruits.
+        List<GameObject> fruits = new();
+        List<GameObject> changedFruits = new();
 
+
+        // Instantiate the potion power-up at the given position.
+        GameObject powerUp = Instantiate(powerUpPotionPrefab, position, Quaternion.identity);
+
+        // Detect fruits within the detection radius of the potion power-up.
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(powerUp.transform.position, detectionRadiusPotion);
+
+        // Loop through the detected colliders to find fruits and add them to the list.
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            Fruit fruit = colliders[i].GetComponent<Fruit>();
+
+            if (fruit != null)
+            {
+                fruits.Add(fruit.gameObject);
+            }
+        }
+
+        // Process each fruit affected by the potion power-up.
+        fruits.ForEach(fruit =>
+        {
+            // Get the current position of the fruit in the game grid.
+            int positionX = (int)fruit.transform.localPosition.x;
+            int positionY = (int)fruit.transform.localPosition.y;
+
+            // Get a new random fruit to replace the current one in the game grid.
+            this.fruits[positionX, positionY] = GetNewFruit(positionX, positionY);
+            // Add the changed fruit to the list.
+            changedFruits.Add(this.fruits[positionX, positionY]);
+
+            // Disable the current fruit and add it back to the pool.
+            fruit.GetComponent<Fruit>().DisableFruit();
+            AddFruitToPool(fruit);
+
+        });
+
+        // Start the coroutine to search for matches after the potion power-up effect.
+        StartCoroutine(SearchMatchesAfterPotionRutiner(changedFruits));
+    }
+
+    /// <summary>
+    /// Coroutine that searches for matches after applying the potion power-up.
+    /// </summary>
+    /// <param name="fruits">The list of fruits affected by the potion power-up.</param>
+    IEnumerator SearchMatchesAfterPotionRutiner(List<GameObject> fruits)
+    {
+        List<GameObject> newFruits = new();
+
+        // Wait for a short delay to let the changes take effect.
+        yield return new WaitForSeconds(1f);
+
+        // Loop through the list of affected fruits.
+        fruits.ForEach(fruit =>
+        {
+            // Find matches for the current fruit and add them to the newFruits list.
+            List<GameObject> matches = ThereAreFoundMatches(fruit);
+            newFruits = newFruits.Union(matches).ToList();
+        });
+
+        // If new matches are found, clear them and start the coroutine to handle the matches.
+        if (newFruits.Count > 0)
+        {
+            ClearSingleFruitMatch(newFruits);
+            StartCoroutine(FoundMatchesRutiner(newFruits));
+        }
     }
 }
