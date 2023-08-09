@@ -5,7 +5,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
 using System.ComponentModel;
-using TMPro;
+using System.Net.NetworkInformation;
+using UnityEngine.Networking;
+using System.Threading.Tasks;
 
 // Define a set of game modes for different game objectives
 public enum GameMode
@@ -25,6 +27,8 @@ public enum GamePlayMode { MovesLimited, TimedMatch }
 /// </summary>
 public enum Errors
 {
+    [Description("We're sorry, but you don't seem to have an internet connection right now. To access the online features, please check your Wi-Fi or mobile data connection and try again. Thank you!. If the problem persists, contact the game developer")]
+    NNA_GM_THIS,
     [Description("Something went wrong with the database dependencies. Please try again. If the problem persists, contact the game developer")]
     F_FA_68,
     [Description("Something went wrong with authentication. If the problem persists, contact the game developer.")]
@@ -58,6 +62,8 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public UnityEvent OnUniqueMatches;
     [HideInInspector] public UnityEvent<Errors> OnErrorRetry;
     [HideInInspector] public UnityEvent<Errors> OnErrorClose;
+    Dictionary<Errors, Action> errorsRetryHandler;
+    Dictionary<Errors, Action> errorsCloseHandler;
 
     public int Level { get { return level; } set { level = value; } }  // Public getter for the current level
     // Gets or sets the objective game mode.
@@ -155,6 +161,8 @@ public class GameManager : MonoBehaviour
     void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
+        OnErrorRetry.AddListener(ErrorRetry);
+        OnErrorClose.AddListener(ErrorClose);
     }
 
     /// <summary>
@@ -163,6 +171,8 @@ public class GameManager : MonoBehaviour
     void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
+        OnErrorRetry.RemoveListener(ErrorRetry);
+        OnErrorClose.RemoveListener(ErrorClose);
     }
 
     void Awake()
@@ -174,6 +184,91 @@ public class GameManager : MonoBehaviour
 
         if (gameMode == GameMode.ScoringObjective || gameMode == GameMode.TimeObjective)
             uniqueMatches = true;
+
+        CheckInternetConnection();
+
+        errorsRetryHandler = new Dictionary<Errors, Action>()
+        {
+            { Errors.NNA_GM_THIS,  RetryErrorNetworkAvailable },
+        };
+
+        errorsCloseHandler = new Dictionary<Errors, Action>()
+        {
+            { Errors.NNA_GM_THIS,  CloseErrorNetworkAvailable },
+        };
+    }
+
+    /// <summary>
+    /// Handles the retry action for a specific error.
+    /// </summary>
+    /// <param name="error">The error to retry.</param>
+    void ErrorRetry(Errors error)
+    {
+        if (errorsRetryHandler.ContainsKey(error)) errorsRetryHandler[error]();
+    }
+
+    /// <summary>
+    /// Handles the close action for a specific error.
+    /// </summary>
+    /// <param name="error">The error to close.</param>
+    void ErrorClose(Errors error)
+    {
+        if (errorsCloseHandler.ContainsKey(error)) errorsCloseHandler[error]();
+    }
+
+    /// <summary>
+    /// Checks the internet connection and initiates the connection check routine if available.
+    /// </summary>
+    void CheckInternetConnection()
+    {
+        if (NetworkInterface.GetIsNetworkAvailable())
+        {
+            // Initiate the internet connection check routine.
+            StartCoroutine(CheckInternetConnectionRutiner());
+        }
+        else HasFoundError(Errors.NNA_GM_THIS); // Handle error when no network connection is available.
+    }
+
+    /// <summary>
+    /// Coroutine to perform the internet connection check.
+    /// </summary>
+    IEnumerator CheckInternetConnectionRutiner()
+    {
+        Task<bool> result = IsConnectionNetwork();
+
+        yield return new WaitUntil(() => result.IsCompleted);
+
+        if (result.Result)
+        {
+            // Start the Firebase service when network connection is available.
+            FirebaseApp firebaseApp = FindObjectOfType<FirebaseApp>();
+            firebaseApp.StartFirebaseService();
+        }
+        else HasFoundError(Errors.NNA_GM_THIS);  // Handle error when network connection check fails.
+    }
+
+    /// <summary>
+    /// Checks if a network connection to a specific URL is available.
+    /// </summary>
+    /// <returns>True if network connection is available, otherwise false.</returns>
+    async Task<bool> IsConnectionNetwork()
+    {
+        UnityWebRequest www = UnityWebRequest.Get("https://www.google.com");
+        var asyncOperation = www.SendWebRequest();
+
+        while (!asyncOperation.isDone)
+        {
+            await Task.Yield();
+        }
+
+        if (www.result == UnityWebRequest.Result.Success)
+        {
+            // Network connection is available.
+            return true;
+        }
+
+        // Network connection is not available.
+        return false;
     }
 
     /// <summary>
@@ -347,5 +442,34 @@ public class GameManager : MonoBehaviour
             CloudFirestore.Instance.UpdateLevelUser(new Dictionary<string, object> { { "level", 0 } });
             level = 0;
         }
+    }
+
+    /// <summary>
+    /// Retry network error handling by rechecking the internet connection.
+    /// </summary>
+    void RetryErrorNetworkAvailable()
+    {
+        HideDisplayError();
+        // Retry by initiating internet connection check.
+        StartCoroutine(RetryErrorGetUserCollectiblesRutiner());
+    }
+
+    /// <summary>
+    /// Coroutine to retry handling network error by rechecking the internet connection.
+    /// </summary>
+    IEnumerator RetryErrorGetUserCollectiblesRutiner()
+    {
+        // Retry the internet connection check after a short delay.
+        yield return new WaitForSeconds(.1f);
+        CheckInternetConnection();
+    }
+
+    /// <summary>
+    /// Close the error handling due to a network error and reset the current scene while signing out.
+    /// </summary>
+    void CloseErrorNetworkAvailable()
+    {
+        // Close the error UI, reset the scene, and sign out the user.
+        ResetCurrentSceneAndSignOut();
     }
 }

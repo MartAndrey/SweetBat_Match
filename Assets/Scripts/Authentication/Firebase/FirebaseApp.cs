@@ -42,6 +42,29 @@ public class FirebaseApp : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
+        // Close the error related to user photo.
+        errorsRetryHandler = new Dictionary<Errors, Action>()
+        {
+            { Errors.F_FA_68,  RetryErrorFirebaseDependencies },
+            { Errors.AUGGC_FA_122,  RetryErrorFirebaseAuthGoogle },
+            { Errors.AUGGF_FA_127,  RetryErrorFirebaseAuthGoogle },
+            { Errors.UP_FA_199, RetryErrorUserPhoto }
+        };
+
+        errorsCloseHandler = new Dictionary<Errors, Action>()
+        {
+            { Errors.F_FA_68,  CloseErrorFirebaseDependencies },
+            { Errors.AUGGC_FA_122,  CloseErrorFirebaseAuthGoogle },
+            { Errors.AUGGF_FA_127,  CloseErrorFirebaseAuthGoogle },
+            { Errors.UP_FA_199, CloseErrorUserPhoto }
+        };
+    }
+
+    /// <summary>
+    /// Initializes the Firebase service and handles network connection checking.
+    /// </summary>
+    public void StartFirebaseService()
+    {
         Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
         {
             var dependencyStatus = task.Result;
@@ -70,23 +93,6 @@ public class FirebaseApp : MonoBehaviour
                 StartCoroutine(ShowErrorUIRutiner(Errors.F_FA_68));
             }
         });
-
-        // Close the error related to user photo.
-        errorsRetryHandler = new Dictionary<Errors, Action>()
-        {
-            { Errors.F_FA_68,  RetryErrorFirebaseDependencies },
-            { Errors.AUGGC_FA_122,  RetryErrorFirebaseAuthGoogle },
-            { Errors.AUGGF_FA_127,  RetryErrorFirebaseAuthGoogle },
-            { Errors.UP_FA_199, RetryErrorUserPhoto }
-        };
-
-        errorsCloseHandler = new Dictionary<Errors, Action>()
-        {
-            { Errors.F_FA_68,  CloseErrorFirebaseDependencies },
-            { Errors.AUGGC_FA_122,  CloseErrorFirebaseAuthGoogle },
-            { Errors.AUGGF_FA_127,  CloseErrorFirebaseAuthGoogle },
-            { Errors.UP_FA_199, CloseErrorUserPhoto }
-        };
     }
 
     /// <summary>

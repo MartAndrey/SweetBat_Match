@@ -39,9 +39,12 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
     [SerializeField] CharacterBatUI characterBatUI;
     [Header("Power Ups Prefabs")]
     [SerializeField] GameObject powerUpBombPrefab;
+    [SerializeField] AudioClip powerUpBombSfx;
     [SerializeField] GameObject powerUpLightningPrefabBefore;
     [SerializeField] GameObject powerUpLightningPrefabAfter;
+    [SerializeField] AudioClip powerUpLightningSfx;
     [SerializeField] GameObject powerUpPotionPrefab;
+    [SerializeField] AudioClip powerUpPotionSfx;
     [SerializeField] float detectionRadiusBomb;
     [SerializeField] float detectionRadiusPotion;
 
@@ -681,6 +684,7 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
 
         // Find all colliders within a certain radius from the Bomb PowerUp's position.
         Collider2D[] colliders = Physics2D.OverlapCircleAll(powerUp.transform.position, detectionRadiusBomb);
+        audioSource.PlayOneShot(powerUpBombSfx);
 
         // Loop through the colliders to check if they belong to fruits and add them to the fruits list.
         for (int i = 0; i < colliders.Length; i++)
@@ -709,6 +713,7 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
 
         // Instantiate the lightning power-up before effect.
         Instantiate(powerUpLightningPrefabBefore, position, Quaternion.identity);
+        audioSource.PlayOneShot(powerUpLightningSfx);
 
         // Raycast in two directions to detect fruits affected by the lightning power-up.
         fruits = fruits.Union(RaycastLightning(position, new Vector2(.2f, 14), 0f)).ToList();
@@ -782,7 +787,7 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
 
         // Detect fruits within the detection radius of the potion power-up.
         Collider2D[] colliders = Physics2D.OverlapCircleAll(powerUp.transform.position, detectionRadiusPotion);
-
+        audioSource.PlayOneShot(powerUpPotionSfx);
         // Loop through the detected colliders to find fruits and add them to the list.
         for (int i = 0; i < colliders.Length; i++)
         {
@@ -841,5 +846,6 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
             ClearSingleFruitMatch(newFruits);
             StartCoroutine(FoundMatchesRutiner(newFruits));
         }
+        else IsShifting = false;
     }
 }

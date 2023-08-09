@@ -2829,7 +2829,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7495080115227862180, guid: dade7306939b664438af07967a1db99c, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7495080115227862181, guid: dade7306939b664438af07967a1db99c, type: 3}
       propertyPath: m_Enabled
@@ -7555,9 +7555,12 @@ MonoBehaviour:
   missMove: {fileID: 8300000, guid: 56f624f30b38fa342b89ab1b8a58ba27, type: 3}
   characterBatUI: {fileID: 1237095861}
   powerUpBombPrefab: {fileID: 2433282508537954060, guid: 180208929d09d744d8f89ca215bcb06f, type: 3}
+  powerUpBombSfx: {fileID: 8300000, guid: 95b1bffcf0642884eae5e78b38f95dac, type: 3}
   powerUpLightningPrefabBefore: {fileID: 100008, guid: 1ca16f2a31fb6a548ad8954bed1d321f, type: 3}
   powerUpLightningPrefabAfter: {fileID: 2367036102047928156, guid: 8fddc71f7233a2142811ec7a14964332, type: 3}
+  powerUpLightningSfx: {fileID: 8300000, guid: a2cc5774b8b754647af67b1a6d70fc35, type: 3}
   powerUpPotionPrefab: {fileID: 100004, guid: cca2a9575bb97b541b75aeb66c777a3c, type: 3}
+  powerUpPotionSfx: {fileID: 8300000, guid: 7aaaee72031957b448d1595c23e7c390, type: 3}
   detectionRadiusBomb: 0.6
   detectionRadiusPotion: 1
 --- !u!82 &1141675369
