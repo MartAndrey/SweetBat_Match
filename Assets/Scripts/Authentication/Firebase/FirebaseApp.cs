@@ -10,6 +10,7 @@ public class FirebaseApp : MonoBehaviour
     public static FirebaseApp Instance;
 
     public Dictionary<string, object> UserData { get { return userData; } }
+    public Firebase.Auth.FirebaseUser User { get { return user; } }
 
     [HideInInspector] public UnityEvent OnSetFirebase;
 
@@ -100,11 +101,20 @@ public class FirebaseApp : MonoBehaviour
     /// </summary>
     void GetUserData()
     {
-        StartCoroutine(LoadAvatarImage(user.PhotoUrl.ToString()));
+        if (!user.IsAnonymous)
+        {
+            // Load avatar image and check for game readiness
+            StartCoroutine(LoadAvatarImage(user.PhotoUrl.ToString()));
+            mainMenuController.CheckLoadingGame();
+        }
+
+    // Retrieve user data, levels, and collectibles
         CloudFirestore.Instance.GetUserData(user.UserId);
         CloudFirestore.Instance.UserLevels(user.UserId);
         CloudFirestore.Instance.UserCollectibles(user.UserId);
-        mainMenuController.CheckLoadingGame();
+
+        if (user.IsAnonymous)
+            Invoke("GameReadyToPlay", 1f);
     }
 
     /// <summary>
@@ -151,7 +161,6 @@ public class FirebaseApp : MonoBehaviour
             GameManager.Instance.UserData = userData;
             loginController.LoginSuccess();
             StartCoroutine(LoadAvatarImage(user.PhotoUrl.ToString()));
-            GameManager.Instance.GetCurrentLevelUser();
         });
     }
 
@@ -179,13 +188,44 @@ public class FirebaseApp : MonoBehaviour
                 return;
             }
 
-            // Get the current user from FirebaseAuth
-            Firebase.Auth.FirebaseUser user = auth.CurrentUser;
-
             // Call the loginController to handle successful login
             loginController.LoginSuccess();
             // Load the user's avatar image
             StartCoroutine(LoadAvatarImage(user.PhotoUrl.ToString()));
+        });
+    }
+
+        /// <summary>
+    /// Logs in an anonymous user.
+    /// </summary>
+    public void LoginAnonymous()
+    {
+        Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
+
+        auth.SignInAnonymouslyAsync().ContinueWith(task =>
+        {
+            if (task.IsCanceled)
+            {
+                Debug.LogError("SignInAnonymouslyAsync was canceled.");
+                return;
+            }
+            if (task.IsFaulted)
+            {
+                Debug.LogError("SignInAnonymouslyAsync encountered an error: " + task.Exception);
+                return;
+            }
+
+            user = auth.CurrentUser;
+
+            userData = new Dictionary<string, object>()
+            {
+                { "name", "Me" },
+                { "id", user.UserId },
+            };
+
+    // Store user data and trigger login success
+            GameManager.Instance.UserData = userData;
+            GameManager.Instance.LoginSuccessAnonymous();
         });
     }
 

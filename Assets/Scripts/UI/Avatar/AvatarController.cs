@@ -112,4 +112,16 @@ public class AvatarController : MonoBehaviour
         else if (genderUser == GenderUser.Female) UserWomen(photoUser);
         else if (genderUser == GenderUser.Unknown) UserUnknown(photoUser);
     }
+
+    /// <summary>
+    /// Updates the anonymous user's avatar information.
+    /// </summary>
+    public void UpdateAvatarAnonymous()
+    {
+        if (showFrame)
+        {
+            textNameUnknown.text = GameManager.Instance.UserData["name"].ToString().Split(' ')[0];
+            textLevelUnknown.text = (GameManager.Instance.Level + 1).ToString();
+        }
+    }
 }

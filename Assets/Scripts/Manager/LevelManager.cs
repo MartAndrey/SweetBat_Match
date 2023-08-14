@@ -8,7 +8,6 @@ using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
-    public TMP_Text text;
     // The prefab for the level objects
     [SerializeField] GameObject levelPrefab;
     // The starting levels
@@ -31,11 +30,11 @@ public class LevelManager : MonoBehaviour
     float widthLevelPrefab;
 
     // This integer variable defines the maximum distance between the focusLevel and profileMarker before the player is returned to the returnLevel.
-    int maxDistanceToReturn = 850;
+    readonly int maxDistanceToReturn = 850;
 
     // Duration to move the Rect Transform from the list of levels to indicate the next level
-    float nextLevelTime = 1;
-    int nextPositionLevels = -250;
+    readonly float nextLevelTime = 1;
+    readonly int nextPositionLevels = -250;
 
     void Start()
     {
@@ -100,6 +99,8 @@ public class LevelManager : MonoBehaviour
 
             SetInformationAndIncreaseSizeLevelsContainer(i, newLevel, levelData);
         }
+
+        GameManager.Instance.LevelsData = level;
 
         // Update user levels in the database
         CloudFirestore.Instance.SetUserLevels(level);

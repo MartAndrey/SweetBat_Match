@@ -185,8 +185,6 @@ public class GameManager : MonoBehaviour
         if (gameMode == GameMode.ScoringObjective || gameMode == GameMode.TimeObjective)
             uniqueMatches = true;
 
-        CheckInternetConnection();
-
         errorsRetryHandler = new Dictionary<Errors, Action>()
         {
             { Errors.NNA_GM_THIS,  RetryErrorNetworkAvailable },
@@ -217,14 +215,47 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Initiates the process after a successful anonymous login.
+    /// </summary>
+    public void LoginSuccessAnonymous()
+    {
+        StartCoroutine(LoginSuccessAnonymousRutiner());
+    }
+
+    /// <summary>
+    /// Coroutine to handle anonymous login success operations.
+    /// </summary>
+    IEnumerator LoginSuccessAnonymousRutiner()
+    {
+        // Check if the user already exists in the Cloud Firestore database
+        Task<bool> checkUserTask = CloudFirestore.Instance.CheckUserExists(userData["id"].ToString());
+
+        yield return new WaitUntil(() => checkUserTask.IsCompleted);
+
+        bool userExists = checkUserTask.Result;
+
+        if (userExists)
+        {
+            // If user exists, retrieve user-related data and yield break
+            CloudFirestore.Instance.GetUserData(userData["id"].ToString());
+            CloudFirestore.Instance.UserLevels(userData["id"].ToString());
+            CloudFirestore.Instance.UserCollectibles(userData["id"].ToString());
+            yield break;
+        }
+
+        // If user does not exist, create a new user
+        CloudFirestore.Instance.CreateNewUser(userData);
+    }
+
+    /// <summary>
     /// Checks the internet connection and initiates the connection check routine if available.
     /// </summary>
-    void CheckInternetConnection()
+    void CheckInternetConnection(Scene scene)
     {
         if (NetworkInterface.GetIsNetworkAvailable())
         {
             // Initiate the internet connection check routine.
-            StartCoroutine(CheckInternetConnectionRutiner());
+            StartCoroutine(CheckInternetConnectionRutiner(scene));
         }
         else HasFoundError(Errors.NNA_GM_THIS); // Handle error when no network connection is available.
     }
@@ -232,7 +263,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Coroutine to perform the internet connection check.
     /// </summary>
-    IEnumerator CheckInternetConnectionRutiner()
+    IEnumerator CheckInternetConnectionRutiner(Scene scene)
     {
         Task<bool> result = IsConnectionNetwork();
 
@@ -240,9 +271,12 @@ public class GameManager : MonoBehaviour
 
         if (result.Result)
         {
-            // Start the Firebase service when network connection is available.
-            FirebaseApp firebaseApp = FindObjectOfType<FirebaseApp>();
-            firebaseApp.StartFirebaseService();
+            if (scene.name == "MainMenu")
+            {
+                // Start the Firebase service when network connection is available.
+                FirebaseApp firebaseApp = FindObjectOfType<FirebaseApp>();
+                firebaseApp.StartFirebaseService();
+            }
         }
         else HasFoundError(Errors.NNA_GM_THIS);  // Handle error when network connection check fails.
     }
@@ -332,7 +366,11 @@ public class GameManager : MonoBehaviour
         if (scene.name == "Game")
             OnGameMode?.Invoke(gameMode);
         else if (scene.name == "LevelMenu")
+        {
             UpdateAvatars();
+        }
+
+        CheckInternetConnection(scene);
     }
 
     /// <summary>
@@ -352,7 +390,7 @@ public class GameManager : MonoBehaviour
     /// <returns>IEnumerator for coroutine execution.</returns>
     public IEnumerator LoadingGameRutiner()
     {
-        while ((userPhoto == null || userData == null))
+        while ((userPhoto == null && !FirebaseApp.Instance.User.IsAnonymous) || userData == null)
         {
             yield return null;
         }
@@ -380,7 +418,9 @@ public class GameManager : MonoBehaviour
         // Update the avatars with the user's gender and photo
         for (int i = 0; i < avatars.Length; i++)
         {
-            avatars[i].UpdateAvatar((GenderUser)Enum.Parse(typeof(GenderUser), userData["gender"].ToString()), userPhoto);
+            if (!FirebaseApp.Instance.User.IsAnonymous)
+                avatars[i].UpdateAvatar((GenderUser)Enum.Parse(typeof(GenderUser), userData["gender"].ToString()), userPhoto);
+            else avatars[i].UpdateAvatarAnonymous();
         }
     }
 
@@ -400,8 +440,6 @@ public class GameManager : MonoBehaviour
     /// <returns>An enumerator.</returns>
     IEnumerator HasFoundErrorRutiner(Errors error)
     {
-        // yield return null;
-
         while (errorHandler == null)
         {
             yield return null;
@@ -426,7 +464,7 @@ public class GameManager : MonoBehaviour
     public void ResetCurrentSceneAndSignOut()
     {
         FirebaseApp.Instance.SignOut();
-        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene("MainMenu");
     }
 
     /// <summary>
@@ -461,7 +499,7 @@ public class GameManager : MonoBehaviour
     {
         // Retry the internet connection check after a short delay.
         yield return new WaitForSeconds(.1f);
-        CheckInternetConnection();
+        CheckInternetConnection(SceneManager.GetActiveScene());
     }
 
     /// <summary>

@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Linq;
-using TMPro;
 
 public class CloudFirestore : MonoBehaviour
 {
-    public TMP_Text text;
     public static CloudFirestore Instance;
 
     FirebaseFirestore db;
@@ -113,10 +111,12 @@ public class CloudFirestore : MonoBehaviour
         docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
         {
             if (task.IsCompletedSuccessfully)
+            {
                 GameManager.Instance.UserData = task.Result.ToDictionary();
+                GameManager.Instance.GetCurrentLevelUser();
+            }
             else if (task.IsFaulted || task.IsCanceled)
                 StartCoroutine(ShowErrorUIRutiner(Errors.GUD_CF_118));
-
         });
     }
 

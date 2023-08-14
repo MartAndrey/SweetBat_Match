@@ -15,6 +15,8 @@ public class MainMenuController : MonoBehaviour
     /// </summary>
     public void Play()
     {
+        if (FirebaseApp.Instance.User == null)
+            FirebaseApp.Instance.LoginAnonymous();
         StartCoroutine(ScreenChangeTransition.Instance.FadeOut("LevelMenu"));
     }
 

@@ -108,8 +108,10 @@ public class LoginController : MonoBehaviour
         if (userExists)
         {
             SetInformationUser();
-            CloudFirestore.Instance.GetUserData(userData["id"].ToString());
             GameManager.Instance.UpdateAvatars();
+            CloudFirestore.Instance.GetUserData(userData["id"].ToString());
+            CloudFirestore.Instance.UserLevels(userData["id"].ToString());
+            CloudFirestore.Instance.UserCollectibles(userData["id"].ToString());
             yield break;
         }
 
@@ -191,7 +193,7 @@ public class LoginController : MonoBehaviour
     /// <summary>
     /// Creates a new user in the database.
     /// </summary>
-    void CreateNewUserDataBase()
+    public void CreateNewUserDataBase()
     {
         CloudFirestore.Instance.CreateNewUser(userData);
     }
@@ -336,7 +338,6 @@ public class LoginController : MonoBehaviour
     public void UserAlreadyAuthenticated()
     {
         this.userData = GameManager.Instance.UserData;
-        GameManager.Instance.GetCurrentLevelUser();
         this.currentGenderUser = (GenderUser)Enum.Parse(typeof(GenderUser), this.userData["gender"].ToString());
         displaySingIn.SetActive(false);
         SetInformationUser(false);
