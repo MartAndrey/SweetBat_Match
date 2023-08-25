@@ -14,6 +14,9 @@ public class ProfileController : MonoBehaviour
         UpdateProfileData();
     }
 
+    /// <summary>
+    /// Updates the profile data, including power-up inventory and avatar.
+    /// </summary>
     void UpdateProfileData()
     {
         // If power-ups have been moved in the inventory, update the inventory UI with the updated power-ups
@@ -27,12 +30,13 @@ public class ProfileController : MonoBehaviour
         // Update inventory UI
         Inventory.Instance.UpdateInventoryUI(inventoryPanel);
 
-        GenderUser genderUser = (GenderUser)Enum.Parse(typeof(GenderUser), GameManager.Instance.UserData["gender"].ToString());
-        Sprite userPhoto = GameManager.Instance.UserPhoto;
-
         // Update avatar information based on user type
         if (!FirebaseApp.Instance.User.IsAnonymous)
+        {
+            GenderUser genderUser = (GenderUser)Enum.Parse(typeof(GenderUser), GameManager.Instance.UserData["gender"].ToString());
+            Sprite userPhoto = GameManager.Instance.UserPhoto;
             avatar.UpdateAvatar(genderUser, userPhoto);
+        }
         else avatar.UpdateAvatarAnonymous();
     }
 }

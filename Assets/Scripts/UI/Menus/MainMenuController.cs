@@ -11,13 +11,19 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] CanvasGroup alreadyLoading;
 
     /// <summary>
-    /// Plays the screen change transition and fades out to the level menu.
+    /// Initiates the screen change transition and loads the level menu scene.
     /// </summary>
     public void Play()
     {
         if (FirebaseApp.Instance.User == null)
+        {
             FirebaseApp.Instance.LoginAnonymous();
-        StartCoroutine(ScreenChangeTransition.Instance.FadeOut("LevelMenu"));
+            StartCoroutine(ScreenChangeTransition.Instance.FadeOut("LevelMenu", true));
+        }
+        else
+        {
+            StartCoroutine(ScreenChangeTransition.Instance.FadeOut("LevelMenu"));
+        }
     }
 
     /// <summary>

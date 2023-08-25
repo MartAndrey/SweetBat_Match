@@ -108,7 +108,7 @@ public class FirebaseApp : MonoBehaviour
             mainMenuController.CheckLoadingGame();
         }
 
-    // Retrieve user data, levels, and collectibles
+        // Retrieve user data, levels, and collectibles
         CloudFirestore.Instance.GetUserData(user.UserId);
         CloudFirestore.Instance.UserLevels(user.UserId);
         CloudFirestore.Instance.UserCollectibles(user.UserId);
@@ -195,7 +195,7 @@ public class FirebaseApp : MonoBehaviour
         });
     }
 
-        /// <summary>
+    /// <summary>
     /// Logs in an anonymous user.
     /// </summary>
     public void LoginAnonymous()
@@ -223,7 +223,7 @@ public class FirebaseApp : MonoBehaviour
                 { "id", user.UserId },
             };
 
-    // Store user data and trigger login success
+            // Store user data and trigger login success
             GameManager.Instance.UserData = userData;
             GameManager.Instance.LoginSuccessAnonymous();
         });

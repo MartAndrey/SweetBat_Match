@@ -1,9 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
 using System;
+using Firebase.Firestore;
 
 public class LifeController : Timer
 {
@@ -37,14 +36,8 @@ public class LifeController : Timer
 
     void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
     }
 
     void Start()
@@ -83,6 +76,8 @@ public class LifeController : Timer
         lives = Mathf.Clamp(lives + amount, minLives, maxLives);
         livesText.text = lives.ToString();
 
+        SaveLivesDataBase();
+
         if (CheckRestartTimer())
         {
             if (!isBuy) SetTimer(waitTimeInMinutes);
@@ -101,11 +96,19 @@ public class LifeController : Timer
         restartTimer = false;
     }
 
-    // Method in charge of configuring the timer
-    public void SetTimer(float time)
+    /// <summary>
+    /// Sets a timer for a given time with an optional subtraction of time in seconds.
+    /// </summary>
+    /// <param name="time">The main time to set the timer for, in minutes.</param>
+    /// <param name="timeInSecond">Additional time to subtract in seconds.</param>
+    public void SetTimer(float time, float timeInSecond = 0)
     {
         restartTimer = true;
         timeRemainingInSeconds = time * 60;
+
+        if (timeInSecond != 0)
+            timeRemainingInSeconds -= timeInSecond;
+
     }
 
     // Method in charge of changing the UI to infinity and vice versa
@@ -120,39 +123,86 @@ public class LifeController : Timer
     bool CheckRestartTimer() => lives < 5;
 
     /// <summary>
-    /// Retrieves the number of lives from the CollectiblesData dictionary and sets the initial coins.
-    /// If the lives data is not available, it sets the lives to 0 and initializes coins accordingly.
+    /// Retrieves lives data from the GameManager and processes it.
     /// </summary>
     void GetLives()
     {
         Dictionary<string, object> data = GameManager.Instance.CollectiblesData;
+
         if (data != null && data.Count > 0)
         {
             if (data.ContainsKey("lives"))
             {
-                int lives = Convert.ToInt32(data["lives"]);
+                Dictionary<string, object> lives = data["lives"] as Dictionary<string, object>;
+                int auxLives = Convert.ToInt32(lives["amount"]);
 
-                SetInitialLives(lives);
-
+                // Get the current internet time and calculate the time difference for lives
+                StartCoroutine(InternetTime.Instance.GetInternetTime(time =>
+                {
+                    currentTime = time;
+                    Timestamp timestamp = (Timestamp)lives["Last Date"];
+                    DateTime utcDate = timestamp.ToDateTime();
+                    DateTime localDate = utcDate.ToLocalTime();
+                    previouslyAllottedTime = localDate;
+                    GetDifferenceLives(auxLives);
+                }));
                 return;
             }
         }
 
-        CloudFirestore.Instance.SetCollectible(new Dictionary<string, object> { { "lives", 0 } });
-        SetInitialLives(0);
+        int initialLives = maxLives;
+        SetInitialLives(initialLives, true);
     }
 
     /// <summary>
-    /// Sets the initial number of lives and updates the lives text UI element.
-    /// If the restart timer condition is not met, calls FullLives method; otherwise, sets the timer.
+    /// Sets initial lives, updates UI, and handles timer.
     /// </summary>
-    /// <param name="lives">The number of lives to set.</param>
-    void SetInitialLives(int lives)
+    /// <param name="lives">The initial lives to set.</param>
+    /// <param name="saveDataBase">Indicates whether to save data to the database.</param>
+    /// <param name="timeInSecond">Additional time to subtract in seconds.</param>
+    void SetInitialLives(int lives, bool saveDataBase, float timeInSecond = 0)
     {
-        this.lives = lives;
-        livesText.text = lives.ToString();
+        // Clamp the number of lives between minLives and maxLives
+        this.lives = Mathf.Clamp(lives, minLives, maxLives);
+        livesText.text = this.lives.ToString();
+
+        if (saveDataBase)
+            SaveLivesDataBase(timeInSecond);
 
         if (!CheckRestartTimer()) FullLives();
-        else SetTimer(waitTimeInMinutes);
+        else SetTimer(waitTimeInMinutes, timeInSecond);
+    }
+
+    /// <summary>
+    /// Saves lives data to the database with optional subtracted time.
+    /// </summary>
+    /// <param name="subtractTime">Time to subtract in seconds.</param>
+    public void SaveLivesDataBase(float subtractTime = 0)
+    {
+        if (Lives >= maxLives) subtractTime = 0;
+
+        StartCoroutine(InternetTime.Instance.GetInternetTime(time =>
+        {
+            DateTime newTime = time.AddSeconds(-subtractTime);
+            previouslyAllottedTime = newTime;
+            Dictionary<string, object> data = new Dictionary<string, object> { { "amount", this.lives }, { "Last Date", newTime } };
+            Dictionary<string, object> lives = new Dictionary<string, object> { { "lives", data } };
+            CloudFirestore.Instance.SetCollectible(lives);
+        }));
+    }
+
+    /// <summary>
+    /// Calculates and applies the difference in lives based on time elapsed.
+    /// </summary>
+    /// <param name="auxLives">The auxiliary lives count.</param>
+    void GetDifferenceLives(int auxLives)
+    {
+        float timeDifference = (float)(currentTime.Subtract(previouslyAllottedTime)).TotalSeconds;
+        int livesToAdd = (int)(timeDifference / (waitTimeInMinutes * 60));
+        float remainingSeconds = timeDifference % (waitTimeInMinutes * 60);
+
+        auxLives += livesToAdd;
+        bool saveDataBase = livesToAdd > 0;
+        SetInitialLives(auxLives, saveDataBase, remainingSeconds);
     }
 }

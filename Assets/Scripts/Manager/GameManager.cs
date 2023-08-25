@@ -103,6 +103,8 @@ public class GameManager : MonoBehaviour
     public TypePowerUp CurrentPowerUp { get { return currentPowerUp; } set { currentPowerUp = value; } }
     public GameObject CurrentGameObjectPowerUp { get { return currentGameObjectPowerUp; } set { currentGameObjectPowerUp = value; } }
 
+    public bool UserAlready;
+
     // Serialized game mode field
     [SerializeField] GameMode gameMode;
 

@@ -73,10 +73,11 @@ public class CloudFirestore : MonoBehaviour
 
         userRef.SetAsync(userData).ContinueWithOnMainThread(task =>
         {
-            if (task.IsFaulted || task.IsCanceled)
-            {
+            if (task.IsCompletedSuccessfully)
+                GameManager.Instance.UserAlready = true;
+            else if (task.IsFaulted || task.IsCanceled)
                 StartCoroutine(ShowErrorUIRutiner(Errors.CNU_CF_80));
-            }
+
         });
     }
 
