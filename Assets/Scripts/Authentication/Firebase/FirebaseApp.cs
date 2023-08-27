@@ -224,6 +224,7 @@ public class FirebaseApp : MonoBehaviour
             };
 
             // Store user data and trigger login success
+            GameManager.Instance.UserIsAnonymous = true;
             GameManager.Instance.UserData = userData;
             GameManager.Instance.LoginSuccessAnonymous();
         });

@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Board
   - LevelUI
+  - text
   layers:
   - Default
   - TransparentFX

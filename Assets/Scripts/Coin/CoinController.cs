@@ -6,6 +6,7 @@ using System;
 
 public class CoinController : MonoBehaviour
 {
+    public TMP_Text text;
     public static CoinController Instance;
 
     public int Coins { get { return coins; } }
@@ -15,14 +16,8 @@ public class CoinController : MonoBehaviour
 
     void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
     }
 
     void Start()
@@ -36,40 +31,51 @@ public class CoinController : MonoBehaviour
     /// </summary>
     void GetCoins()
     {
+        text = GameObject.FindGameObjectWithTag("text").GetComponent<TMP_Text>();
+        text.text = " Start Find ";
         Dictionary<string, object> data = GameManager.Instance.CollectiblesData;
+
         if (data != null && data.Count > 0)
         {
             if (data.ContainsKey("coins"))
             {
                 int coins = Convert.ToInt32(data["coins"]);
-
-                SetInitialCoins(coins);
-
+                ChangeCoins(coins, false);
                 return;
             }
         }
 
-        CloudFirestore.Instance.SetCollectible(new Dictionary<string, object> { { "coins", 0 } });
-        SetInitialCoins(0);
+        if (!GameManager.Instance.UserIsAnonymous)
+            Invoke("GetRewardCoins", 2f);
+
+        Dictionary<string, object> coinsData = new Dictionary<string, object> { { "coins", 0 } };
+        // GameManager.Instance.CollectiblesData.Add(coinsData);
+        CloudFirestore.Instance.SetCollectible(coinsData);
+        ChangeCoins(0);
     }
 
-    /// <summary>
-    /// Sets the initial number of coins and updates the coins text UI element.
-    /// </summary>
-    /// <param name="coins">The number of coins to set.</param>
-    void SetInitialCoins(int coins)
+    void GetRewardCoins()
     {
-        this.coins = coins;
-        coinsText.text = coins.ToString();
+        Reward reward = FindObjectOfType<Reward>(true);
+        if (reward != null) reward.ActivateReward();
     }
 
     /// <summary>
     /// Increases or decreases the number of coins by the specified amount and updates the coins text UI element.
     /// </summary>
     /// <param name="amount">The amount by which to change the number of coins.</param>
-    public void ChangeCoins(int amount)
+    public void ChangeCoins(int amount, bool saveDataBase = true)
     {
         coins += amount;
         coinsText.text = coins.ToString();
+
+        if (saveDataBase)
+            SaveCoinsDataBase();
+    }
+
+    public void SaveCoinsDataBase()
+    {
+        Dictionary<string, object> coins = new Dictionary<string, object> { { "coins", this.coins } };
+        CloudFirestore.Instance.SetCollectible(coins);
     }
 }
