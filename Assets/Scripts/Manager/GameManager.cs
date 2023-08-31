@@ -53,9 +53,13 @@ public enum Errors
     SUC_CF_223,
 }
 
+public enum GameState { LevelMenu, InGame }
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;  // Static reference to the GameManager instance
+
+    public GameState currentGameState;
 
     /// Observer Pattern
     [HideInInspector] public UnityEvent<GameMode> OnGameMode;
@@ -367,10 +371,17 @@ public class GameManager : MonoBehaviour
         errorHandler = GameObject.FindObjectOfType<ErrorHandler>(true);
 
         if (scene.name == "Game")
+        {
+            currentGameState = GameState.InGame;
             OnGameMode?.Invoke(gameMode);
+        }
         else if (scene.name == "LevelMenu")
         {
+            currentGameState = GameState.LevelMenu;
+            Time.timeScale = 1;
             UpdateAvatars();
+            CoinController.Instance.UpdateCoinsUI();
+            LifeController.Instance.UpdateLivesUI();
         }
 
         CheckInternetConnection(scene);

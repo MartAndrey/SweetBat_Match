@@ -6,7 +6,6 @@ using System;
 
 public class CoinController : MonoBehaviour
 {
-    public TMP_Text text;
     public static CoinController Instance;
 
     public int Coins { get { return coins; } }
@@ -18,6 +17,8 @@ public class CoinController : MonoBehaviour
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+        DontDestroyOnLoad(gameObject);
     }
 
     void Start()
@@ -31,8 +32,6 @@ public class CoinController : MonoBehaviour
     /// </summary>
     void GetCoins()
     {
-        text = GameObject.FindGameObjectWithTag("text").GetComponent<TMP_Text>();
-        text.text = " Start Find ";
         Dictionary<string, object> data = GameManager.Instance.CollectiblesData;
 
         if (data != null && data.Count > 0)
@@ -67,7 +66,7 @@ public class CoinController : MonoBehaviour
     public void ChangeCoins(int amount, bool saveDataBase = true)
     {
         coins += amount;
-        coinsText.text = coins.ToString();
+        UpdateCoinsUI();
 
         if (saveDataBase)
             SaveCoinsDataBase();
@@ -77,5 +76,15 @@ public class CoinController : MonoBehaviour
     {
         Dictionary<string, object> coins = new Dictionary<string, object> { { "coins", this.coins } };
         CloudFirestore.Instance.SetCollectible(coins);
+    }
+
+    /// <summary>
+    /// Updates the coins UI element with the current coins count.
+    /// </summary>
+    public void UpdateCoinsUI()
+    {
+        if (coinsText == null) coinsText = GameObject.FindGameObjectWithTag("Number Coin").GetComponent<TMP_Text>();
+
+        coinsText.text = coins.ToString();
     }
 }

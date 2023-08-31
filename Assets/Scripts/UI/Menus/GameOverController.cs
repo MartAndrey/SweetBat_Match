@@ -24,7 +24,6 @@ public class GameOverController : MonoBehaviour
     AudioSource audioSource;
     // Text object displaying the current level in the UI
 
-
     void Awake()
     {
         audioSource = GetComponent<AudioSource>();

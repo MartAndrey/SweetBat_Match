@@ -29,7 +29,7 @@ public abstract class Timer : MonoBehaviour
     // Method in charge of updating the timer, subtracting 1 every second
     protected void UpdateTimer(Action OnCountdownFinished)
     {
-        timeRemainingInSeconds -= Time.deltaTime;
+        timeRemainingInSeconds -= Time.unscaledDeltaTime;
 
         hours = Mathf.FloorToInt(timeRemainingInSeconds / 3600);
         minutes = Mathf.FloorToInt((timeRemainingInSeconds - hours * 3600) / 60);

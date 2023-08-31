@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 5760263}
   m_Layer: 5
   m_Name: Timer
-  m_TagString: Untagged
+  m_TagString: Timer Life
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1934,7 +1934,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9d7db80f8ff0f942a1109dd0e92779f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: {fileID: 0}
   coins: 0
   coinsText: {fileID: 807914419}
 --- !u!4 &139279845
@@ -8549,7 +8548,7 @@ GameObject:
   - component: {fileID: 807914419}
   m_Layer: 5
   m_Name: Counter
-  m_TagString: Untagged
+  m_TagString: Number Coin
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -15017,7 +15016,7 @@ GameObject:
   - component: {fileID: 1428675269}
   m_Layer: 5
   m_Name: Number
-  m_TagString: Untagged
+  m_TagString: Number Life
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

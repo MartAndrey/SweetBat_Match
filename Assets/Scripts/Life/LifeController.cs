@@ -38,6 +38,8 @@ public class LifeController : Timer
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+        DontDestroyOnLoad(gameObject);
     }
 
     void Start()
@@ -70,13 +72,24 @@ public class LifeController : Timer
         ChangeLives(1);
     }
 
-    // Method responsible for diminishing or changing lives
+    /// <summary>
+    /// Changes the number of lives and updates UI accordingly.
+    /// </summary>
+    /// <param name="amount">The amount of lives to change by</param>
+    /// <param name="isBuy">Whether the change is due to a purchase</param>
     public void ChangeLives(int amount, bool isBuy = false)
     {
         lives = Mathf.Clamp(lives + amount, minLives, maxLives);
-        livesText.text = lives.ToString();
 
-        SaveLivesDataBase();
+        if (GameManager.Instance.currentGameState == GameState.LevelMenu)
+            UpdateLivesUI();
+
+        if (amount < 0)
+        {
+            SaveLivesDataBase((waitTimeInMinutes * 60) - timeRemainingInSeconds);
+            return;
+        }
+        else SaveLivesDataBase();
 
         if (CheckRestartTimer())
         {
@@ -152,6 +165,17 @@ public class LifeController : Timer
 
         int initialLives = maxLives;
         SetInitialLives(initialLives, true);
+    }
+
+    /// <summary>
+    /// Updates the lives UI element with the current lives count.
+    /// </summary>
+    public void UpdateLivesUI()
+    {
+        if (livesText == null) livesText = GameObject.FindGameObjectWithTag("Number Life").GetComponent<TMP_Text>();
+        if (timerText == null) timerText = GameObject.FindGameObjectWithTag("Timer Life").GetComponent<TMP_Text>();
+
+        if (livesText != null) livesText.text = lives.ToString();
     }
 
     /// <summary>

@@ -7,6 +7,9 @@ TagManager:
   - Board
   - LevelUI
   - text
+  - Timer Life
+  - Number Life
+  - Number Coin
   layers:
   - Default
   - TransparentFX
