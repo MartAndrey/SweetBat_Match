@@ -64,10 +64,20 @@ public class LevelUI : MonoBehaviour
     /// <param name="nameScene">The name of the scene to load.</param>
     public void PlayLevel(string nameScene)
     {
-        GameManager.Instance.GameMode = gameMode;
-        GameManager.Instance.ObjectiveComplete = false;
-        GameManager.Instance.CurrentLevel = Convert.ToInt32(nameLevelText.text.Split(' ')[1]) - 1;
-        StartCoroutine(ScreenChangeTransition.Instance.FadeOut(nameScene));
+        if (LifeController.Instance.HasLives || LifeController.Instance.IsInfinite)
+        {
+            GameManager.Instance.GameMode = gameMode;
+            GameManager.Instance.ObjectiveComplete = false;
+            GameManager.Instance.CurrentLevel = Convert.ToInt32(nameLevelText.text.Split(' ')[1]) - 1;
+            StartCoroutine(ScreenChangeTransition.Instance.FadeOut(nameScene));
+        }
+        else
+        {
+            LevelMenuController.Instance.OffScreen(LevelMenuController.Instance.BoxLevelUI, () =>
+            {
+                LevelMenuController.Instance.OnScreen(LevelMenuController.Instance.LifeShop);
+            });
+        }
     }
 
     /// <summary>

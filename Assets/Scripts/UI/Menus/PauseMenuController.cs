@@ -50,10 +50,14 @@ public class PauseMenuController : MonoBehaviour
         boxPause.SetActive(false);
     }
 
+    /// <summary>
+    /// Handles replaying the level after a game over.
+    /// </summary>
     public void Replay()
     {
-        audioSource.PlayOneShot(popComplete);
-        StartCoroutine(ScreenChangeTransition.Instance.FadeOut(SceneManager.GetActiveScene().name));
+        if (!LifeController.Instance.IsInfinite)
+            LifeController.Instance.ChangeLives(-1);
+        GameOverController.Instance.Replay();
         Time.timeScale = 1;
     }
 
@@ -72,11 +76,15 @@ public class PauseMenuController : MonoBehaviour
         StartCoroutine(ConfirmationQuitOffRutiner());
     }
 
+    /// <summary>
+    /// Quits the current level and returns to the level menu.
+    /// </summary>
     public void QuitLevel()
     {
         audioSource.PlayOneShot(popComplete);
         StartCoroutine(ScreenChangeTransition.Instance.FadeOut("LevelMenu"));
-        LifeController.Instance.ChangeLives(-1);
+        if (!LifeController.Instance.IsInfinite)
+            LifeController.Instance.ChangeLives(-1);
         Time.timeScale = 1;
     }
 

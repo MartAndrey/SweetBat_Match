@@ -5,6 +5,8 @@ using TMPro;
 [RequireComponent(typeof(UpdateScoreUI))]
 public class GameOverController : MonoBehaviour
 {
+    public static GameOverController Instance;
+
     [Header("UI Game Over")]
     [SerializeField] GameObject boxGameOver;
     [SerializeField] GameObject particleSystemBrokenHeart;
@@ -26,9 +28,15 @@ public class GameOverController : MonoBehaviour
 
     void Awake()
     {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+
         audioSource = GetComponent<AudioSource>();
     }
 
+    /// <summary>
+    /// Handles actions when the game is over.
+    /// </summary>
     public void OnGameOver()
     {
         particleSystemEnergy.SetActive(true);
@@ -39,12 +47,26 @@ public class GameOverController : MonoBehaviour
         particleSystemBrokenHeart.SetActive(true);
         audioSourceBoxGameOver.PlayDelayed(1f);
         StartCoroutine(updateScoreUI.UpdateScoreRutiner());
+
+        // Reduce lives if not infinite lives
+        if (!LifeController.Instance.IsInfinite)
+            LifeController.Instance.ChangeLives(-1);
     }
 
+    /// <summary>
+    /// Handles replaying the level if lives are available.
+    /// </summary>
     public void Replay()
     {
-        audioSource.PlayOneShot(popComplete);
-        StartCoroutine(ScreenChangeTransition.Instance.FadeOut(SceneManager.GetActiveScene().name));
+        if (LifeController.Instance.HasLives || LifeController.Instance.IsInfinite)
+        {
+            audioSource.PlayOneShot(popComplete);
+            StartCoroutine(ScreenChangeTransition.Instance.FadeOut(SceneManager.GetActiveScene().name));
+        }
+        else
+        {
+            StartCoroutine(ScreenChangeTransition.Instance.FadeOut("LevelMenu"));
+        }
     }
 
     public void Ads()

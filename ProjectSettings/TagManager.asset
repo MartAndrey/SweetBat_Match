@@ -10,6 +10,7 @@ TagManager:
   - Timer Life
   - Number Life
   - Number Coin
+  - Infinite Life
   layers:
   - Default
   - TransparentFX

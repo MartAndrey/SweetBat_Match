@@ -3,6 +3,7 @@ using UnityEngine;
 using TMPro;
 using System;
 using Firebase.Firestore;
+using UnityEngine.UI;
 
 public class LifeController : Timer
 {
@@ -17,7 +18,7 @@ public class LifeController : Timer
     [Header("Life")]
     [SerializeField] int lives;
     [SerializeField] TMP_Text livesText;
-    [SerializeField] GameObject imageInfiniteLife;
+    [SerializeField] Image imageInfiniteLife;
 
     int maxLives = 5;
     int minLives = 0;
@@ -84,9 +85,11 @@ public class LifeController : Timer
         if (GameManager.Instance.currentGameState == GameState.LevelMenu)
             UpdateLivesUI();
 
-        if (amount < 0)
+        if ((amount < 0 && lives < 4) || isBuy)
         {
             SaveLivesDataBase((waitTimeInMinutes * 60) - timeRemainingInSeconds);
+
+            if (isBuy && !CheckRestartTimer()) FullLives();
             return;
         }
         else SaveLivesDataBase();
@@ -110,6 +113,11 @@ public class LifeController : Timer
     }
 
     /// <summary>
+    /// Checks if the player has lives.
+    /// </summary>
+    public bool HasLives => lives > 0;
+
+    /// <summary>
     /// Sets a timer for a given time with an optional subtraction of time in seconds.
     /// </summary>
     /// <param name="time">The main time to set the timer for, in minutes.</param>
@@ -124,12 +132,22 @@ public class LifeController : Timer
 
     }
 
-    // Method in charge of changing the UI to infinity and vice versa
+    /// <summary>
+    /// Toggles the Infinite Life feature and updates the UI accordingly.
+    /// </summary>
     void ChangeInfiniteLife()
     {
-        livesText.enabled = !livesText.isActiveAndEnabled;
-        imageInfiniteLife.SetActive(!imageInfiniteLife.activeSelf);
+        ChangeInfiniteLifeUI();
         IsInfinite = !IsInfinite;
+    }
+
+    /// <summary>
+    /// Toggles the visibility of UI elements related to Infinite Life.
+    /// </summary>
+    void ChangeInfiniteLifeUI()
+    {
+        livesText.enabled = !livesText.isActiveAndEnabled;
+        imageInfiniteLife.enabled = !imageInfiniteLife.isActiveAndEnabled;
     }
 
     // Method tells us if the counter needs to be reset
@@ -149,22 +167,24 @@ public class LifeController : Timer
                 Dictionary<string, object> lives = data["lives"] as Dictionary<string, object>;
                 int auxLives = Convert.ToInt32(lives["amount"]);
 
+                Dictionary<string, object> infiniteInfo = lives["infinite"] as Dictionary<string, object>;
+                IsInfinite = (bool)infiniteInfo["is infinite"];
+
                 // Get the current internet time and calculate the time difference for lives
                 StartCoroutine(InternetTime.Instance.GetInternetTime(time =>
                 {
                     currentTime = time;
-                    Timestamp timestamp = (Timestamp)lives["Last Date"];
+                    Timestamp timestamp = (Timestamp)lives["last date"];
                     DateTime utcDate = timestamp.ToDateTime();
                     DateTime localDate = utcDate.ToLocalTime();
                     previouslyAllottedTime = localDate;
-                    GetDifferenceLives(auxLives);
+                    GetDifferenceLives(auxLives, Convert.ToInt32(infiniteInfo["time"]));
                 }));
                 return;
             }
         }
 
-        int initialLives = maxLives;
-        SetInitialLives(initialLives, true);
+        SetInitialLives(maxLives, true);
     }
 
     /// <summary>
@@ -174,8 +194,11 @@ public class LifeController : Timer
     {
         if (livesText == null) livesText = GameObject.FindGameObjectWithTag("Number Life").GetComponent<TMP_Text>();
         if (timerText == null) timerText = GameObject.FindGameObjectWithTag("Timer Life").GetComponent<TMP_Text>();
+        if (imageInfiniteLife == null) imageInfiniteLife = GameObject.FindGameObjectWithTag("Infinite Life").GetComponent<Image>();
 
         if (livesText != null) livesText.text = lives.ToString();
+
+        if (IsInfinite) ChangeInfiniteLifeUI();
     }
 
     /// <summary>
@@ -201,7 +224,7 @@ public class LifeController : Timer
     /// Saves lives data to the database with optional subtracted time.
     /// </summary>
     /// <param name="subtractTime">Time to subtract in seconds.</param>
-    public void SaveLivesDataBase(float subtractTime = 0)
+    public void SaveLivesDataBase(float subtractTime = 0, float timeInfinite = 0)
     {
         if (Lives >= maxLives) subtractTime = 0;
 
@@ -209,7 +232,8 @@ public class LifeController : Timer
         {
             DateTime newTime = time.AddSeconds(-subtractTime);
             previouslyAllottedTime = newTime;
-            Dictionary<string, object> data = new Dictionary<string, object> { { "amount", this.lives }, { "Last Date", newTime } };
+            Dictionary<string, object> infinite = new Dictionary<string, object> { { "is infinite", IsInfinite }, { "time", timeInfinite } };
+            Dictionary<string, object> data = new Dictionary<string, object> { { "amount", this.lives }, { "last date", newTime }, { "infinite", infinite } };
             Dictionary<string, object> lives = new Dictionary<string, object> { { "lives", data } };
             CloudFirestore.Instance.SetCollectible(lives);
         }));
@@ -219,14 +243,28 @@ public class LifeController : Timer
     /// Calculates and applies the difference in lives based on time elapsed.
     /// </summary>
     /// <param name="auxLives">The auxiliary lives count.</param>
-    void GetDifferenceLives(int auxLives)
+    /// <param name="timeInfinite">The remaining time for Infinite Life.</param>
+    void GetDifferenceLives(int auxLives, int timeInfinite)
     {
+        // Calculate the time difference between the current and previously allotted time.
         float timeDifference = (float)(currentTime.Subtract(previouslyAllottedTime)).TotalSeconds;
-        int livesToAdd = (int)(timeDifference / (waitTimeInMinutes * 60));
-        float remainingSeconds = timeDifference % (waitTimeInMinutes * 60);
 
-        auxLives += livesToAdd;
-        bool saveDataBase = livesToAdd > 0;
-        SetInitialLives(auxLives, saveDataBase, remainingSeconds);
+        if (timeInfinite == 0)
+        {
+            // Calculate the number of lives to add based on the elapsed time.
+            int livesToAdd = (int)(timeDifference / (waitTimeInMinutes * 60));
+            float remainingSeconds = timeDifference % (waitTimeInMinutes * 60);
+
+            // Update the auxiliary lives count and determine if the database should be saved.
+            auxLives += livesToAdd;
+            bool saveDataBase = livesToAdd > 0;
+            SetInitialLives(auxLives, saveDataBase, remainingSeconds);
+        }
+        else
+        {
+            // Toggle Infinite Life UI and set the timer for Infinite Life.
+            ChangeInfiniteLifeUI();
+            SetTimer(timeInfinite, timeDifference);
+        }
     }
 }
