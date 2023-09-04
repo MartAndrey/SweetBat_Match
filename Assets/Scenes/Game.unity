@@ -6454,6 +6454,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff1bc8ff7e057f04493d9138c481326e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentGameState: 0
   OnGameMode:
     m_PersistentCalls:
       m_Calls: []
@@ -6466,6 +6467,8 @@ MonoBehaviour:
   OnErrorClose:
     m_PersistentCalls:
       m_Calls: []
+  UserAlready: 0
+  UserIsAnonymous: 0
   gameMode: 3
   level: 0
   availableFruits:
@@ -6484,6 +6487,7 @@ MonoBehaviour:
   totalSeconds: 120
   matchObjectiveAmount: 25
   fruitCollectionAmount: 35
+  rewardLevelPass: 10
 --- !u!4 &956948156
 Transform:
   m_ObjectHideFlags: 0
@@ -10004,6 +10008,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1393117606}
     m_Modifications:
+    - target: {fileID: 6281508240732051193, guid: 450f653ad2b8d8044be5f2ba8021885c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -1.5006104
+      objectReference: {fileID: 0}
     - target: {fileID: 7530285427875670182, guid: 450f653ad2b8d8044be5f2ba8021885c, type: 3}
       propertyPath: m_fontSize
       value: 79.85

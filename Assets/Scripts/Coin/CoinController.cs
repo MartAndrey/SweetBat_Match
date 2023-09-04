@@ -66,7 +66,9 @@ public class CoinController : MonoBehaviour
     public void ChangeCoins(int amount, bool saveDataBase = true)
     {
         coins += amount;
-        UpdateCoinsUI();
+
+        if (GameManager.Instance.currentGameState == GameState.LevelMenu)
+            UpdateCoinsUI();
 
         if (saveDataBase)
             SaveCoinsDataBase();

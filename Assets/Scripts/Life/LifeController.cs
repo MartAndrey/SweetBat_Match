@@ -197,6 +197,7 @@ public class LifeController : Timer
         if (imageInfiniteLife == null) imageInfiniteLife = GameObject.FindGameObjectWithTag("Infinite Life").GetComponent<Image>();
 
         if (livesText != null) livesText.text = lives.ToString();
+        if (lives == maxLives) FullLives();
 
         if (IsInfinite) ChangeInfiniteLifeUI();
     }

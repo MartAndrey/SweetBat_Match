@@ -141,6 +141,8 @@ public class GameManager : MonoBehaviour
     [Header("Collection Objective")]
     [SerializeField] int fruitCollectionAmount;
 
+    [SerializeField] int rewardLevelPass;
+
     // Indicates whether the game objective is complete
     bool objectiveComplete;
 
@@ -346,7 +348,10 @@ public class GameManager : MonoBehaviour
         CloudFirestore.Instance.UpdateDocumentLevel($"level {this.currentLevel + 1}", currentLevel);
 
         if (updateLevelDataBase)
+        {
             CloudFirestore.Instance.UpdateLevelUser(new Dictionary<string, object> { { "level", this.currentLevel + 1 } });
+            CoinController.Instance.ChangeCoins(rewardLevelPass);
+        }
     }
 
     /// <summary>

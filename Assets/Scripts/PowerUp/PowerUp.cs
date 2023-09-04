@@ -2,9 +2,20 @@ using UnityEngine;
 using TMPro;
 using System;
 using UnityEngine.UI;
+using System.ComponentModel;
+using Unity.VisualScripting;
+using System.Collections;
 
 // Type of power up that this object represents
-public enum TypePowerUp { Bomb, Lightning, Potion }
+public enum TypePowerUp
+{
+    [Description("Remove fruits in a radius of 0.6, a real explosion of fun!")]
+    Bomb,
+    [Description("Eliminate rows and columns of fruit, unleash the storm of destruction on the board!")]
+    Lightning,
+    [Description("Revolutionize fruits within a radius of 1, prepare the chaos of combinations!")]
+    Potion
+}
 public enum StatePowerUp { Profile, LevelUI, Game }
 
 // Timer that counts down the time for the power up
@@ -25,16 +36,26 @@ public class PowerUp : Timer
     [SerializeField] GameObject imageInfinite;
     [SerializeField] GameObject imageCheck;
     [SerializeField] Image spritePowerUp;
+    [SerializeField] TMP_Text descriptionText;
+    [SerializeField] GameObject descriptionObject;
 
-    bool isChecked; // boolean that tells us if the power up was chosen only works in the StatePowerUp.LevelUI
+    // boolean that tells us if the power up was chosen only works in the StatePowerUp.LevelUI
+    bool isChecked;
+    bool isInTransitionDescription;
 
     AudioSource audioSource;
     Animator animator;
+    float timeDescription = 3;
 
     void Awake()
     {
         audioSource = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
+    }
+
+    void Start()
+    {
+        descriptionText.text = GetPowerUpDescription(typePowerUp);
     }
 
     // Called when the script instance is being loaded
@@ -94,9 +115,6 @@ public class PowerUp : Timer
     /// <summary>
     /// Change the state of the checkbox and the isChecked variable.
     /// </summary>
-    /// <summary>
-    /// Change the state of the checkbox and the isChecked variable.
-    /// </summary>
     void ChangeCheckPowerUp()
     {
         imageCheck.SetActive(imageCheck.activeSelf == true ? false : true);
@@ -113,7 +131,13 @@ public class PowerUp : Timer
 
         if (statePowerUp == StatePowerUp.Profile)
         {
-            Debug.Log("Profile");
+            if (isInTransitionDescription) return;
+
+            isInTransitionDescription = true;
+            descriptionObject.SetActive(true);
+            animator.enabled = true;
+            animator.Play("DescriptionIn");
+            StartCoroutine(TimeToDescriptionRutiner());
         }
         else if (statePowerUp == StatePowerUp.LevelUI)
         {
@@ -138,5 +162,51 @@ public class PowerUp : Timer
     public void DisableAnimator()
     {
         animator.enabled = false;
+    }
+
+    /// <summary>
+    /// Retrieves the description of a PowerUp type based on its Description attribute.
+    /// </summary>
+    /// <param name="typePowerUp">The PowerUp type for which to retrieve the description.</param>
+    /// <returns>The description of the PowerUp type.</returns>    
+    string GetPowerUpDescription(TypePowerUp typePowerUp)
+    {
+        // Get the field representing the PowerUp type.
+        var fieldInfo = typePowerUp.GetType().GetField(typePowerUp.ToString());
+        // Get the Description attributes of the field.
+        var attributes = fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];
+
+        // Return the description of the PowerUp type.
+        return attributes[0].Description;
+    }
+
+    /// <summary>
+    /// Routine that waits for a specified time and then performs the description exit animation.
+    /// </summary>
+    IEnumerator TimeToDescriptionRutiner()
+    {
+        // Wait for the specified time before continuing.
+        yield return new WaitForSeconds(timeDescription);
+        // Enable the animator if it's not enabled.
+        if (!animator.enabled) animator.enabled = true;
+        // Play the exit animation.
+        animator.Play("DescriptionOut");
+        // Wait for an additional time before disabling the description.
+        yield return new WaitForSeconds(.6f);
+        // Disable the description.
+        DisableDescription();
+    }
+
+    /// <summary>
+    /// Disables the description and related animator.
+    /// </summary>
+    void DisableDescription()
+    {
+        // Indicates that it's not in description transition.
+        isInTransitionDescription = false;
+        // Disable the description object.
+        descriptionObject.SetActive(false);
+        // Disable the animator.
+        DisableAnimator();
     }
 }

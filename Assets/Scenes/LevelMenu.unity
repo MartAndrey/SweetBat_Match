@@ -3561,6 +3561,7 @@ MonoBehaviour:
   totalSeconds: 120
   matchObjectiveAmount: 25
   fruitCollectionAmount: 50
+  rewardLevelPass: 10
 --- !u!4 &311158764
 Transform:
   m_ObjectHideFlags: 0
@@ -4781,7 +4782,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7503105710788278685, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -69
+      value: -77
       objectReference: {fileID: 0}
     - target: {fileID: 7922627736734354541, guid: 58bbc18e8d2596743bd7a73cfe59bee5, type: 3}
       propertyPath: m_text

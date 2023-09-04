@@ -2870,6 +2870,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff1bc8ff7e057f04493d9138c481326e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentGameState: 0
   OnGameMode:
     m_PersistentCalls:
       m_Calls: []
@@ -2882,6 +2883,8 @@ MonoBehaviour:
   OnErrorClose:
     m_PersistentCalls:
       m_Calls: []
+  UserAlready: 0
+  UserIsAnonymous: 0
   gameMode: 3
   level: 0
   availableFruits:
@@ -2900,6 +2903,7 @@ MonoBehaviour:
   totalSeconds: 120
   matchObjectiveAmount: 25
   fruitCollectionAmount: 50
+  rewardLevelPass: 10
 --- !u!4 &616426632
 Transform:
   m_ObjectHideFlags: 0
@@ -3019,7 +3023,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e64cf1d431c746479b2b6aed4196449, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: {fileID: 0}
   OnSetFirebase:
     m_PersistentCalls:
       m_Calls: []
@@ -3070,7 +3073,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cead8a027bf4c534f90feb8e4466d3db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: {fileID: 0}
 --- !u!4 &685094309
 Transform:
   m_ObjectHideFlags: 0
