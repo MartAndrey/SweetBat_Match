@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
@@ -10,6 +9,7 @@ public abstract class Timer : MonoBehaviour
     public bool IsInfinite { get; set; }
     // Property to set the previously allotted time for the timer
     public DateTime PreviouslyAllottedTime { set { previouslyAllottedTime = value; } }
+    public float TimeRemainingInSeconds { get { return timeRemainingInSeconds; } }
 
     [Header("Timer")]
     [SerializeField] protected float waitTimeInMinutes;

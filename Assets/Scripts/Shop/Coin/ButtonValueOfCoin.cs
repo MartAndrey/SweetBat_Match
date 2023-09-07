@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -26,6 +25,9 @@ public class ButtonValueOfCoin : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
+    /// <summary>
+    /// Handles the buying of power-ups.
+    /// </summary>
     public void Buy()
     {
         audioSource.PlayOneShot(popEnter);
@@ -33,10 +35,14 @@ public class ButtonValueOfCoin : MonoBehaviour
         // Check if the player has enough coins to purchase the power ups
         if (CoinController.Instance.Coins < valueOfPPowerUp) return;
 
+        Dictionary<string, object> data = new Dictionary<string, object>();
+
         // Add the specified amount of power ups to the inventory
         foreach (TypePowerUp item in typePowerUp)
         {
             Inventory.Instance.InventoryItems[item] += amountOfPPowerUp;
+
+            Dictionary<string, object> subData = new Dictionary<string, object> { { "amount", Inventory.Instance.InventoryItems[item] } };
 
             // If the power ups are infinite for a certain time, set a timer
             if (infiniteTimePowerUp != 0)
@@ -48,11 +54,29 @@ public class ButtonValueOfCoin : MonoBehaviour
                         StartCoroutine(InternetTime.Instance.GetInternetTime(currentTime =>
                         {
                             powerUp.MakeInfinitePowerUp(infiniteTimePowerUp, currentTime);
+
+                            int time = (int)powerUp.TimeRemainingInSeconds / 60;
+
+                            subData.Add("time", time);
+
+                            if (time == infiniteTimePowerUp)
+                                subData.Add("last date", currentTime);
+
+                            data.Add(item.ToString(), subData);
+
+                            Inventory.Instance.SaveDataBase(data);
                         }));
                         break;
                     }
                 }
             }
+            else
+            {
+                data.Add(item.ToString(), subData);
+
+                Inventory.Instance.SaveDataBase(data);
+            }
+
         }
 
         // Subtract the value of the power ups from the player's coins

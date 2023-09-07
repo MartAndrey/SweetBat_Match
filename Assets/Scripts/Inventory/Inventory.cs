@@ -1,12 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
-    public TMP_Text text;
     public static Inventory Instance;
 
     public Dictionary<TypePowerUp, int> InventoryItems { get { return inventoryItems; } set { inventoryItems = value; } }
@@ -26,7 +23,6 @@ public class Inventory : MonoBehaviour
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
-
     }
 
     void Start()
@@ -64,17 +60,17 @@ public class Inventory : MonoBehaviour
     /// <param name="powerUpsData">The data of the user's collectibles.</param>
     void SetCollectibles(bool setDataBase, Dictionary<string, object> powerUpsData = null)
     {
-
         if (powerUpsData != null && !setDataBase)
         {
-            // Set existing power-ups
+            // Set existing power-ups from the provided data
             foreach (KeyValuePair<string, object> item in powerUpsData)
             {
-                if (Enum.TryParse(typeof(TypePowerUp), item.Key, out object enumValue))
-                {
-                    TypePowerUp powerUp = (TypePowerUp)enumValue;
+                Dictionary<string, object> powerUp = item.Value as Dictionary<string, object>;
 
-                    inventoryItems.Add(powerUp, Convert.ToInt32(item.Value));
+                if (Enum.TryParse(item.Key, out TypePowerUp type))
+                {
+                    // Update the inventory with the amount from the data
+                    inventoryItems.Add(type, Convert.ToInt32(powerUp["amount"]));
                 }
             }
 
@@ -94,10 +90,12 @@ public class Inventory : MonoBehaviour
             // Prepare data for storing in the database
             foreach (KeyValuePair<TypePowerUp, int> item in inventoryItems)
             {
-                data.Add(item.Key.ToString(), item.Value);
+
+                Dictionary<string, object> subData = new Dictionary<string, object> { { "amount", item.Value }, { "time", 0 }, { "last date", DateTime.Now } };
+                data.Add(item.Key.ToString(), subData);
             }
 
-            CloudFirestore.Instance.SetCollectible(new Dictionary<string, object> { { "power ups", data } });
+            SaveDataBase(data);
         }
     }
 
@@ -179,5 +177,14 @@ public class Inventory : MonoBehaviour
             int indexPowerUp = Convert.ToInt32(powerUp.TypePowerUp);
             powerUp.transform.SetSiblingIndex(indexPowerUp);
         });
+    }
+
+    /// <summary>
+    /// Saves the provided data to the database.
+    /// </summary>
+    /// <param name="data">The data to be saved.</param>
+    public void SaveDataBase(Dictionary<string, object> data)
+    {
+        CloudFirestore.Instance.SetCollectible(new Dictionary<string, object> { { "power ups", data } });
     }
 }
