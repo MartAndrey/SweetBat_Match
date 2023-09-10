@@ -53,14 +53,17 @@ public class ButtonValueOfCoin : MonoBehaviour
                     {
                         StartCoroutine(InternetTime.Instance.GetInternetTime(currentTime =>
                         {
+                            if (powerUp.TimeRemainingInSeconds != 0)
+                            {
+                                powerUp.CurrentTime = currentTime;
+                                powerUp.SubtractTimeTimer();
+                            }
                             powerUp.MakeInfinitePowerUp(infiniteTimePowerUp, currentTime);
 
                             int time = (int)powerUp.TimeRemainingInSeconds / 60;
 
                             subData.Add("time", time);
-
-                            if (time == infiniteTimePowerUp)
-                                subData.Add("last date", currentTime);
+                            subData.Add("last date", currentTime);
 
                             data.Add(item.ToString(), subData);
 

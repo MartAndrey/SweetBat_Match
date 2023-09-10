@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Firebase.Firestore;
 using UnityEngine;
 
 public class Inventory : MonoBehaviour
@@ -71,6 +72,19 @@ public class Inventory : MonoBehaviour
                 {
                     // Update the inventory with the amount from the data
                     inventoryItems.Add(type, Convert.ToInt32(powerUp["amount"]));
+
+                    powerUpsObject.ForEach(powerUpObject =>
+                    {
+                        PowerUp power = powerUpObject.GetComponent<PowerUp>();
+
+                        if (power.TypePowerUp == type && Convert.ToInt32(powerUp["time"]) != 0)
+                        {
+                            StartCoroutine(InternetTime.Instance.GetInternetTime(time =>
+                            {
+                                power.SetTimerInfinite(time, (Timestamp)powerUp["last date"], Convert.ToInt32(powerUp["time"]));
+                            }));
+                        }
+                    });
                 }
             }
 

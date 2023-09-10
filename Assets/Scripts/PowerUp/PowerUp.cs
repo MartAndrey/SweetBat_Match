@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System.ComponentModel;
 using Unity.VisualScripting;
 using System.Collections;
+using Firebase.Firestore;
 
 // Type of power up that this object represents
 public enum TypePowerUp
@@ -208,5 +209,28 @@ public class PowerUp : Timer
         descriptionObject.SetActive(false);
         // Disable the animator.
         DisableAnimator();
+    }
+
+    /// <summary>
+    /// Sets the game timer to an infinite state, adjusting the time remaining.
+    /// </summary>
+    /// <param name="currentTime">The current time.</param>
+    /// <param name="time">The timestamp to set the game timer to.</param>
+    /// <param name="timeToInfinite">The time in seconds for the infinite power-up.</param>
+    public void SetTimerInfinite(DateTime currentTime, Timestamp time, int timeToInfinite)
+    {
+        this.currentTime = currentTime;
+
+        Timestamp timestamp = time;
+        DateTime utcDate = timestamp.ToDateTime();
+        DateTime localDate = utcDate.ToLocalTime();
+
+        previouslyAllottedTime = localDate;
+
+        float timeDifference = (float)(currentTime.Subtract(previouslyAllottedTime)).TotalSeconds;
+
+        MakeInfinitePowerUp(timeToInfinite, currentTime);
+
+        timeRemainingInSeconds -= timeDifference;
     }
 }

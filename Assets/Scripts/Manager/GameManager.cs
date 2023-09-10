@@ -21,7 +21,9 @@ public enum GameMode
     [Description("Collect all orders!")]
     CollectionObjective
 }
+
 public enum GamePlayMode { MovesLimited, TimedMatch }
+
 /// <summary>
 /// Enum representing different error types.
 /// </summary>

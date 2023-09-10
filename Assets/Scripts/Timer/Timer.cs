@@ -9,6 +9,7 @@ public abstract class Timer : MonoBehaviour
     public bool IsInfinite { get; set; }
     // Property to set the previously allotted time for the timer
     public DateTime PreviouslyAllottedTime { set { previouslyAllottedTime = value; } }
+    public DateTime CurrentTime { set { currentTime = value; } }
     public float TimeRemainingInSeconds { get { return timeRemainingInSeconds; } }
 
     [Header("Timer")]
@@ -68,7 +69,7 @@ public abstract class Timer : MonoBehaviour
     }
 
     // Method to subtract the time difference between the previously allotted time and the current time
-    protected void SubtractTimeTimer()
+    public void SubtractTimeTimer()
     {
         float timeDifference = (float)(currentTime.Subtract(previouslyAllottedTime)).TotalSeconds;
         timeRemainingInSeconds -= timeDifference;
