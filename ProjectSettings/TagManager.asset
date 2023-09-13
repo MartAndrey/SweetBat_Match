@@ -11,6 +11,8 @@ TagManager:
   - Number Life
   - Number Coin
   - Infinite Life
+  - Container Power Game
+  - Power
   layers:
   - Default
   - TransparentFX

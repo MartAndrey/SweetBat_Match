@@ -8,8 +8,7 @@ public class Inventory : MonoBehaviour
     public static Inventory Instance;
 
     public Dictionary<TypePowerUp, int> InventoryItems { get { return inventoryItems; } set { inventoryItems = value; } }
-
-    public bool PowerUpsWereMoved { get { return powerUpsWereMoved; } set { powerUpsWereMoved = value; } }
+    public List<GameObject> PowerUpsObject { get { return powerUpsObject; } set { powerUpsObject = value; } }
 
     // List of all available power-ups as game objects
     [SerializeField] List<GameObject> powerUpsObject;
@@ -17,13 +16,12 @@ public class Inventory : MonoBehaviour
     // Dictionary that stores the amount of each power-up the player has
     Dictionary<TypePowerUp, int> inventoryItems = new Dictionary<TypePowerUp, int>();
 
-    // Flag that indicates if power-ups were moved in the UI
-    bool powerUpsWereMoved;
-
     void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+        DontDestroyOnLoad(gameObject);
     }
 
     void Start()
@@ -174,6 +172,25 @@ public class Inventory : MonoBehaviour
     }
 
     /// <summary>
+    /// Resets the parent of power-ups and optionally changes their checked status.
+    /// </summary>
+    /// <param name="changeCheck">Flag to change the check status of power-ups.</param>
+    public void ResetParentPowerUps(bool changeCheck)
+    {
+        foreach (GameObject powerUp in powerUpsObject)
+        {
+            // Reset the parent of each power-up to this game object.
+            powerUp.transform.SetParent(gameObject.transform, false);
+
+            if (changeCheck)
+            {
+                // Set the checked status of power-ups based on the 'changeCheck' flag.
+                powerUp.GetComponent<PowerUp>().IsChecked = false;
+            }
+        }
+    }
+
+    /// <summary>
     /// Orders the power-up game objects under the given parent transform based on their TypePowerUp enum value.
     /// </summary>
     /// <param name="parent">The parent transform of the power-up game objects to be ordered.</param>
@@ -200,5 +217,35 @@ public class Inventory : MonoBehaviour
     public void SaveDataBase(Dictionary<string, object> data)
     {
         CloudFirestore.Instance.SetCollectible(new Dictionary<string, object> { { "power ups", data } });
+    }
+
+    /// <summary>
+    /// Sets the power-up game state and updates the UI.
+    /// </summary>
+    public void SetPowerUpGame()
+    {
+        // Create a list to store selected power-ups.
+        List<GameObject> listPowerUps = new();
+        GameObject containerGame = GameObject.FindGameObjectWithTag("Container Power Game");
+
+        if (containerGame != null)
+        {
+            // Iterate through power-ups to find and process checked ones.
+            powerUpsObject.ForEach(powerUp =>
+            {
+                PowerUp power = powerUp.GetComponent<PowerUp>();
+
+                if (power.IsChecked)
+
+                {
+                    listPowerUps.Add(power.gameObject);
+                    power.ChangeCheckPowerUpUI();
+                }
+            });
+
+            // If there are selected power-ups, set them as available in the game container.
+            if (listPowerUps.Count >= 1)
+                SetAvailablePowerUps(listPowerUps, containerGame.transform, StatePowerUp.Game);
+        }
     }
 }

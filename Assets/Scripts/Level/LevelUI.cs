@@ -54,7 +54,6 @@ public class LevelUI : MonoBehaviour
         {
             Inventory.Instance.SetAvailablePowerUps(powerUps, boxSelectPower.transform, StatePowerUp.LevelUI);
             Inventory.Instance.UpdateInventoryUI(powerUpPanel);
-            Inventory.Instance.PowerUpsWereMoved = true;
         }
     }
 
@@ -70,6 +69,7 @@ public class LevelUI : MonoBehaviour
             GameManager.Instance.ObjectiveComplete = false;
             GameManager.Instance.CurrentLevel = Convert.ToInt32(nameLevelText.text.Split(' ')[1]) - 1;
             StartCoroutine(ScreenChangeTransition.Instance.FadeOut(nameScene));
+            StartCoroutine(ResetParentPowerUps());
         }
         else
         {
@@ -80,6 +80,15 @@ public class LevelUI : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Coroutine to delay resetting the parent of power-ups.
+    /// </summary>
+    /// <returns>An IEnumerator for use in StartCoroutine.</returns>
+    IEnumerator ResetParentPowerUps()
+    {
+        yield return new WaitForSeconds(.8f);
+        Inventory.Instance.ResetParentPowerUps(false);
+    }
     /// <summary>
     /// Resets the information of a level by disabling stars.
     /// </summary>

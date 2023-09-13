@@ -381,6 +381,7 @@ public class GameManager : MonoBehaviour
         {
             currentGameState = GameState.InGame;
             OnGameMode?.Invoke(gameMode);
+            Inventory.Instance.SetPowerUpGame();
         }
         else if (scene.name == "LevelMenu")
         {

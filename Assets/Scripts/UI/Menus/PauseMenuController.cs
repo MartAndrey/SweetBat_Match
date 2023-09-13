@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class PauseMenuController : MonoBehaviour
 {
@@ -85,6 +84,7 @@ public class PauseMenuController : MonoBehaviour
         StartCoroutine(ScreenChangeTransition.Instance.FadeOut("LevelMenu"));
         if (!LifeController.Instance.IsInfinite)
             LifeController.Instance.ChangeLives(-1);
+        Inventory.Instance.ResetParentPowerUps(true);
         Time.timeScale = 1;
     }
 

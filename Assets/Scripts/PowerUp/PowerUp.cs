@@ -6,6 +6,7 @@ using System.ComponentModel;
 using Unity.VisualScripting;
 using System.Collections;
 using Firebase.Firestore;
+using System.Collections.Generic;
 
 // Type of power up that this object represents
 public enum TypePowerUp
@@ -28,6 +29,8 @@ public class PowerUp : Timer
     public StatePowerUp StatePowerUp { get { return statePowerUp; } set { statePowerUp = value; } }
     // Text component that displays the amount of this power up the player has
     public TMP_Text TextAmount { get { return textAmount; } set { textAmount = value; } }
+    public bool IsChecked { get { return isChecked; } set { isChecked = value; } }
+    public bool IsInTransitionDescription { get { return isInTransitionDescription; } }
 
     [SerializeField] TypePowerUp typePowerUp;
     [SerializeField] StatePowerUp statePowerUp;
@@ -52,6 +55,8 @@ public class PowerUp : Timer
     {
         audioSource = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
+
+        DontDestroyOnLoad(gameObject);
     }
 
     void Start()
@@ -74,7 +79,7 @@ public class PowerUp : Timer
     {
         InternetTime.Instance.UpdateInternetTime(this.gameObject);
 
-        if (isChecked)
+        if (isChecked && GameManager.Instance.currentGameState == GameState.LevelMenu)
         {
             ChangeCheckPowerUp();
         }
@@ -92,6 +97,20 @@ public class PowerUp : Timer
     {
         // Change the state of the power up
         ChangeStatePowerUp();
+        SavePowerDataBase();
+    }
+
+    /// <summary>
+    /// Saves power-up data to the inventory database.
+    /// </summary>
+    void SavePowerDataBase()
+    {
+        // Create a sub-dictionary for power-up data with a default time of 0.
+        Dictionary<string, object> subData = new Dictionary<string, object> { { "time", 0 } };
+        // Create a dictionary to store the power-up type and its sub-data.
+        Dictionary<string, object> data = new Dictionary<string, object> { { typePowerUp.ToString(), subData } };
+        // Save the data to the inventory.
+        Inventory.Instance.SaveDataBase(data);
     }
 
     // This method is responsible for making ignition infinite for a certain time, it is also responsible for changing the UI in "Profile"
@@ -118,8 +137,16 @@ public class PowerUp : Timer
     /// </summary>
     void ChangeCheckPowerUp()
     {
-        imageCheck.SetActive(imageCheck.activeSelf == true ? false : true);
+        ChangeCheckPowerUpUI();
         isChecked = isChecked == true ? false : true;
+    }
+
+    /// <summary>
+    /// Toggles the visibility of the checkmark image.
+    /// </summary>
+    public void ChangeCheckPowerUpUI()
+    {
+        imageCheck.SetActive(imageCheck.activeSelf == true ? false : true);
     }
 
     /// <summary>
@@ -146,7 +173,7 @@ public class PowerUp : Timer
         }
         else if (statePowerUp == StatePowerUp.Game)
         {
-            if (BoardManager.Instance.IsShifting) return;
+            if (BoardManager.Instance.IsShifting || (Inventory.Instance.InventoryItems[typePowerUp] <= 0 && !IsInfinite)) return;
             // Updates the sorting order of the canvas based on the overlay display state,
             // and triggers the overlay switch with the provided power-up sprite.
             OverlayDisplayPowerUp overlay = GameObject.FindObjectOfType<OverlayDisplayPowerUp>();
@@ -201,7 +228,7 @@ public class PowerUp : Timer
     /// <summary>
     /// Disables the description and related animator.
     /// </summary>
-    void DisableDescription()
+    public void DisableDescription()
     {
         // Indicates that it's not in description transition.
         isInTransitionDescription = false;

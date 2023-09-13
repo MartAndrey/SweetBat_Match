@@ -653,8 +653,24 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
         // Switch the PowerUp state in the OverlayDisplayPowerUp object to activate the corresponding UI elements.
         overlay.SwitchState(null);
 
+        TypePowerUp typePowerUp = GameManager.Instance.CurrentPowerUp;
+
+        Inventory.Instance.PowerUpsObject.ForEach(powerUp =>
+        {
+            PowerUp power = powerUp.GetComponent<PowerUp>();
+
+            if (power.TypePowerUp == typePowerUp && !power.IsInfinite)
+            {
+                Inventory.Instance.InventoryItems[typePowerUp]--;
+                power.TextAmount.text = Inventory.Instance.InventoryItems[typePowerUp].ToString();
+            }
+        });
+
+        Dictionary<string, object> data = new Dictionary<string, object> { { "amount", Inventory.Instance.InventoryItems[typePowerUp] } };
+        Inventory.Instance.SaveDataBase(new Dictionary<string, object> { { typePowerUp.ToString(), data } });
+
         // Perform actions based on the type of PowerUp currently active in the GameManager.
-        switch (GameManager.Instance.CurrentPowerUp)
+        switch (typePowerUp)
         {
             case TypePowerUp.Bomb:
                 PowerUpBomb(eventData.pointerCurrentRaycast.worldPosition);

@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ProfileController : MonoBehaviour
@@ -9,9 +7,22 @@ public class ProfileController : MonoBehaviour
     [SerializeField] GameObject inventoryPanel;
     [SerializeField] AvatarController avatar;
 
-    private void OnEnable()
+    void OnEnable()
     {
         UpdateProfileData();
+    }
+
+    void OnDisable()
+    {
+        Inventory.Instance.ResetParentPowerUps(false);
+        // Iterate through power-ups to check if they are in transition and disable descriptions.
+        Inventory.Instance.PowerUpsObject.ForEach(powerUp =>
+        {
+            PowerUp power = powerUp.GetComponent<PowerUp>();
+
+            if (power.IsInTransitionDescription)
+                power.DisableDescription();
+        });
     }
 
     /// <summary>
@@ -19,13 +30,9 @@ public class ProfileController : MonoBehaviour
     /// </summary>
     void UpdateProfileData()
     {
-        // If power-ups have been moved in the inventory, update the inventory UI with the updated power-ups
-        if (Inventory.Instance.PowerUpsWereMoved)
-        {
-            Inventory.Instance.SetAvailablePowerUps(Inventory.Instance.GetAvailablePowerUps(), inventoryPanel.transform, StatePowerUp.Profile);
-            Inventory.Instance.OrderPowerUps(inventoryPanel.transform);
-            Inventory.Instance.PowerUpsWereMoved = false;
-        }
+        // update the inventory UI with the updated power-ups
+        Inventory.Instance.SetAvailablePowerUps(Inventory.Instance.PowerUpsObject, inventoryPanel.transform, StatePowerUp.Profile);
+        Inventory.Instance.OrderPowerUps(inventoryPanel.transform);
 
         // Update inventory UI
         Inventory.Instance.UpdateInventoryUI(inventoryPanel);
