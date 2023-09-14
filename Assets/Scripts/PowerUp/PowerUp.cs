@@ -31,6 +31,8 @@ public class PowerUp : Timer
     public TMP_Text TextAmount { get { return textAmount; } set { textAmount = value; } }
     public bool IsChecked { get { return isChecked; } set { isChecked = value; } }
     public bool IsInTransitionDescription { get { return isInTransitionDescription; } }
+    // Public property to check if cooling is active
+    public bool IsCooldown { get { return isCooldown; } }
 
     [SerializeField] TypePowerUp typePowerUp;
     [SerializeField] StatePowerUp statePowerUp;
@@ -42,14 +44,21 @@ public class PowerUp : Timer
     [SerializeField] Image spritePowerUp;
     [SerializeField] TMP_Text descriptionText;
     [SerializeField] GameObject descriptionObject;
+    [SerializeField] Image cooldown;
 
     // boolean that tells us if the power up was chosen only works in the StatePowerUp.LevelUI
     bool isChecked;
     bool isInTransitionDescription;
+    // Private variable to track if cooling is active
+    bool isCooldown;
 
     AudioSource audioSource;
     Animator animator;
     float timeDescription = 3;
+    // Cooling duration in seconds
+    readonly int timeCooldown = 20;
+    // Current elapsed cooling time
+    float currentTimeCooldown = 0;
 
     void Awake()
     {
@@ -81,7 +90,7 @@ public class PowerUp : Timer
 
         if (isChecked && GameManager.Instance.currentGameState == GameState.LevelMenu)
         {
-            ChangeCheckPowerUp();
+            toggleChangeCheckPowerUp();
         }
     }
 
@@ -97,6 +106,7 @@ public class PowerUp : Timer
     {
         // Change the state of the power up
         ChangeStatePowerUp();
+        ResetCoolDownUI();
         SavePowerDataBase();
     }
 
@@ -106,7 +116,7 @@ public class PowerUp : Timer
     void SavePowerDataBase()
     {
         // Create a sub-dictionary for power-up data with a default time of 0.
-        Dictionary<string, object> subData = new Dictionary<string, object> { { "time", 0 } };
+        Dictionary<string, object> subData = new Dictionary<string, object> { { "time", timeRemainingInSeconds } };
         // Create a dictionary to store the power-up type and its sub-data.
         Dictionary<string, object> data = new Dictionary<string, object> { { typePowerUp.ToString(), subData } };
         // Save the data to the inventory.
@@ -135,18 +145,18 @@ public class PowerUp : Timer
     /// <summary>
     /// Change the state of the checkbox and the isChecked variable.
     /// </summary>
-    void ChangeCheckPowerUp()
+    void toggleChangeCheckPowerUp()
     {
-        ChangeCheckPowerUpUI();
+        imageCheck.SetActive(imageCheck.activeSelf == true ? false : true);
         isChecked = isChecked == true ? false : true;
     }
 
     /// <summary>
     /// Toggles the visibility of the checkmark image.
     /// </summary>
-    public void ChangeCheckPowerUpUI()
+    public void ChangeCheckPowerUpUI(bool stateToChange)
     {
-        imageCheck.SetActive(imageCheck.activeSelf == true ? false : true);
+        imageCheck.SetActive(stateToChange);
     }
 
     /// <summary>
@@ -169,11 +179,11 @@ public class PowerUp : Timer
         }
         else if (statePowerUp == StatePowerUp.LevelUI)
         {
-            ChangeCheckPowerUp();
+            toggleChangeCheckPowerUp();
         }
         else if (statePowerUp == StatePowerUp.Game)
         {
-            if (BoardManager.Instance.IsShifting || (Inventory.Instance.InventoryItems[typePowerUp] <= 0 && !IsInfinite)) return;
+            if (BoardManager.Instance.IsShifting || (Inventory.Instance.InventoryItems[typePowerUp] <= 0 && !IsInfinite) || isCooldown) return;
             // Updates the sorting order of the canvas based on the overlay display state,
             // and triggers the overlay switch with the provided power-up sprite.
             OverlayDisplayPowerUp overlay = GameObject.FindObjectOfType<OverlayDisplayPowerUp>();
@@ -259,5 +269,54 @@ public class PowerUp : Timer
         MakeInfinitePowerUp(timeToInfinite, currentTime);
 
         timeRemainingInSeconds -= timeDifference;
+    }
+
+    /// <summary>
+    /// Initiates the cooldown process.
+    /// </summary>
+    public void StartCooldown()
+    {
+        isCooldown = true;
+        cooldown.gameObject.SetActive(true);
+        cooldown.fillAmount = 1;
+        currentTimeCooldown = 0;
+
+        StartCoroutine(CooldownRutiner());
+    }
+
+    /// <summary>
+    /// Routine to manage cooldown.
+    /// </summary>
+    /// <returns>An enumerator that allows time-based waiting.</returns>
+    IEnumerator CooldownRutiner()
+    {
+        float factor;
+
+        while (currentTimeCooldown < timeCooldown)
+        {
+            currentTimeCooldown += Time.deltaTime;
+
+            factor = 1 - (currentTimeCooldown / timeCooldown);
+            cooldown.fillAmount = factor;
+
+            if (currentTimeCooldown > timeCooldown)
+            {
+                isCooldown = false;
+                cooldown.gameObject.SetActive(false);
+            }
+
+            yield return null;
+        }
+
+        yield return null;
+    }
+
+    /// <summary>
+    /// Resets the cooldown user interface.
+    /// </summary>
+    public void ResetCoolDownUI()
+    {
+        isCooldown = false;
+        cooldown.gameObject.SetActive(false);
     }
 }

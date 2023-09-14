@@ -659,10 +659,17 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
         {
             PowerUp power = powerUp.GetComponent<PowerUp>();
 
-            if (power.TypePowerUp == typePowerUp && !power.IsInfinite)
+            if (power.TypePowerUp == typePowerUp)
             {
-                Inventory.Instance.InventoryItems[typePowerUp]--;
-                power.TextAmount.text = Inventory.Instance.InventoryItems[typePowerUp].ToString();
+                if (power.IsInfinite)
+                {
+                    power.StartCooldown();
+                }
+                else
+                {
+                    Inventory.Instance.InventoryItems[typePowerUp]--;
+                    power.TextAmount.text = Inventory.Instance.InventoryItems[typePowerUp].ToString();
+                }
             }
         });
 

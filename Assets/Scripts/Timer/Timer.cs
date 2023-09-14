@@ -47,6 +47,7 @@ public abstract class Timer : MonoBehaviour
 
         if (timeRemainingInSeconds <= 0)
         {
+            timeRemainingInSeconds = 0;
             OnCountdownFinished();
         }
     }

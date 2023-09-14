@@ -58,6 +58,7 @@ public class CompleteGameController : MonoBehaviour
     {
         audioSource.PlayOneShot(popComplete);
         StartCoroutine(ScreenChangeTransition.Instance.FadeOut(SceneManager.GetActiveScene().name));
+        Inventory.Instance.ResetParentPowerUps(false);
     }
 
     /// <summary>

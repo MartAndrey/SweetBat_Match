@@ -62,10 +62,12 @@ public class GameOverController : MonoBehaviour
         {
             audioSource.PlayOneShot(popComplete);
             StartCoroutine(ScreenChangeTransition.Instance.FadeOut(SceneManager.GetActiveScene().name));
+            Inventory.Instance.ResetParentPowerUps(false);
         }
         else
         {
             StartCoroutine(ScreenChangeTransition.Instance.FadeOut("LevelMenu"));
+            Inventory.Instance.ResetParentPowerUps(true);
         }
     }
 

@@ -182,11 +182,16 @@ public class Inventory : MonoBehaviour
             // Reset the parent of each power-up to this game object.
             powerUp.transform.SetParent(gameObject.transform, false);
 
+            PowerUp power = powerUp.GetComponent<PowerUp>();
+
             if (changeCheck)
             {
                 // Set the checked status of power-ups based on the 'changeCheck' flag.
-                powerUp.GetComponent<PowerUp>().IsChecked = false;
+                power.IsChecked = false;
             }
+
+            if (power.IsCooldown)
+                power.ResetCoolDownUI();
         }
     }
 
@@ -239,7 +244,7 @@ public class Inventory : MonoBehaviour
 
                 {
                     listPowerUps.Add(power.gameObject);
-                    power.ChangeCheckPowerUpUI();
+                    power.ChangeCheckPowerUpUI(false);
                 }
             });
 
