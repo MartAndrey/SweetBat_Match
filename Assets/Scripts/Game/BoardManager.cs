@@ -649,7 +649,7 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
         // Find the OverlayDisplayPowerUp object in the scene.
         OverlayDisplayPowerUp overlay = GameObject.FindObjectOfType<OverlayDisplayPowerUp>();
         // Adjust the sorting order of the current PowerUp's GameObject based on the OverlayDisplayPowerUp state.
-        GameManager.Instance.CurrentGameObjectPowerUp.GetComponent<Canvas>().sortingOrder = overlay.OverlayEnable ? 0 : 5;
+        GameManager.Instance.CurrentGameObjectPowerUp.GetComponent<Canvas>().sortingOrder = overlay.OverlayEnable ? 1 : 5;
         // Switch the PowerUp state in the OverlayDisplayPowerUp object to activate the corresponding UI elements.
         overlay.SwitchState(null);
 
