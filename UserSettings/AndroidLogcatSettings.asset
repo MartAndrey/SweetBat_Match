@@ -1,9 +1,9 @@
 {
     "m_SelectedDeviceId": "146268f60409",
     "m_SelectedPackage": {
-        "deviceId": "146268f60409",
-        "name": "com.martandrey.hungrybat",
-        "processId": 31024,
+        "deviceId": "",
+        "name": "",
+        "processId": 0,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -11,56 +11,26 @@
         {
             "deviceId": "146268f60409",
             "name": "com.martandrey.hungrybat",
-            "processId": 7259,
-            "exited": true
-        },
-        {
-            "deviceId": "146268f60409",
-            "name": "com.zhiliaoapp.musically",
-            "processId": 3564,
-            "exited": false
-        },
-        {
-            "deviceId": "146268f60409",
-            "name": "com.martandrey.hungrybat",
-            "processId": 12834,
+            "processId": 31197,
             "exited": true
         },
         {
             "deviceId": "146268f60409",
             "name": "com.martandrey.hungrybat",
-            "processId": 14018,
+            "processId": 32518,
             "exited": true
         },
         {
             "deviceId": "146268f60409",
             "name": "com.martandrey.hungrybat",
-            "processId": 16160,
+            "processId": 6108,
             "exited": true
         },
         {
             "deviceId": "146268f60409",
             "name": "com.martandrey.hungrybat",
-            "processId": 18129,
-            "exited": false
-        },
-        {
-            "deviceId": "146268f60409",
-            "name": "com.martandrey.hungrybat",
-            "processId": 23320,
-            "exited": false
-        },
-        {
-            "deviceId": "146268f60409",
-            "name": "com.martandrey.hungrybat",
-            "processId": 28704,
-            "exited": false
-        },
-        {
-            "deviceId": "146268f60409",
-            "name": "com.martandrey.hungrybat",
-            "processId": 31024,
-            "exited": false
+            "processId": 13950,
+            "exited": true
         }
     ],
     "m_Tags": {

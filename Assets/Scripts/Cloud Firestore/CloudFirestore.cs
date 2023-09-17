@@ -163,7 +163,7 @@ public class CloudFirestore : MonoBehaviour
     public void SetUserLevels(List<Dictionary<string, object>> userData)
     {
         // Get the current level
-        int currentLevel = GameManager.Instance.Level + 1;
+        int currentLevel = LevelManager.Instance.LimitLevels + LevelManager.Instance.OffsetNewLevels + 1;
         // Get the reference to the user's levels collection
         CollectionReference userRef = db.Collection("Users").Document(GameManager.Instance.UserData["id"].ToString()).Collection("Levels");
 

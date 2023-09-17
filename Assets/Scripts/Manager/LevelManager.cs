@@ -8,12 +8,12 @@ using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
+    public static LevelManager Instance;
     // The prefab for the level objects
     [SerializeField] GameObject levelPrefab;
     // The starting levels
     [SerializeField] int initialLevel = 50;
 
-    [SerializeField] RectTransform rectTransformLevels;
     // A game object that marks the player's progress on the level objects
     [SerializeField] GameObject profileMarker;
 
@@ -26,6 +26,8 @@ public class LevelManager : MonoBehaviour
     // A list of the level objects in the scene
     List<GameObject> levelsList = new List<GameObject>();
 
+    RectTransform rectTransformLevels;
+
     // Get the width of the level prefab
     float widthLevelPrefab;
 
@@ -36,10 +38,23 @@ public class LevelManager : MonoBehaviour
     readonly float nextLevelTime = 1;
     readonly int nextPositionLevels = -250;
 
+    public int LimitLevels { get; set; }
+    public int OffsetNewLevels { get { return offsetNewLevels; } }
+    int offsetNewLevels = 4;
+    bool levelsAlreadyCreated = false;
+
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
+
     void Start()
     {
         // Get the width of the level prefab
+        LimitLevels = -offsetNewLevels;
         widthLevelPrefab = levelPrefab.GetComponent<RectTransform>().sizeDelta.x;
+        rectTransformLevels = GetComponent<RectTransform>();
         GetUserLevels();
     }
 
@@ -53,6 +68,7 @@ public class LevelManager : MonoBehaviour
         // If levels exist, create them; otherwise, create initial levels
         if (data != null && data.Count > 0)
         {
+            LimitLevels = data.Count - offsetNewLevels;
             CreateAndSetLevels(data);
             return;
         }
@@ -67,7 +83,7 @@ public class LevelManager : MonoBehaviour
     void CreateNewLevels(int amount)
     {
         // Get the current level from the GameManager
-        int currentLevel = GameManager.Instance.Level;
+        int currentLevel = LimitLevels + offsetNewLevels;
 
         // Create a list to hold level data
         List<Dictionary<string, object>> level = new List<Dictionary<string, object>>();
@@ -92,7 +108,7 @@ public class LevelManager : MonoBehaviour
                 {"Stars", 0},
                 {"Score", 0},
                 {"Game Mode", UnityEngine.Random.Range(0, Enum.GetValues(typeof(GameMode)).Length)},
-                {"order", i},
+                {"order", currentLevel + i},
             };
 
             level.Add(levelData);
@@ -100,12 +116,15 @@ public class LevelManager : MonoBehaviour
             SetInformationAndIncreaseSizeLevelsContainer(i, newLevel, levelData);
         }
 
-        GameManager.Instance.LevelsData = level;
+        GameManager.Instance.LevelsData.AddRange(level);
 
         // Update user levels in the database
         CloudFirestore.Instance.SetUserLevels(level);
 
         UnlockLevelAndUpdateAvatar();
+
+        LimitLevels = GameManager.Instance.LevelsData.Count - offsetNewLevels;
+        levelsAlreadyCreated = true;
     }
 
     /// <summary>
@@ -130,6 +149,7 @@ public class LevelManager : MonoBehaviour
         }
 
         UnlockLevelAndUpdateAvatar();
+        levelsAlreadyCreated = true;
     }
 
     /// <summary>
@@ -181,7 +201,7 @@ public class LevelManager : MonoBehaviour
         if (getDataBase) levelUser.CheckLevelToUnlock();
 
         // Increase the size of the levels container if there are more than 4 levels and the current level is not 4
-        if (i > 4)
+        if (i > 4 || levelsAlreadyCreated)
         {
             // Increase the width of the levels container by the width of the level prefab
             rectTransformLevels.sizeDelta = new Vector2(rectTransformLevels.sizeDelta.x + widthLevelPrefab, rectTransformLevels.sizeDelta.y);
@@ -253,8 +273,13 @@ public class LevelManager : MonoBehaviour
             {
                 // Sets focus on the next level and animates the movement of the levels list
                 focusLevel.GetComponent<FocusLevel>().SetLevelFocus(nextLevel.GetComponent<Collider2D>());
-                rectTransformLevels.DOAnchorPosX(rectTransformLevels.anchoredPosition.x + nextPositionLevels, nextLevelTime);
+                rectTransformLevels.DOAnchorPosX(rectTransformLevels.anchoredPosition.x + nextPositionLevels, nextLevelTime).OnComplete(() =>
+                {
+                    if (GameManager.Instance.Level + 1 == LimitLevels)
+                        CreateNewLevels(initialLevel);
+                });
             });
         });
+
     }
 }
