@@ -75,7 +75,8 @@ public class GameManager : MonoBehaviour
     // Gets or sets the objective game mode.
     public GameMode GameMode { get { return gameMode; } set { gameMode = value; } }
     // Gets the list of available fruits.
-    public List<GameObject> AvailableFruits { get { return availableFruits; } }
+    public List<GameObject> AvailableFruits { get { return availableFruits; } set { availableFruits = value; } }
+    public List<GameObject> UpcomingFruits { get { return upcomingFruits; } set { upcomingFruits = value; } }
 
     // Gets the maximum feeding objective.
     public int MaxFeedingObjective { get { return maxFeedingObjective; } }
@@ -108,6 +109,8 @@ public class GameManager : MonoBehaviour
     public bool PowerUpActivate { get { return powerUpActivate; } set { powerUpActivate = value; } }
     public TypePowerUp CurrentPowerUp { get { return currentPowerUp; } set { currentPowerUp = value; } }
     public GameObject CurrentGameObjectPowerUp { get { return currentGameObjectPowerUp; } set { currentGameObjectPowerUp = value; } }
+
+    public bool CheckUnlockFruitsToCreateLevels { get { return checkUnlockFruitsToCreateLevels; } set { checkUnlockFruitsToCreateLevels = value; } }
 
     public bool UserAlready;
     public bool UserIsAnonymous;
@@ -165,6 +168,9 @@ public class GameManager : MonoBehaviour
     bool powerUpActivate;
     TypePowerUp currentPowerUp;
     GameObject currentGameObjectPowerUp;
+
+    // A flag to determine whether to check and unlock fruits for creating levels.
+    bool checkUnlockFruitsToCreateLevels = true;
 
     /// <summary>
     /// Subscribes to the SceneManager's sceneLoaded event when the script is enabled.

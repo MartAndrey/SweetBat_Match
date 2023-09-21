@@ -22,6 +22,9 @@ public class LevelManager : MonoBehaviour
 
     // This line is marking the GameObject "focusLevel" as Serializable
     [SerializeField] GameObject focusLevel;
+    [SerializeField] GameObject unlockFruitObject;
+    // Reference to the GameObject used for displaying the unlock animation.
+    [SerializeField] List<int> levelToUnlockNewFruit = new List<int> { 12, 46, 96 };
 
     // A list of the level objects in the scene
     List<GameObject> levelsList = new List<GameObject>();
@@ -150,6 +153,9 @@ public class LevelManager : MonoBehaviour
 
         UnlockLevelAndUpdateAvatar();
         levelsAlreadyCreated = true;
+
+        if (GameManager.Instance.CheckUnlockFruitsToCreateLevels)
+            GameManager.Instance.CheckUnlockFruitsToCreateLevels = false;
     }
 
     /// <summary>
@@ -198,7 +204,15 @@ public class LevelManager : MonoBehaviour
         levelUser.GoalInformation = levelData["Game Mode"].ToString();
         levelUser.name = $"Level {levelData["order"]}";
 
-        if (getDataBase) levelUser.CheckLevelToUnlock();
+        if (getDataBase)
+        {
+            levelUser.CheckLevelToUnlock();
+
+            int currentLevel = Convert.ToInt32(levelData["order"]);
+
+            if (IsUnlockNewFruit(currentLevel) && GameManager.Instance.CheckUnlockFruitsToCreateLevels)
+                StartCoroutine(WaitSetUnlockNewFruits(levelUser));
+        }
 
         // Increase the size of the levels container if there are more than 4 levels and the current level is not 4
         if (i > 4 || levelsAlreadyCreated)
@@ -275,11 +289,68 @@ public class LevelManager : MonoBehaviour
                 focusLevel.GetComponent<FocusLevel>().SetLevelFocus(nextLevel.GetComponent<Collider2D>());
                 rectTransformLevels.DOAnchorPosX(rectTransformLevels.anchoredPosition.x + nextPositionLevels, nextLevelTime).OnComplete(() =>
                 {
-                    if (GameManager.Instance.Level + 1 == LimitLevels)
+                    int currentLevel = GameManager.Instance.Level + 1;
+
+                    if (currentLevel == LimitLevels)
                         CreateNewLevels(initialLevel);
+
+                    if (IsUnlockNewFruit(currentLevel))
+                        UnlockNewFruit(true);
                 });
             });
         });
 
+    }
+
+    /// <summary>
+    /// Checks if a new fruit can be unlocked for the given level.
+    /// </summary>
+    /// <param name="level">The level to check for unlocking a new fruit.</param>
+    /// <returns>True if a new fruit can be unlocked; otherwise, false.</returns>
+    bool IsUnlockNewFruit(int level) => GameManager.Instance.UpcomingFruits.Count > 0 && levelToUnlockNewFruit.Contains(level);
+
+
+    /// <summary>
+    /// Unlocks a new fruit and optionally shows an animation.
+    /// </summary>
+    /// <param name="showAnimation">Determines whether to show the unlock animation.</param>
+    void UnlockNewFruit(bool showAnimation)
+    {
+        GameObject newFruit = GameManager.Instance.UpcomingFruits[0];
+        GameManager.Instance.AvailableFruits.Add(newFruit);
+        GameManager.Instance.UpcomingFruits.Remove(newFruit);
+
+
+        if (showAnimation)
+        {
+            // Set the sprite of the unlockFruitObject to match the new fruit's sprite.
+            unlockFruitObject.GetComponentInChildren<Image>().sprite = newFruit.GetComponentInChildren<SpriteRenderer>().sprite;
+            // Activate the unlockFruitObject and start a coroutine to disable it after a delay.
+            unlockFruitObject.SetActive(true);
+            StartCoroutine(DisableUnlockFruitObject());
+        }
+    }
+
+    /// <summary>
+    /// Coroutine to disable the unlockFruitObject after a delay.
+    /// </summary>
+    /// <returns>An IEnumerator used for coroutine execution.</returns>
+    IEnumerator DisableUnlockFruitObject()
+    {
+        yield return new WaitForSecondsRealtime(2);
+        unlockFruitObject.SetActive(false);
+    }
+
+    /// <summary>
+    /// Coroutine to wait until levels are already created and unlock a new fruit if the level is active.
+    /// </summary>
+    /// <param name="level">The level for which to unlock a new fruit.</param>
+    /// <returns>An IEnumerator used for coroutine execution.</returns>
+    IEnumerator WaitSetUnlockNewFruits(Level level)
+    {
+        yield return new WaitUntil(() => levelsAlreadyCreated);
+        // Check if the level is active before unlocking a new fruit.
+        if (level.IsActive)
+            UnlockNewFruit(false);
     }
 }

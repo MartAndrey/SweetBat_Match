@@ -22,7 +22,7 @@ public class Level : MonoBehaviour
         }
     }
 
-    public bool IsActive { set { isActive = value; } }
+    public bool IsActive { get { return isActive; } set { isActive = value; } }
 
     [SerializeField] Image imageLock; // The Image component for the lock icon
     [SerializeField] Sprite levelUnlocked; // The sprite to use when the level is unlocked
