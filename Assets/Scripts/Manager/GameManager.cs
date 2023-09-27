@@ -325,13 +325,13 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Increases the level count and starts the next level routine.
     /// </summary>
-    public void NextLevel(int stars)
+    public void NextLevel(int stars, int score)
     {
         Dictionary<string, object> currentLevel = levelsData[this.currentLevel];
 
         if (this.currentLevel == level)
         {
-            UpdateLevelComplete(currentLevel, stars, true);
+            UpdateLevelComplete(currentLevel, stars, score, true);
             // Starts the next level routine
             StartCoroutine(NextLevelRoutine());
         }
@@ -339,7 +339,12 @@ public class GameManager : MonoBehaviour
         {
             if (stars > Convert.ToInt32(currentLevel["Stars"]))
             {
-                UpdateLevelComplete(currentLevel, stars, false);
+                UpdateLevelComplete(currentLevel, stars, null, false);
+            }
+
+            if (score > Convert.ToInt32(currentLevel["Score"]))
+            {
+                UpdateLevelComplete(currentLevel, null, score, false);
             }
         }
     }
@@ -350,9 +355,14 @@ public class GameManager : MonoBehaviour
     /// <param name="currentLevel">The dictionary representing the current level.</param>
     /// <param name="stars">The number of stars obtained by the player.</param>
     /// <param name="updateLevelDataBase">Indicates whether to update the level data in the database.</param>
-    void UpdateLevelComplete(Dictionary<string, object> currentLevel, int stars, bool updateLevelDataBase)
+    void UpdateLevelComplete(Dictionary<string, object> currentLevel, int? stars, int? score, bool updateLevelDataBase)
     {
-        currentLevel["Stars"] = stars;
+        if (stars != null)
+            currentLevel["Stars"] = stars;
+
+        if (score != null)
+            currentLevel["Score"] = score;
+
         CloudFirestore.Instance.UpdateDocumentLevel($"level {this.currentLevel + 1}", currentLevel);
 
         if (updateLevelDataBase)

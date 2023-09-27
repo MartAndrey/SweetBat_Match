@@ -15,6 +15,7 @@ public class CompleteGameController : MonoBehaviour
     [SerializeField] AudioClip popComplete;
 
     int stars;
+    int score;
 
     /// <summary>
     /// Displays UI elements and particle system when the game is completed
@@ -28,6 +29,8 @@ public class CompleteGameController : MonoBehaviour
         particleSystemEnergy.SetActive(true);
 
         stars = ProgressBar.Instance.GetActiveStars();
+        score = GUIManager.Instance.Score;
+
         // Get the number of active stars from progress bar and animate them
         StartCoroutine(ActiveStars(stars));
         // Update the score UI
@@ -68,7 +71,7 @@ public class CompleteGameController : MonoBehaviour
     {
         audioSource.PlayOneShot(popComplete);
         StartCoroutine(ScreenChangeTransition.Instance.FadeOut("LevelMenu"));
-        GameManager.Instance.NextLevel(stars);
+        GameManager.Instance.NextLevel(stars, score);
         Inventory.Instance.ResetParentPowerUps(true);
     }
 }

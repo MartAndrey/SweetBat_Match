@@ -16,6 +16,7 @@ public class LevelUI : MonoBehaviour
     [SerializeField] GameObject powerUpPanel;
 
     [SerializeField] GameObject boxSelectPower;
+    [SerializeField] TMP_Text hightScoreText;
 
     GameMode gameMode;
 
@@ -33,7 +34,7 @@ public class LevelUI : MonoBehaviour
     /// <param name="amountStars">The number of stars collected.</param>
     /// <param name="goalText">The goal text.</param>
     /// <param name="gameMode">The game mode.</param>
-    public void SetValueLevel(string nameText, int amountStars, string goalText, GameMode gameMode)
+    public void SetValueLevel(string nameText, int amountStars, int amountScore, string goalText, GameMode gameMode)
     {
         nameLevelText.text = nameText; // Sets the level name
 
@@ -45,6 +46,9 @@ public class LevelUI : MonoBehaviour
 
         goal.text = goalText;  // Sets the goal text
 
+        if (amountScore != 0)
+            hightScoreText.text = amountScore.ToString();
+
         this.gameMode = gameMode;
 
         List<GameObject> powerUps = Inventory.Instance.GetAvailablePowerUps();
@@ -55,6 +59,7 @@ public class LevelUI : MonoBehaviour
             Inventory.Instance.SetAvailablePowerUps(powerUps, boxSelectPower.transform, StatePowerUp.LevelUI);
             Inventory.Instance.UpdateInventoryUI(powerUpPanel);
         }
+
     }
 
     /// <summary>
@@ -98,5 +103,7 @@ public class LevelUI : MonoBehaviour
         {
             stars[i].enabled = false;
         }
+
+        hightScoreText.text = "";
     }
 }

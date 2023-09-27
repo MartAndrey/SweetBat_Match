@@ -3,7 +3,7 @@
     "m_SelectedPackage": {
         "deviceId": "146268f60409",
         "name": "com.martandrey.hungrybat",
-        "processId": 13395,
+        "processId": 1758,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -54,6 +54,54 @@
             "deviceId": "146268f60409",
             "name": "com.martandrey.hungrybat",
             "processId": 13395,
+            "exited": false
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 28950,
+            "exited": false
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 8034,
+            "exited": false
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 10363,
+            "exited": false
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 13537,
+            "exited": false
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 15764,
+            "exited": false
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 24653,
+            "exited": false
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 30194,
+            "exited": false
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 1758,
             "exited": false
         }
     ],

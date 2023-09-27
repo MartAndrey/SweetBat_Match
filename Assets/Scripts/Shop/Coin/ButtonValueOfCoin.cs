@@ -25,6 +25,17 @@ public class ButtonValueOfCoin : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
+    void Start()
+    {
+        if (infiniteTimePowerUp != 0 && inventoryPowersUp[0] == null)
+        {
+            for (int i = 0; i < typePowerUp.Length; i++)
+            {
+                inventoryPowersUp[i] = Inventory.Instance.PowerUpsObject.Find(powerUp => powerUp.GetComponent<PowerUp>().TypePowerUp == typePowerUp[i]).GetComponent<PowerUp>();
+            }
+        }
+    }
+
     /// <summary>
     /// Handles the buying of power-ups.
     /// </summary>

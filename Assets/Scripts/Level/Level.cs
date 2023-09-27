@@ -65,7 +65,7 @@ public class Level : MonoBehaviour
 
             levelUI.ActiveLevelUI();
             // Sets the level name, number of stars, and goal in the level UI
-            levelUI.SetValueLevel(gameObject.name, stars, goalInformation, gameMode);
+            levelUI.SetValueLevel(gameObject.name, stars, score, goalInformation, gameMode);
         }
     }
 
