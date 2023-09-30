@@ -1,19 +1,13 @@
 {
     "m_SelectedDeviceId": "146268f60409",
     "m_SelectedPackage": {
-        "deviceId": "146268f60409",
-        "name": "com.martandrey.hungrybat",
-        "processId": 22285,
+        "deviceId": "",
+        "name": "",
+        "processId": 0,
         "exited": false
     },
     "m_SelectedPriority": 0,
     "m_KnownPackagesForSerialization": [
-        {
-            "deviceId": "146268f60409",
-            "name": "com.martandrey.hungrybat",
-            "processId": 6679,
-            "exited": true
-        },
         {
             "deviceId": "146268f60409",
             "name": "com.martandrey.hungrybat",
@@ -42,6 +36,12 @@
             "deviceId": "146268f60409",
             "name": "com.martandrey.hungrybat",
             "processId": 22285,
+            "exited": true
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.facebook.katana",
+            "processId": 27965,
             "exited": false
         }
     ],

@@ -105,9 +105,12 @@ public class ButtonValueOfCoin : MonoBehaviour
         CoinController.Instance.ChangeCoins(-valueOfPPowerUp);
     }
 
+    /// <summary>
+    /// Checks if all types of power-ups in the inventory are active.
+    /// </summary>
+    /// <returns><c>true</c> if all power-ups are active; <c>false</c> otherwise.</returns>
     bool CheckIsPowerUpIsActive()
     {
-        TMP_Text text = GameObject.FindGameObjectWithTag("text").GetComponent<TMP_Text>();
         foreach (TypePowerUp item in typePowerUp)
         {
             foreach (PowerUp powerUp in inventoryPowersUp)

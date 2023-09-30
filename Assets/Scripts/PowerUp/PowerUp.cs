@@ -350,12 +350,19 @@ public class PowerUp : Timer
         imgCooldown.gameObject.SetActive(false);
     }
 
+    /// <summary>
+    /// Checks if the object should be unlocked and unlocks it if necessary.
+    /// </summary>
     void CheckUnlock()
     {
+        // Checks if the current level is greater than or equal to the level at which the object is available.
         if (availableInLevel <= GameManager.Instance.Level + 1 && !IsActive)
             Unlock();
     }
 
+    /// <summary>
+    /// Activates the unlocked object.
+    /// </summary>
     void Unlock()
     {
         IsActive = true;
