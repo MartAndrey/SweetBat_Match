@@ -34,6 +34,8 @@ public class PowerUp : Timer
     // Public property to check if cooling is active
     public bool IsCooldown { get { return isCooldown; } }
 
+    public bool IsActive { get; set; }
+
     [SerializeField] TypePowerUp typePowerUp;
     [SerializeField] StatePowerUp statePowerUp;
 
@@ -41,10 +43,14 @@ public class PowerUp : Timer
     [SerializeField] GameObject labelTimer;
     [SerializeField] GameObject imageInfinite;
     [SerializeField] GameObject imageCheck;
+    [SerializeField] GameObject imgLock;
     [SerializeField] Image spritePowerUp;
     [SerializeField] TMP_Text descriptionText;
     [SerializeField] GameObject descriptionObject;
-    [SerializeField] Image cooldown;
+    [SerializeField] Image imgCooldown;
+    [SerializeField] GameObject objectLock;
+    [SerializeField] int availableInLevel;
+    [SerializeField] GameObject textInfoLevel;
 
     // boolean that tells us if the power up was chosen only works in the StatePowerUp.LevelUI
     bool isChecked;
@@ -71,6 +77,8 @@ public class PowerUp : Timer
     void Start()
     {
         descriptionText.text = GetPowerUpDescription(typePowerUp);
+
+        CheckUnlock();
     }
 
     // Called when the script instance is being loaded
@@ -80,7 +88,10 @@ public class PowerUp : Timer
         if (IsInfinite)
         {
             StartCoroutine(WaitForGetCurrentTime());
+
         }
+
+        GameManager.Instance.LevelUp.AddListener(CheckUnlock);
     }
 
     // Called when the script instance is being disabled
@@ -92,6 +103,8 @@ public class PowerUp : Timer
         {
             toggleChangeCheckPowerUp();
         }
+
+        GameManager.Instance.LevelUp.RemoveListener(CheckUnlock);
     }
 
     void Update()
@@ -175,6 +188,18 @@ public class PowerUp : Timer
             descriptionObject.SetActive(true);
             animator.enabled = true;
             animator.Play("DescriptionIn");
+
+            if (!IsActive)
+            {
+                textInfoLevel.SetActive(true);
+                descriptionText.gameObject.SetActive(false);
+            }
+            else
+            {
+                descriptionText.gameObject.SetActive(true);
+                textInfoLevel.SetActive(false);
+            };
+
             StartCoroutine(TimeToDescriptionRutiner());
         }
         else if (statePowerUp == StatePowerUp.LevelUI)
@@ -231,6 +256,11 @@ public class PowerUp : Timer
         animator.Play("DescriptionOut");
         // Wait for an additional time before disabling the description.
         yield return new WaitForSeconds(.6f);
+
+        if (IsActive)
+            textInfoLevel.SetActive(false);
+        else descriptionText.gameObject.SetActive(false);
+
         // Disable the description.
         DisableDescription();
     }
@@ -277,8 +307,8 @@ public class PowerUp : Timer
     public void StartCooldown()
     {
         isCooldown = true;
-        cooldown.gameObject.SetActive(true);
-        cooldown.fillAmount = 1;
+        imgCooldown.gameObject.SetActive(true);
+        imgCooldown.fillAmount = 1;
         currentTimeCooldown = 0;
 
         StartCoroutine(CooldownRutiner());
@@ -297,12 +327,12 @@ public class PowerUp : Timer
             currentTimeCooldown += Time.deltaTime;
 
             factor = 1 - (currentTimeCooldown / timeCooldown);
-            cooldown.fillAmount = factor;
+            imgCooldown.fillAmount = factor;
 
             if (currentTimeCooldown > timeCooldown)
             {
                 isCooldown = false;
-                cooldown.gameObject.SetActive(false);
+                imgCooldown.gameObject.SetActive(false);
             }
 
             yield return null;
@@ -317,6 +347,20 @@ public class PowerUp : Timer
     public void ResetCoolDownUI()
     {
         isCooldown = false;
-        cooldown.gameObject.SetActive(false);
+        imgCooldown.gameObject.SetActive(false);
+    }
+
+    void CheckUnlock()
+    {
+        if (availableInLevel <= GameManager.Instance.Level + 1 && !IsActive)
+            Unlock();
+    }
+
+    void Unlock()
+    {
+        IsActive = true;
+        objectLock.SetActive(false);
+        imgLock.SetActive(false);
+        textAmount.enabled = true;
     }
 }

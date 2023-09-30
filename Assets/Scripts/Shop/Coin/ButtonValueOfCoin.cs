@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class ButtonValueOfCoin : MonoBehaviour
@@ -27,7 +28,7 @@ public class ButtonValueOfCoin : MonoBehaviour
 
     void Start()
     {
-        if (infiniteTimePowerUp != 0 && inventoryPowersUp[0] == null)
+        if (inventoryPowersUp[0] == null)
         {
             for (int i = 0; i < typePowerUp.Length; i++)
             {
@@ -45,6 +46,13 @@ public class ButtonValueOfCoin : MonoBehaviour
 
         // Check if the player has enough coins to purchase the power ups
         if (CoinController.Instance.Coins < valueOfPPowerUp) return;
+
+        if (!CheckIsPowerUpIsActive())
+        {
+            CoinShop coinShop = GetComponentInParent<CoinShop>();
+            coinShop.ShowMessage();
+            return;
+        }
 
         Dictionary<string, object> data = new Dictionary<string, object>();
 
@@ -95,5 +103,23 @@ public class ButtonValueOfCoin : MonoBehaviour
 
         // Subtract the value of the power ups from the player's coins
         CoinController.Instance.ChangeCoins(-valueOfPPowerUp);
+    }
+
+    bool CheckIsPowerUpIsActive()
+    {
+        TMP_Text text = GameObject.FindGameObjectWithTag("text").GetComponent<TMP_Text>();
+        foreach (TypePowerUp item in typePowerUp)
+        {
+            foreach (PowerUp powerUp in inventoryPowersUp)
+            {
+                if (powerUp.TypePowerUp == item)
+                {
+                    if (!powerUp.GetComponent<PowerUp>().IsActive)
+                        return false;
+                }
+            }
+        }
+
+        return true;
     }
 }

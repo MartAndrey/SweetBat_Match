@@ -275,6 +275,7 @@ public class LevelManager : MonoBehaviour
         GameObject nextLevel = levelsList[GameManager.Instance.Level + 1];
 
         GameManager.Instance.Level++;
+        GameManager.Instance.LevelUp.Invoke();
 
         // Unlocks the next level
         nextLevel.GetComponent<Level>().UnlockLevel();
@@ -308,7 +309,6 @@ public class LevelManager : MonoBehaviour
     /// <param name="level">The level to check for unlocking a new fruit.</param>
     /// <returns>True if a new fruit can be unlocked; otherwise, false.</returns>
     bool IsUnlockNewFruit(int level) => GameManager.Instance.UpcomingFruits.Count > 0 && levelToUnlockNewFruit.Contains(level);
-
 
     /// <summary>
     /// Unlocks a new fruit and optionally shows an animation.

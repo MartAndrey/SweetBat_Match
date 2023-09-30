@@ -68,6 +68,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public UnityEvent OnUniqueMatches;
     [HideInInspector] public UnityEvent<Errors> OnErrorRetry;
     [HideInInspector] public UnityEvent<Errors> OnErrorClose;
+    [HideInInspector] public UnityEvent LevelUp;
     Dictionary<Errors, Action> errorsRetryHandler;
     Dictionary<Errors, Action> errorsCloseHandler;
 

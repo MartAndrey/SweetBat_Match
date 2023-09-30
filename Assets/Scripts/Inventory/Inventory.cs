@@ -146,10 +146,10 @@ public class Inventory : MonoBehaviour
         {
             GameObject powerUp = powerUpsObject.Find(powerUp => powerUp.GetComponent<PowerUp>().TypePowerUp == item.Key);
 
-            if (item.Value != 0 || powerUp.GetComponent<PowerUp>().IsInfinite)
-            {
+            PowerUp power = powerUp.GetComponent<PowerUp>();
+
+            if ((item.Value != 0 || power.IsInfinite) && power.IsActive)
                 listPowerUps.Add(powerUp);
-            }
         }
 
         return listPowerUps;
