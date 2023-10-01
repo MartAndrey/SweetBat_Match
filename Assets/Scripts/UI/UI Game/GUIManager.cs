@@ -231,6 +231,20 @@ public class GUIManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Changes the 'timeToMatch' value, clamping it between 3 and the GameManager's 'TimeToMatch' property.
+    /// </summary>
+    /// <param name="amount">The amount by which to adjust the 'timeToMatch' value.</param>
+    public void ChangeTimeToMatch(float amount)
+    {
+        // Calculate the new 'timeToMatch' value and clamp it to the desired range.
+        timeToMatch = Math.Clamp(timeToMatch += amount, 3, GameManager.Instance.TimeToMatch);
+
+        // Check if 'timeToMatch' is equal to the GameManager's 'TimeToMatch' value and update 'IsTimeToMatchPenalty' accordingly.
+        if (timeToMatch == GameManager.Instance.TimeToMatch)
+            GameManager.Instance.IsTimeToMatchPenalty = false;
+    }
+
+    /// <summary>
     /// Checks whether the game objective is complete and whether the player earned at least three stars, then starts the CheckGameStatus coroutine.
     /// </summary>
     public void CompleteTimeToMatchObjective()

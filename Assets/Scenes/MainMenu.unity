@@ -2883,6 +2883,9 @@ MonoBehaviour:
   OnErrorClose:
     m_PersistentCalls:
       m_Calls: []
+  LevelUp:
+    m_PersistentCalls:
+      m_Calls: []
   UserAlready: 0
   UserIsAnonymous: 0
   gameMode: 3
@@ -2898,6 +2901,8 @@ MonoBehaviour:
   - {fileID: 2705507177751519838, guid: 06e4910d9238ddb418ce390133ed7724, type: 3}
   moveCounter: 20
   timeToMatch: 10
+  minTimeToMatch: 3
+  timeToMatchPenalty: 0.3
   maxFeedingObjective: 40
   maxScoreObjective: 3000
   totalSeconds: 120

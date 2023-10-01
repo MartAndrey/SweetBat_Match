@@ -195,7 +195,7 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
         if (fruit.GetComponent<Fruit>().Id == nextFruit.GetComponent<Fruit>().Id)
         {
             audioSource.PlayOneShot(missMove);
-            BoardManager.Instance.IsShifting = false;
+            IsShifting = false;
             yield break;
         }
 
@@ -216,6 +216,10 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
         {
             if (GUIManager.Instance.GamePlayMode == GamePlayMode.TimedMatch)
             {
+                GUIManager.Instance.ChangeTimeToMatch(-GameManager.Instance.TimeToMatchPenalty);
+                GameManager.Instance.TimeToMatchPenaltyTimes = GameManager.Instance.MaxTimeToMatchPenaltyTimes;
+                GameManager.Instance.IsTimeToMatchPenalty = true;
+
                 audioSource.PlayOneShot(missMove);
                 // If there are no matches found, return the fruits to their old position.
                 fruit.GetComponent<Fruit>().MoveFruit(nextFruit.transform.localPosition);
@@ -225,6 +229,16 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
             }
             // Set IsShifting to false to indicate that the swap is complete
             IsShifting = false;
+        }
+        else
+        {
+            if (GUIManager.Instance.GamePlayMode == GamePlayMode.TimedMatch && GameManager.Instance.IsTimeToMatchPenalty)
+            {
+                GameManager.Instance.TimeToMatchPenaltyTimes--;
+
+                if (GameManager.Instance.TimeToMatchPenaltyTimes <= 0)
+                    GUIManager.Instance.ChangeTimeToMatch(GameManager.Instance.TimeToMatchPenalty);
+            }
         }
 
         yield return null;

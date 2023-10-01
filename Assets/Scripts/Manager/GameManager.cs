@@ -88,6 +88,16 @@ public class GameManager : MonoBehaviour
     public int MoveCounter { get { return moveCounter; } }
     // Gets the time to match.
     public float TimeToMatch { get { return timeToMatch; } }
+    // Gets the minimum allowed 'timeToMatch'.
+    public float MinTimeToMatch { get { return minTimeToMatch; } }
+    // Gets the 'timeToMatchPenalty' value.
+    public float TimeToMatchPenalty { get { return timeToMatchPenalty; } }
+    // Gets or sets the 'timeToMatchPenaltyTimes' value.
+    public float TimeToMatchPenaltyTimes { get { return timeToMatchPenaltyTimes; } set { timeToMatchPenaltyTimes = value; } }
+    // Gets the maximum allowed 'maxTimeToMatchPenaltyTimes'.
+    public float MaxTimeToMatchPenaltyTimes { get { return maxTimeToMatchPenaltyTimes; } }
+    // Gets or sets a value indicating whether there is a time-to-match penalty.
+    public bool IsTimeToMatchPenalty { get { return isTimeToMatchPenalty; } set { isTimeToMatchPenalty = value; } }
 
     // Gets or sets whether the game objective is complete.
     public bool ObjectiveComplete { get { return objectiveComplete; } set { objectiveComplete = value; } }
@@ -131,6 +141,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] int moveCounter;
     // Time to match for the game mode
     [SerializeField] float timeToMatch;
+    [SerializeField] float minTimeToMatch;
+    [SerializeField] float timeToMatchPenalty;
 
     [Header("Feeding Objective")]
     // Maximum feeding objective
@@ -172,6 +184,10 @@ public class GameManager : MonoBehaviour
 
     // A flag to determine whether to check and unlock fruits for creating levels.
     bool checkUnlockFruitsToCreateLevels = true;
+
+    float timeToMatchPenaltyTimes = -1;
+    float maxTimeToMatchPenaltyTimes = 3;
+    bool isTimeToMatchPenalty;
 
     /// <summary>
     /// Subscribes to the SceneManager's sceneLoaded event when the script is enabled.
