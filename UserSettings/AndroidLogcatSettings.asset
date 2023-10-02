@@ -3,23 +3,11 @@
     "m_SelectedPackage": {
         "deviceId": "146268f60409",
         "name": "com.martandrey.hungrybat",
-        "processId": 8601,
+        "processId": 19914,
         "exited": false
     },
     "m_SelectedPriority": 0,
     "m_KnownPackagesForSerialization": [
-        {
-            "deviceId": "146268f60409",
-            "name": "com.martandrey.hungrybat",
-            "processId": 26947,
-            "exited": true
-        },
-        {
-            "deviceId": "146268f60409",
-            "name": "com.martandrey.hungrybat",
-            "processId": 30016,
-            "exited": true
-        },
         {
             "deviceId": "146268f60409",
             "name": "com.miui.home",
@@ -29,25 +17,31 @@
         {
             "deviceId": "146268f60409",
             "name": "com.martandrey.hungrybat",
-            "processId": 22285,
+            "processId": 8601,
             "exited": true
-        },
-        {
-            "deviceId": "146268f60409",
-            "name": "com.facebook.katana",
-            "processId": 27965,
-            "exited": true
-        },
-        {
-            "deviceId": "146268f60409",
-            "name": "com.whatsapp",
-            "processId": 32718,
-            "exited": false
         },
         {
             "deviceId": "146268f60409",
             "name": "com.martandrey.hungrybat",
-            "processId": 8601,
+            "processId": 19600,
+            "exited": true
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 21105,
+            "exited": true
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 29420,
+            "exited": true
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 19914,
             "exited": false
         }
     ],

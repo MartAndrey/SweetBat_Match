@@ -250,7 +250,7 @@ public class GUIManager : MonoBehaviour
     public void CompleteTimeToMatchObjective()
     {
         // Check whether the game objective is complete, the player earned at least three stars, and the game mode is TimedMatch.
-        if (GameManager.Instance.ObjectiveComplete && ProgressBar.Instance.GetActiveStars() >= 3 && gamePlayMode == GamePlayMode.TimedMatch)
+        if (GameManager.Instance.ObjectiveComplete && ProgressBar.Instance.GetActiveStars() >= 3)
             StartCoroutine(CheckGameStatus());
     }
 }

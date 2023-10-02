@@ -495,7 +495,8 @@ public class CharacterBatUI : MonoBehaviour
     /// </summary>
     void RemainingScoreComplete()
     {
-        audioSource.Play();
+        if (!GameManager.Instance.ObjectiveComplete)
+            audioSource.Play();
         remainingScoreObjective = 0;
         remainingScoreText.text = remainingScoreObjective.ToString();
         GameManager.Instance.ObjectiveComplete = true;

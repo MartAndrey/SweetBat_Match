@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Net.NetworkInformation;
 using UnityEngine.Networking;
 using System.Threading.Tasks;
+using TMPro;
 
 // Define a set of game modes for different game objectives
 public enum GameMode
@@ -342,13 +343,13 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Increases the level count and starts the next level routine.
     /// </summary>
-    public void NextLevel(int stars, int score)
+    public void NextLevel(int stars, int score, int bonus)
     {
         Dictionary<string, object> currentLevel = levelsData[this.currentLevel];
 
-        if (this.currentLevel == level)
+        if (IsTheCurrentLevel())
         {
-            UpdateLevelComplete(currentLevel, stars, score, true);
+            UpdateLevelComplete(currentLevel, stars, score, true, bonus);
             // Starts the next level routine
             StartCoroutine(NextLevelRoutine());
         }
@@ -356,15 +357,17 @@ public class GameManager : MonoBehaviour
         {
             if (stars > Convert.ToInt32(currentLevel["Stars"]))
             {
-                UpdateLevelComplete(currentLevel, stars, null, false);
+                UpdateLevelComplete(currentLevel, stars, null, false, bonus);
             }
 
             if (score > Convert.ToInt32(currentLevel["Score"]))
             {
-                UpdateLevelComplete(currentLevel, null, score, false);
+                UpdateLevelComplete(currentLevel, null, score, false, bonus);
             }
         }
     }
+
+    public bool IsTheCurrentLevel() => currentLevel == level;
 
     /// <summary>
     /// Updates the completion status of the current level.
@@ -372,7 +375,7 @@ public class GameManager : MonoBehaviour
     /// <param name="currentLevel">The dictionary representing the current level.</param>
     /// <param name="stars">The number of stars obtained by the player.</param>
     /// <param name="updateLevelDataBase">Indicates whether to update the level data in the database.</param>
-    void UpdateLevelComplete(Dictionary<string, object> currentLevel, int? stars, int? score, bool updateLevelDataBase)
+    void UpdateLevelComplete(Dictionary<string, object> currentLevel, int? stars, int? score, bool updateLevelDataBase, int bonus)
     {
         if (stars != null)
             currentLevel["Stars"] = stars;
@@ -385,7 +388,7 @@ public class GameManager : MonoBehaviour
         if (updateLevelDataBase)
         {
             CloudFirestore.Instance.UpdateLevelUser(new Dictionary<string, object> { { "level", this.currentLevel + 1 } });
-            CoinController.Instance.ChangeCoins(rewardLevelPass);
+            CoinController.Instance.ChangeCoins(rewardLevelPass + bonus);
         }
     }
 
@@ -565,4 +568,11 @@ public class GameManager : MonoBehaviour
         // Close the error UI, reset the scene, and sign out the user.
         ResetCurrentSceneAndSignOut();
     }
+
+    // public void Vibra()
+    // {
+    //     TMP_Text text = GameObject.FindGameObjectWithTag("text").GetComponent<TMP_Text>();
+    //     text.text += " Vibra ";
+    //     Handheld.Vibrate();
+    // }
 }

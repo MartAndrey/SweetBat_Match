@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -13,9 +14,12 @@ public class CompleteGameController : MonoBehaviour
     [SerializeField] UpdateScoreUI updateScoreUI;
     [SerializeField] AudioSource audioSource;
     [SerializeField] AudioClip popComplete;
+    [SerializeField] GameObject boxBonus;
+    [SerializeField] TMP_Text textBonus;
 
     int stars;
     int score;
+    int bonus = 0;
 
     /// <summary>
     /// Displays UI elements and particle system when the game is completed
@@ -35,6 +39,13 @@ public class CompleteGameController : MonoBehaviour
         StartCoroutine(ActiveStars(stars));
         // Update the score UI
         StartCoroutine(updateScoreUI.UpdateScoreRutiner());
+
+        if (GUIManager.Instance.MoveCounter > 0 && GUIManager.Instance.GamePlayMode == GamePlayMode.MovesLimited && GameManager.Instance.IsTheCurrentLevel())
+        {
+            boxBonus.SetActive(true);
+            bonus = GUIManager.Instance.MoveCounter;
+            textBonus.text = $"+{bonus}";
+        }
     }
 
     /// <summary>
@@ -71,7 +82,7 @@ public class CompleteGameController : MonoBehaviour
     {
         audioSource.PlayOneShot(popComplete);
         StartCoroutine(ScreenChangeTransition.Instance.FadeOut("LevelMenu"));
-        GameManager.Instance.NextLevel(stars, score);
+        GameManager.Instance.NextLevel(stars, score, bonus);
         Inventory.Instance.ResetParentPowerUps(true);
     }
 }
