@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -41,9 +40,18 @@ public class CompleteGameController : MonoBehaviour
         StartCoroutine(updateScoreUI.UpdateScoreRutiner());
 
         if (GUIManager.Instance.MoveCounter > 0 && GUIManager.Instance.GamePlayMode == GamePlayMode.MovesLimited && GameManager.Instance.IsTheCurrentLevel())
+            bonus = GUIManager.Instance.MoveCounter;
+
+        if (GameManager.Instance.GameMode == GameMode.TimeObjective)
+        {
+            TimerGame timerGame = FindObjectOfType<TimerGame>();
+            Debug.Log(timerGame.TimeRemaining);
+            bonus = (int)timerGame.TimeRemaining / 10;
+        }
+
+        if (bonus > 0)
         {
             boxBonus.SetActive(true);
-            bonus = GUIManager.Instance.MoveCounter;
             textBonus.text = $"+{bonus}";
         }
     }

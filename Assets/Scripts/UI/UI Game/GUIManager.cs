@@ -64,6 +64,7 @@ public class GUIManager : MonoBehaviour
 
     int moveCounter, score;
     float timeToMatch, currentTime;
+    float lerpDurationScore = 1;
 
     // Dictionary to map game modes to corresponding objective setting methods.
     Dictionary<GameMode, Action> gameModeHandlers;
@@ -195,11 +196,15 @@ public class GUIManager : MonoBehaviour
 
         int scoreDisplay = Convert.ToInt32(scoreText.text);
 
+        float elapsedTime = 0;
+
         while (scoreDisplay < score)
         {
-            scoreDisplay++;
+            scoreDisplay = Mathf.RoundToInt(Mathf.Lerp(scoreDisplay, score, elapsedTime / lerpDurationScore));
             scoreText.text = scoreDisplay.ToString();
-            yield return new WaitForSeconds(0.01f);
+
+            elapsedTime +=Time.deltaTime;
+            yield return null;
         }
         yield return null;
     }

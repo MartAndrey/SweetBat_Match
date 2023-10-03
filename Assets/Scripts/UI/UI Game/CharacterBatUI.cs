@@ -58,6 +58,7 @@ public class CharacterBatUI : MonoBehaviour
 
     //========================Scoring Objective===========================//
     int remainingScoreObjective;
+    float lerpDurationScore = 1;
 
     //========================Time Objective===========================//
     int remainingMatch;
@@ -140,6 +141,7 @@ public class CharacterBatUI : MonoBehaviour
     {
         objectTimeObjective.SetActive(true);
         GameManager.Instance.ObjectiveComplete = false;
+        GameManager.Instance.UniqueMatches = true;
         remainingMatch = GameManager.Instance.MatchObjectiveAmount;
         remainingMatchText.text = remainingMatch.ToString();
     }
@@ -471,11 +473,13 @@ public class CharacterBatUI : MonoBehaviour
     /// <returns>An IEnumerator for coroutine execution.</returns>
     public IEnumerator RemainingScore()
     {
-        int amount = GameManager.Instance.MaxScoreObjective - GUIManager.Instance.Score;
+        int targetAmount = GameManager.Instance.MaxScoreObjective - GUIManager.Instance.Score;
 
-        while (amount < remainingScoreObjective)
+        float timeElapsed = 0;
+
+        while (timeElapsed < lerpDurationScore)
         {
-            remainingScoreObjective--;
+            remainingScoreObjective = Mathf.RoundToInt(Mathf.Lerp(remainingScoreObjective, targetAmount, timeElapsed / lerpDurationScore));
             remainingScoreText.text = remainingScoreObjective.ToString();
 
             if (remainingScoreObjective <= 0)
@@ -483,6 +487,8 @@ public class CharacterBatUI : MonoBehaviour
                 RemainingScoreComplete();
                 yield break;
             }
+
+             timeElapsed += Time.deltaTime;
             yield return null;
         }
 

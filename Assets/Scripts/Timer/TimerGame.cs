@@ -4,6 +4,8 @@ using TMPro;
 
 public class TimerGame : MonoBehaviour
 {
+    public float TimeRemaining { get { return timeRemaining; } }
+
     [SerializeField] TMP_Text timerText;
 
     float timeRemaining;

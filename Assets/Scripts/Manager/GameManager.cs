@@ -568,11 +568,4 @@ public class GameManager : MonoBehaviour
         // Close the error UI, reset the scene, and sign out the user.
         ResetCurrentSceneAndSignOut();
     }
-
-    // public void Vibra()
-    // {
-    //     TMP_Text text = GameObject.FindGameObjectWithTag("text").GetComponent<TMP_Text>();
-    //     text.text += " Vibra ";
-    //     Handheld.Vibrate();
-    // }
 }
