@@ -488,7 +488,7 @@ public class CharacterBatUI : MonoBehaviour
                 yield break;
             }
 
-             timeElapsed += Time.deltaTime;
+            timeElapsed += Time.deltaTime;
             yield return null;
         }
 
@@ -573,6 +573,7 @@ public class CharacterBatUI : MonoBehaviour
                 audioSource.Play();
                 goalComplete = true;
                 GameManager.Instance.ObjectiveComplete = true;
+                GUIManager.Instance.CompleteTimeToMatchObjective();
             }
             else fruitCollectionGoal.GetComponentInChildren<TMP_Text>().text = amountGoal.ToString();
         }
