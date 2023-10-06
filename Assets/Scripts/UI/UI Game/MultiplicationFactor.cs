@@ -10,6 +10,8 @@ public class MultiplicationFactor : MonoBehaviour
     // Checks if the multiplication factor is active.
     public bool IsActiveMultiplication { get { return isActiveMultiplication; } set { isActiveMultiplication = value; } }
 
+    float probability;
+
     [Tooltip("Multiplication factor container")]
     // Reference to the multiplication factor container GameObject.
     [SerializeField] GameObject boxMultiplicationFactor;
@@ -25,6 +27,11 @@ public class MultiplicationFactor : MonoBehaviour
     bool isActiveMultiplication;
     // Reference to the AudioSource component.
     AudioSource audioSource;
+
+    void Start()
+    {
+        probability = GameManager.Instance.ProbabilityMultiplicationFactor;
+    }
 
     void OnEnable()
     {
@@ -59,7 +66,7 @@ public class MultiplicationFactor : MonoBehaviour
     {
         float rn = Random.Range(0.0f, 1f);
 
-        if (rn < 0.3f)
+        if (rn < probability)
         {
             isActiveMultiplication = true;
             boxMultiplicationFactor.SetActive(true);

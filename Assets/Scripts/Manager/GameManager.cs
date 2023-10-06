@@ -8,7 +8,6 @@ using System.ComponentModel;
 using System.Net.NetworkInformation;
 using UnityEngine.Networking;
 using System.Threading.Tasks;
-using TMPro;
 
 // Define a set of game modes for different game objectives
 public enum GameMode
@@ -84,6 +83,7 @@ public class GameManager : MonoBehaviour
     public int MaxFeedingObjective { get { return maxFeedingObjective; } }
     // Gets the maximum score objective.
     public int MaxScoreObjective { get { return maxScoreObjective; } }
+    public float ProbabilityMultiplicationFactor { get { return probabilityMultiplicationFactor; } }
 
     // Gets the current move counter.
     public int MoveCounter { get { return moveCounter; } }
@@ -108,6 +108,8 @@ public class GameManager : MonoBehaviour
     // Gets the match objective amount.
     public int MatchObjectiveAmount { get { return matchObjectiveAmount; } }
     public int FruitCollectionAmount { get { return fruitCollectionAmount; } }
+    public float FruitCollectionProbability { get { return fruitCollectionProbability; } }
+
     // Gets or sets a value indicating whether unique matches are required.
     public bool UniqueMatches { get { return uniqueMatches; } set { uniqueMatches = value; } }
 
@@ -132,6 +134,7 @@ public class GameManager : MonoBehaviour
 
     // Private field for the current level
     [SerializeField] int level = 0;
+
     // List of available fruits
     [SerializeField] List<GameObject> availableFruits;
     // List of upcoming fruits
@@ -148,6 +151,7 @@ public class GameManager : MonoBehaviour
     [Header("Feeding Objective")]
     // Maximum feeding objective
     [SerializeField] int maxFeedingObjective;
+    [SerializeField] float probabilityMultiplicationFactor;
 
     [Header("Scoring Objective")]
     // Maximum score objective
@@ -159,8 +163,20 @@ public class GameManager : MonoBehaviour
 
     [Header("Collection Objective")]
     [SerializeField] int fruitCollectionAmount;
+    [SerializeField, Range(0f, 1f)] float fruitCollectionProbability;
 
+    [Space(10)]
     [SerializeField] int rewardLevelPass;
+
+    const string KEY_DIFFICULTY = "difficulty";
+    // Current game difficulty level
+    int difficulty;
+    // Maximum consecutive wins/losses before difficulty adjustment
+    const int MAX_CONSECUTIVE_GAME = 3;
+    // Number of consecutive victories
+    int consecutiveVictory;
+    // Number of consecutive defeats
+    int consecutiveDefeat;
 
     // Indicates whether the game objective is complete
     bool objectiveComplete;
@@ -212,11 +228,11 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        DontDestroyOnLoad(gameObject);
-
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
+        difficulty = GetDifficulty();
+        Debug.LogWarning($"Difficulty {difficulty}");
         if (gameMode == GameMode.ScoringObjective || gameMode == GameMode.TimeObjective)
             uniqueMatches = true;
 
@@ -229,6 +245,70 @@ public class GameManager : MonoBehaviour
         {
             { Errors.NNA_GM_THIS,  CloseErrorNetworkAvailable },
         };
+
+        DontDestroyOnLoad(gameObject);
+    }
+
+    /// <summary>
+    /// Save the current difficulty level to PlayerPrefs.
+    /// </summary>
+    void SaveDifficulty() => PlayerPrefs.SetInt(KEY_DIFFICULTY, difficulty);
+
+    /// <summary>
+    /// Get the current difficulty level. If not found in PlayerPrefs, return a default value.
+    /// </summary>
+    /// <returns>The current difficulty level.</returns>
+    int GetDifficulty()
+    {
+        if (PlayerPrefs.HasKey(KEY_DIFFICULTY)) return PlayerPrefs.GetInt(KEY_DIFFICULTY);
+
+        // If difficulty is not set, return a default value based on the level (assuming 'level' variable is defined elsewhere).
+        return level == 0 ? 1 : 5;
+    }
+
+    /// <summary>
+    /// Change the game difficulty by the specified amount, clamped between 1 and 10.
+    /// </summary>
+    /// <param name="newDifficulty">The amount by which to change the difficulty.</param>
+    public void ChangeDifficulty(int newDifficulty)
+    {
+        difficulty = Math.Clamp(difficulty + newDifficulty, 1, 10);
+
+        SaveDifficulty();
+    }
+
+    /// <summary>
+    /// Handle a victory in the game.
+    /// </summary>
+    public void WinGame()
+    {
+        consecutiveVictory++;
+
+        if (consecutiveVictory >= MAX_CONSECUTIVE_GAME && difficulty < 10)
+        {
+            ChangeDifficulty(1);
+
+            consecutiveVictory = 0;
+        }
+
+        consecutiveDefeat = 0;
+    }
+
+    /// <summary>
+    /// Handle a defeat in the game.
+    /// </summary>
+    public void LoseGame()
+    {
+        consecutiveDefeat++;
+
+        if (consecutiveDefeat >= MAX_CONSECUTIVE_GAME && difficulty > 1)
+        {
+            ChangeDifficulty(-1);
+
+            consecutiveDefeat = 0;
+        }
+
+        consecutiveVictory = 0;
     }
 
     /// <summary>

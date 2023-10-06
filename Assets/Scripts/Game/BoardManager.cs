@@ -103,6 +103,7 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
         {
             fruitsProbabilities = ProbabilityFruit.GenerateFruitProbabilities(prefabs.Count)
                                   .OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+
             spriteCollectionObjective = prefabs[fruitsProbabilities.Last().Key].GetComponentInChildren<SpriteRenderer>().sprite;
         }
 
@@ -635,7 +636,7 @@ public class BoardManager : MonoBehaviour, IPointerDownHandler
         {
             if (indexFruit == fruitsProbabilities.Last().Key)
             {
-                while (indexFruit == fruitsProbabilities.Last().Key && Random.value > 7f)
+                while (indexFruit == fruitsProbabilities.Last().Key && Random.value > GameManager.Instance.FruitCollectionProbability)
                     indexFruit = UnityEngine.Random.Range(0, prefabs.Count);
             }
         }
