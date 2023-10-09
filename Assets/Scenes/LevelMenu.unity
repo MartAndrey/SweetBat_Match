@@ -3681,6 +3681,9 @@ MonoBehaviour:
   LevelUp:
     m_PersistentCalls:
       m_Calls: []
+  OnDifficult:
+    m_PersistentCalls:
+      m_Calls: []
   UserAlready: 0
   UserIsAnonymous: 0
   gameMode: 3
@@ -3699,11 +3702,14 @@ MonoBehaviour:
   minTimeToMatch: 3
   timeToMatchPenalty: 0.3
   maxFeedingObjective: 40
+  probabilityMultiplicationFactor: 0
   maxScoreObjective: 3000
   totalSeconds: 120
   matchObjectiveAmount: 25
   fruitCollectionAmount: 50
+  fruitCollectionProbability: 0
   rewardLevelPass: 10
+  difficultData: {fileID: 11400000, guid: 0caabec5856fc694c995e962cd41a2fe, type: 2}
 --- !u!4 &311158764
 Transform:
   m_ObjectHideFlags: 0

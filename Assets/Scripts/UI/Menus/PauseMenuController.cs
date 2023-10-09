@@ -54,6 +54,7 @@ public class PauseMenuController : MonoBehaviour
     /// </summary>
     public void Replay()
     {
+        GameManager.Instance.LoseGame();
         if (!LifeController.Instance.IsInfinite)
             LifeController.Instance.ChangeLives(-1);
         GameOverController.Instance.Replay();

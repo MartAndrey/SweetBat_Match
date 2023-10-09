@@ -91,6 +91,7 @@ public class CompleteGameController : MonoBehaviour
         audioSource.PlayOneShot(popComplete);
         StartCoroutine(ScreenChangeTransition.Instance.FadeOut("LevelMenu"));
         GameManager.Instance.NextLevel(stars, score, bonus);
+        GameManager.Instance.WinGame();
         Inventory.Instance.ResetParentPowerUps(true);
     }
 }

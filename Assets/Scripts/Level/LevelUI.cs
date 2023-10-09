@@ -73,6 +73,13 @@ public class LevelUI : MonoBehaviour
             GameManager.Instance.GameMode = gameMode;
             GameManager.Instance.ObjectiveComplete = false;
             GameManager.Instance.CurrentLevel = Convert.ToInt32(nameLevelText.text.Split(' ')[1]) - 1;
+
+            if (GameManager.Instance.Difficulty == 0)
+                GameManager.Instance.GetDifficulty();
+
+            DifficultManager.SetInitialStateData(DifficultManager.GetLevelData());
+            GameManager.Instance.OnDifficult.Invoke(GameManager.Instance.GameMode);
+
             StartCoroutine(ScreenChangeTransition.Instance.FadeOut(nameScene));
             StartCoroutine(ResetParentPowerUps());
         }

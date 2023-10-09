@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Net.NetworkInformation;
 using UnityEngine.Networking;
 using System.Threading.Tasks;
+using TMPro;
 
 // Define a set of game modes for different game objectives
 public enum GameMode
@@ -59,6 +60,7 @@ public enum GameState { LevelMenu, InGame }
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] TMP_Text text;
     public static GameManager Instance;  // Static reference to the GameManager instance
 
     public GameState currentGameState;
@@ -69,6 +71,8 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public UnityEvent<Errors> OnErrorRetry;
     [HideInInspector] public UnityEvent<Errors> OnErrorClose;
     [HideInInspector] public UnityEvent LevelUp;
+    [HideInInspector] public UnityEvent<GameMode> OnDifficult;
+
     Dictionary<Errors, Action> errorsRetryHandler;
     Dictionary<Errors, Action> errorsCloseHandler;
 
@@ -80,19 +84,19 @@ public class GameManager : MonoBehaviour
     public List<GameObject> UpcomingFruits { get { return upcomingFruits; } set { upcomingFruits = value; } }
 
     // Gets the maximum feeding objective.
-    public int MaxFeedingObjective { get { return maxFeedingObjective; } }
+    public int MaxFeedingObjective { get { return maxFeedingObjective; } set { maxFeedingObjective = value; } }
     // Gets the maximum score objective.
-    public int MaxScoreObjective { get { return maxScoreObjective; } }
-    public float ProbabilityMultiplicationFactor { get { return probabilityMultiplicationFactor; } }
+    public int MaxScoreObjective { get { return maxScoreObjective; } set { maxScoreObjective = value; } }
+    public float ProbabilityMultiplicationFactor { get { return probabilityMultiplicationFactor; } set { probabilityMultiplicationFactor = value; } }
 
     // Gets the current move counter.
-    public int MoveCounter { get { return moveCounter; } }
+    public int MoveCounter { get { return moveCounter; } set { moveCounter = value; } }
     // Gets the time to match.
-    public float TimeToMatch { get { return timeToMatch; } }
+    public float TimeToMatch { get { return timeToMatch; } set { timeToMatch = value; } }
     // Gets the minimum allowed 'timeToMatch'.
     public float MinTimeToMatch { get { return minTimeToMatch; } }
     // Gets the 'timeToMatchPenalty' value.
-    public float TimeToMatchPenalty { get { return timeToMatchPenalty; } }
+    public float TimeToMatchPenalty { get { return timeToMatchPenalty; } set { timeToMatchPenalty = value; } }
     // Gets or sets the 'timeToMatchPenaltyTimes' value.
     public float TimeToMatchPenaltyTimes { get { return timeToMatchPenaltyTimes; } set { timeToMatchPenaltyTimes = value; } }
     // Gets the maximum allowed 'maxTimeToMatchPenaltyTimes'.
@@ -104,11 +108,11 @@ public class GameManager : MonoBehaviour
     public bool ObjectiveComplete { get { return objectiveComplete; } set { objectiveComplete = value; } }
 
     // Gets the total remaining seconds for the timer.
-    public float TotalSeconds { get { return totalSeconds; } }
+    public float TotalSeconds { get { return totalSeconds; } set { totalSeconds = value; } }
     // Gets the match objective amount.
-    public int MatchObjectiveAmount { get { return matchObjectiveAmount; } }
-    public int FruitCollectionAmount { get { return fruitCollectionAmount; } }
-    public float FruitCollectionProbability { get { return fruitCollectionProbability; } }
+    public int MatchObjectiveAmount { get { return matchObjectiveAmount; } set { matchObjectiveAmount = value; } }
+    public int FruitCollectionAmount { get { return fruitCollectionAmount; } set { fruitCollectionAmount = value; } }
+    public float FruitCollectionProbability { get { return fruitCollectionProbability; } set { fruitCollectionProbability = value; } }
 
     // Gets or sets a value indicating whether unique matches are required.
     public bool UniqueMatches { get { return uniqueMatches; } set { uniqueMatches = value; } }
@@ -120,6 +124,8 @@ public class GameManager : MonoBehaviour
     public Dictionary<string, object> CollectiblesData { get { return collectiblesData; } set { collectiblesData = value; } }
 
     public int CurrentLevel { get { return currentLevel; } set { currentLevel = value; } }  // Public getter for the current level
+    public int Difficulty { get { return difficulty; } }  // Public getter for the current level
+    public DifficultData DifficultData { get { return difficultData; } }  // Public getter for the current level
     public bool PowerUpActivate { get { return powerUpActivate; } set { powerUpActivate = value; } }
     public TypePowerUp CurrentPowerUp { get { return currentPowerUp; } set { currentPowerUp = value; } }
     public GameObject CurrentGameObjectPowerUp { get { return currentGameObjectPowerUp; } set { currentGameObjectPowerUp = value; } }
@@ -151,11 +157,11 @@ public class GameManager : MonoBehaviour
     [Header("Feeding Objective")]
     // Maximum feeding objective
     [SerializeField] int maxFeedingObjective;
-    [SerializeField] float probabilityMultiplicationFactor;
 
     [Header("Scoring Objective")]
     // Maximum score objective
     [SerializeField] int maxScoreObjective;
+    [SerializeField] float probabilityMultiplicationFactor;
 
     [Header("Time Objective")]
     [SerializeField] float totalSeconds;
@@ -168,11 +174,15 @@ public class GameManager : MonoBehaviour
     [Space(10)]
     [SerializeField] int rewardLevelPass;
 
+    Dictionary<GameMode, Action> onDifficultHandler;
+    [SerializeField] DifficultData difficultData;
     const string KEY_DIFFICULTY = "difficulty";
+    const string KEY_CONSECUTIVE_VICTORY = "victory";
+    const string KEY_CONSECUTIVE_DEFEAT = "defeat";
     // Current game difficulty level
     int difficulty;
     // Maximum consecutive wins/losses before difficulty adjustment
-    const int MAX_CONSECUTIVE_GAME = 3;
+    const int MAX_CONSECUTIVE_GAME = 1;
     // Number of consecutive victories
     int consecutiveVictory;
     // Number of consecutive defeats
@@ -188,7 +198,7 @@ public class GameManager : MonoBehaviour
     // Sprite representing the user's photo.
     Sprite userPhoto;
 
-    List<Dictionary<string, object>> levelsData;
+    List<Dictionary<string, object>> levelsData = new List<Dictionary<string, object>>();
     Dictionary<string, object> collectiblesData;
 
     ErrorHandler errorHandler;
@@ -214,6 +224,7 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoaded;
         OnErrorRetry.AddListener(ErrorRetry);
         OnErrorClose.AddListener(ErrorClose);
+        OnDifficult.AddListener(Difficult);
     }
 
     /// <summary>
@@ -224,6 +235,7 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
         OnErrorRetry.RemoveListener(ErrorRetry);
         OnErrorClose.RemoveListener(ErrorClose);
+        OnDifficult.RemoveListener(Difficult);
     }
 
     void Awake()
@@ -231,8 +243,6 @@ public class GameManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        difficulty = GetDifficulty();
-        Debug.LogWarning($"Difficulty {difficulty}");
         if (gameMode == GameMode.ScoringObjective || gameMode == GameMode.TimeObjective)
             uniqueMatches = true;
 
@@ -246,24 +256,43 @@ public class GameManager : MonoBehaviour
             { Errors.NNA_GM_THIS,  CloseErrorNetworkAvailable },
         };
 
+        onDifficultHandler = new Dictionary<GameMode, Action>()
+        {
+            { GameMode.FeedingObjective, DifficultManager.FeedingObjective },
+            { GameMode.ScoringObjective, DifficultManager.ScoringObjective },
+            { GameMode.TimeObjective, DifficultManager.TimeObjective },
+            { GameMode.CollectionObjective, DifficultManager.CollectionObjective },
+        };
+
         DontDestroyOnLoad(gameObject);
     }
 
     /// <summary>
     /// Save the current difficulty level to PlayerPrefs.
     /// </summary>
-    void SaveDifficulty() => PlayerPrefs.SetInt(KEY_DIFFICULTY, difficulty);
+    void SaveDifficulty()
+    {
+        PlayerPrefs.SetInt(KEY_DIFFICULTY, difficulty);
+        PlayerPrefs.SetInt(KEY_CONSECUTIVE_VICTORY, consecutiveVictory);
+        PlayerPrefs.SetInt(KEY_CONSECUTIVE_DEFEAT, consecutiveDefeat);
+    }
 
     /// <summary>
     /// Get the current difficulty level. If not found in PlayerPrefs, return a default value.
     /// </summary>
     /// <returns>The current difficulty level.</returns>
-    int GetDifficulty()
+    public void GetDifficulty()
     {
-        if (PlayerPrefs.HasKey(KEY_DIFFICULTY)) return PlayerPrefs.GetInt(KEY_DIFFICULTY);
+        if (PlayerPrefs.HasKey(KEY_DIFFICULTY))
+        {
+            difficulty = PlayerPrefs.GetInt(KEY_DIFFICULTY);
+            consecutiveVictory = PlayerPrefs.GetInt(KEY_CONSECUTIVE_VICTORY);
+            consecutiveDefeat = PlayerPrefs.GetInt(KEY_CONSECUTIVE_DEFEAT);
+            return;
+        }
 
         // If difficulty is not set, return a default value based on the level (assuming 'level' variable is defined elsewhere).
-        return level == 0 ? 1 : 5;
+        difficulty = level == 0 ? 1 : 5;
     }
 
     /// <summary>
@@ -275,6 +304,15 @@ public class GameManager : MonoBehaviour
         difficulty = Math.Clamp(difficulty + newDifficulty, 1, 10);
 
         SaveDifficulty();
+    }
+
+    /// <summary>
+    /// Handles changes in game difficulty.
+    /// </summary>
+    /// <param name="gamePlayMode">The game mode to change difficulty for.</param>
+    void Difficult(GameMode gamePlayMode)
+    {
+        if (onDifficultHandler.ContainsKey(gamePlayMode)) onDifficultHandler[gamePlayMode]();
     }
 
     /// <summary>

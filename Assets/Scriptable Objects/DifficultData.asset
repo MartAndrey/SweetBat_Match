@@ -1,0 +1,215 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9af35cbca18b2f469663e5b815e74a2, type: 3}
+  m_Name: DifficultData
+  m_EditorClassIdentifier: 
+  levelData:
+  - minMoves: 45
+    maxMoves: 50
+    minTime: 14
+    maxTime: 15
+    penalty: 0.1
+    feedingData:
+      minFeeding: 15
+      maxFeeding: 50
+    scoringData:
+      minScoring: 1000
+      maxScoring: 4000
+      scoringProbability: 0.9
+    timeData:
+      minTime: 25
+      maxTime: 50
+      time: 240
+    collectionData:
+      minCollection: 40
+      maxCollection: 50
+      collectionProbability: 1
+  - minMoves: 43
+    maxMoves: 48
+    minTime: 13
+    maxTime: 14
+    penalty: 0.2
+    feedingData:
+      minFeeding: 15
+      maxFeeding: 50
+    scoringData:
+      minScoring: 1000
+      maxScoring: 4000
+      scoringProbability: 0.8
+    timeData:
+      minTime: 25
+      maxTime: 50
+      time: 220
+    collectionData:
+      minCollection: 40
+      maxCollection: 50
+      collectionProbability: 1
+  - minMoves: 35
+    maxMoves: 43
+    minTime: 12
+    maxTime: 13
+    penalty: 0.3
+    feedingData:
+      minFeeding: 15
+      maxFeeding: 50
+    scoringData:
+      minScoring: 1000
+      maxScoring: 4000
+      scoringProbability: 0.7
+    timeData:
+      minTime: 25
+      maxTime: 50
+      time: 200
+    collectionData:
+      minCollection: 30
+      maxCollection: 50
+      collectionProbability: 0.9
+  - minMoves: 25
+    maxMoves: 35
+    minTime: 11
+    maxTime: 12
+    penalty: 0.4
+    feedingData:
+      minFeeding: 15
+      maxFeeding: 50
+    scoringData:
+      minScoring: 1000
+      maxScoring: 4000
+      scoringProbability: 0.6
+    timeData:
+      minTime: 25
+      maxTime: 50
+      time: 180
+    collectionData:
+      minCollection: 30
+      maxCollection: 50
+      collectionProbability: 0.9
+  - minMoves: 22
+    maxMoves: 30
+    minTime: 10
+    maxTime: 11
+    penalty: 0.5
+    feedingData:
+      minFeeding: 15
+      maxFeeding: 50
+    scoringData:
+      minScoring: 1000
+      maxScoring: 4000
+      scoringProbability: 0.5
+    timeData:
+      minTime: 25
+      maxTime: 50
+      time: 160
+    collectionData:
+      minCollection: 24
+      maxCollection: 40
+      collectionProbability: 0.88
+  - minMoves: 20
+    maxMoves: 30
+    minTime: 9
+    maxTime: 10
+    penalty: 0.6
+    feedingData:
+      minFeeding: 15
+      maxFeeding: 50
+    scoringData:
+      minScoring: 1000
+      maxScoring: 4000
+      scoringProbability: 0.48
+    timeData:
+      minTime: 25
+      maxTime: 50
+      time: 130
+    collectionData:
+      minCollection: 24
+      maxCollection: 40
+      collectionProbability: 0.85
+  - minMoves: 18
+    maxMoves: 25
+    minTime: 8
+    maxTime: 9
+    penalty: 0.7
+    feedingData:
+      minFeeding: 15
+      maxFeeding: 50
+    scoringData:
+      minScoring: 1000
+      maxScoring: 4000
+      scoringProbability: 0.45
+    timeData:
+      minTime: 25
+      maxTime: 50
+      time: 120
+    collectionData:
+      minCollection: 22
+      maxCollection: 38
+      collectionProbability: 0.82
+  - minMoves: 18
+    maxMoves: 22
+    minTime: 7
+    maxTime: 8
+    penalty: 0.8
+    feedingData:
+      minFeeding: 15
+      maxFeeding: 50
+    scoringData:
+      minScoring: 1000
+      maxScoring: 4000
+      scoringProbability: 0.4
+    timeData:
+      minTime: 25
+      maxTime: 50
+      time: 110
+    collectionData:
+      minCollection: 22
+      maxCollection: 38
+      collectionProbability: 0.8
+  - minMoves: 15
+    maxMoves: 22
+    minTime: 6
+    maxTime: 7
+    penalty: 0.9
+    feedingData:
+      minFeeding: 15
+      maxFeeding: 50
+    scoringData:
+      minScoring: 1000
+      maxScoring: 4000
+      scoringProbability: 0.35
+    timeData:
+      minTime: 25
+      maxTime: 50
+      time: 100
+    collectionData:
+      minCollection: 20
+      maxCollection: 35
+      collectionProbability: 0.8
+  - minMoves: 15
+    maxMoves: 20
+    minTime: 5
+    maxTime: 6
+    penalty: 1
+    feedingData:
+      minFeeding: 15
+      maxFeeding: 50
+    scoringData:
+      minScoring: 1000
+      maxScoring: 4000
+      scoringProbability: 0.3
+    timeData:
+      minTime: 25
+      maxTime: 50
+      time: 90
+    collectionData:
+      minCollection: 20
+      maxCollection: 35
+      collectionProbability: 0.7

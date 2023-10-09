@@ -51,6 +51,8 @@ public class GameOverController : MonoBehaviour
         // Reduce lives if not infinite lives
         if (!LifeController.Instance.IsInfinite)
             LifeController.Instance.ChangeLives(-1);
+
+        GameManager.Instance.LoseGame();
     }
 
     /// <summary>

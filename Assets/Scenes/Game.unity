@@ -6207,6 +6207,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff1bc8ff7e057f04493d9138c481326e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  text: {fileID: 0}
   currentGameState: 0
   OnGameMode:
     m_PersistentCalls:
@@ -6221,6 +6222,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   LevelUp:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDifficult:
     m_PersistentCalls:
       m_Calls: []
   UserAlready: 0
@@ -6241,13 +6245,14 @@ MonoBehaviour:
   minTimeToMatch: 3
   timeToMatchPenalty: 1
   maxFeedingObjective: 15
-  probabilityMultiplicationFactor: 0.3
   maxScoreObjective: 5000
+  probabilityMultiplicationFactor: 0.3
   totalSeconds: 300
   matchObjectiveAmount: 50
   fruitCollectionAmount: 35
   fruitCollectionProbability: 0.7
   rewardLevelPass: 10
+  difficultData: {fileID: 11400000, guid: 0caabec5856fc694c995e962cd41a2fe, type: 2}
 --- !u!4 &956948156
 Transform:
   m_ObjectHideFlags: 0

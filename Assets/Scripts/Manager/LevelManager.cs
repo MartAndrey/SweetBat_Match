@@ -171,7 +171,7 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     IEnumerator UnlockLevelAndUpdateAvatarRoutine()
     {
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSecondsRealtime(.1f);
         UnlockLevel(levelsList[GameManager.Instance.Level]); // Unlock current level
         UpdatePositionProfileMarker();
         SetScrollRect();
@@ -328,6 +328,7 @@ public class LevelManager : MonoBehaviour
             // Activate the unlockFruitObject and start a coroutine to disable it after a delay.
             unlockFruitObject.SetActive(true);
             StartCoroutine(DisableUnlockFruitObject());
+            GameManager.Instance.ChangeDifficulty(1);
         }
     }
 
