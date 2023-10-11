@@ -4817,7 +4817,7 @@ MonoBehaviour:
   - {fileID: 1326610709}
   - {fileID: 1156555268}
   - {fileID: 1945870182}
-  scoreGoal: 1000
+  scoreGoal: 4000
 --- !u!82 &764027209
 AudioSource:
   m_ObjectHideFlags: 0
@@ -6229,7 +6229,8 @@ MonoBehaviour:
       m_Calls: []
   UserAlready: 0
   UserIsAnonymous: 0
-  gameMode: 3
+  UserIsLinker: 0
+  gameMode: 1
   level: 0
   availableFruits:
   - {fileID: 9003223963689281457, guid: dcfa150433e47994ebf8b1bc2346b4f9, type: 3}
@@ -6244,6 +6245,7 @@ MonoBehaviour:
   timeToMatch: 12
   minTimeToMatch: 3
   timeToMatchPenalty: 1
+  scoreBar: 0
   maxFeedingObjective: 15
   maxScoreObjective: 5000
   probabilityMultiplicationFactor: 0.3

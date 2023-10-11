@@ -18,6 +18,8 @@ MonoBehaviour:
     minTime: 14
     maxTime: 15
     penalty: 0.1
+    minScoreBar: 800
+    maxScoreBar: 4500
     feedingData:
       minFeeding: 15
       maxFeeding: 50
@@ -38,6 +40,8 @@ MonoBehaviour:
     minTime: 13
     maxTime: 14
     penalty: 0.2
+    minScoreBar: 900
+    maxScoreBar: 4500
     feedingData:
       minFeeding: 15
       maxFeeding: 50
@@ -58,6 +62,8 @@ MonoBehaviour:
     minTime: 12
     maxTime: 13
     penalty: 0.3
+    minScoreBar: 1000
+    maxScoreBar: 4500
     feedingData:
       minFeeding: 15
       maxFeeding: 50
@@ -78,6 +84,8 @@ MonoBehaviour:
     minTime: 11
     maxTime: 12
     penalty: 0.4
+    minScoreBar: 1100
+    maxScoreBar: 4500
     feedingData:
       minFeeding: 15
       maxFeeding: 50
@@ -98,6 +106,8 @@ MonoBehaviour:
     minTime: 10
     maxTime: 11
     penalty: 0.5
+    minScoreBar: 1200
+    maxScoreBar: 4500
     feedingData:
       minFeeding: 15
       maxFeeding: 50
@@ -118,6 +128,8 @@ MonoBehaviour:
     minTime: 9
     maxTime: 10
     penalty: 0.6
+    minScoreBar: 1300
+    maxScoreBar: 4500
     feedingData:
       minFeeding: 15
       maxFeeding: 50
@@ -138,6 +150,8 @@ MonoBehaviour:
     minTime: 8
     maxTime: 9
     penalty: 0.7
+    minScoreBar: 1400
+    maxScoreBar: 4500
     feedingData:
       minFeeding: 15
       maxFeeding: 50
@@ -158,6 +172,8 @@ MonoBehaviour:
     minTime: 7
     maxTime: 8
     penalty: 0.8
+    minScoreBar: 1500
+    maxScoreBar: 4500
     feedingData:
       minFeeding: 15
       maxFeeding: 50
@@ -178,6 +194,8 @@ MonoBehaviour:
     minTime: 6
     maxTime: 7
     penalty: 0.9
+    minScoreBar: 1600
+    maxScoreBar: 4500
     feedingData:
       minFeeding: 15
       maxFeeding: 50
@@ -198,6 +216,8 @@ MonoBehaviour:
     minTime: 5
     maxTime: 6
     penalty: 1
+    minScoreBar: 1700
+    maxScoreBar: 4500
     feedingData:
       minFeeding: 15
       maxFeeding: 50

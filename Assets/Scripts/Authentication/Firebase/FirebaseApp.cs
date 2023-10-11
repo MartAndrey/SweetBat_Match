@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Networking;
 using System;
+using System.Linq;
 
 public class FirebaseApp : MonoBehaviour
 {
@@ -74,7 +75,7 @@ public class FirebaseApp : MonoBehaviour
                 // Create and hold a reference to your FirebaseApp,
                 // where app is a Firebase.FirebaseApp property of your application class.
                 app = Firebase.FirebaseApp.DefaultInstance;
-                Debug.Log("Success App Fire");
+
                 // Set a flag here to indicate whether Firebase is ready to use by your app.
                 OnSetFirebase?.Invoke();
 
@@ -135,6 +136,13 @@ public class FirebaseApp : MonoBehaviour
         Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
 
         Firebase.Auth.Credential credential = Firebase.Auth.GoogleAuthProvider.GetCredential(googleIdToken, googleAccessToken);
+
+        if (auth.CurrentUser != null && auth.CurrentUser.IsAnonymous)
+        {
+            LinkAnonymousToGoogle(credential, auth);
+            return;
+        }
+
         auth.SignInWithCredentialAsync(credential).ContinueWith(task =>
         {
             if (task.IsCanceled)
@@ -161,6 +169,61 @@ public class FirebaseApp : MonoBehaviour
             GameManager.Instance.UserData = userData;
             loginController.LoginSuccess();
             StartCoroutine(LoadAvatarImage(user.PhotoUrl.ToString()));
+        });
+    }
+
+    /// <summary>
+    /// Links the user's Firebase account with a Google credential and updates the user's profile.
+    /// </summary>
+    /// <param name="credential">The Google credential to link.</param>
+    /// <param name="auth">The Firebase authentication instance.</param>
+    void LinkAnonymousToGoogle(Firebase.Auth.Credential credential, Firebase.Auth.FirebaseAuth auth)
+    {
+        auth.CurrentUser.LinkWithCredentialAsync(credential).ContinueWith(task =>
+        {
+            if (task.IsCanceled)
+            {
+                return;
+            }
+            if (task.IsFaulted)
+            {
+                return;
+            }
+
+            // Find the Google user information from the provider data.
+            var googleUserInfo = user.ProviderData.Where(userInfo => userInfo.ProviderId == "google.com").FirstOrDefault();
+
+            auth.CurrentUser.UpdateUserProfileAsync(new Firebase.Auth.UserProfile()
+            {
+                DisplayName = googleUserInfo.DisplayName,
+                PhotoUrl = googleUserInfo.PhotoUrl
+            }).ContinueWith(task =>
+            {
+                if (task.IsCanceled)
+                {
+                    return;
+                }
+                if (task.IsFaulted)
+                {
+                    return;
+                }
+                user = auth.CurrentUser;
+
+                // Create a user data dictionary.
+                userData = new Dictionary<string, object>()
+                {
+                    { "name", googleUserInfo.DisplayName },
+                    { "id", user.UserId },
+                    { "email", user.Email },
+                    { "url photo", googleUserInfo.PhotoUrl.ToString() },
+                };
+
+                // Update user data in the game manager.
+                GameManager.Instance.UserData = userData;
+                GameManager.Instance.UserIsLinker = true;
+                loginController.LoginSuccessLinker();
+                StartCoroutine(LoadAvatarImage(userData["url photo"].ToString()));
+            });
         });
     }
 
@@ -206,12 +269,10 @@ public class FirebaseApp : MonoBehaviour
         {
             if (task.IsCanceled)
             {
-                Debug.LogError("SignInAnonymouslyAsync was canceled.");
                 return;
             }
             if (task.IsFaulted)
             {
-                Debug.LogError("SignInAnonymouslyAsync encountered an error: " + task.Exception);
                 return;
             }
 

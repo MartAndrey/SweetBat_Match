@@ -12,6 +12,8 @@ public class LevelData
     public int minTime;
     public int maxTime;
     public float penalty;
+    public int minScoreBar;
+    public int maxScoreBar;
 
     public FeedingData feedingData;
     public ScoringData scoringData;

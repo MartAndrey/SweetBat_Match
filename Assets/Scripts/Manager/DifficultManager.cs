@@ -56,5 +56,6 @@ public static class DifficultManager
         GameManager.Instance.MoveCounter = Random.Range(levelData.minMoves, levelData.maxMoves + 1);
         GameManager.Instance.TimeToMatch = Random.Range(levelData.minTime, levelData.maxTime + 1);
         GameManager.Instance.TimeToMatchPenalty = levelData.penalty;
+        GameManager.Instance.ScoreBar = Random.Range(levelData.minScoreBar, levelData.maxScoreBar + 1);
     }
 }

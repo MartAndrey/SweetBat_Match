@@ -99,6 +99,7 @@ public class GameManager : MonoBehaviour
     public float TimeToMatchPenalty { get { return timeToMatchPenalty; } set { timeToMatchPenalty = value; } }
     // Gets or sets the 'timeToMatchPenaltyTimes' value.
     public float TimeToMatchPenaltyTimes { get { return timeToMatchPenaltyTimes; } set { timeToMatchPenaltyTimes = value; } }
+    public int ScoreBar { get { return scoreBar; } set { scoreBar = value; } }
     // Gets the maximum allowed 'maxTimeToMatchPenaltyTimes'.
     public float MaxTimeToMatchPenaltyTimes { get { return maxTimeToMatchPenaltyTimes; } }
     // Gets or sets a value indicating whether there is a time-to-match penalty.
@@ -134,6 +135,7 @@ public class GameManager : MonoBehaviour
 
     public bool UserAlready;
     public bool UserIsAnonymous;
+    public bool UserIsLinker;
 
     // Serialized game mode field
     [SerializeField] GameMode gameMode;
@@ -153,6 +155,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] float timeToMatch;
     [SerializeField] float minTimeToMatch;
     [SerializeField] float timeToMatchPenalty;
+    [SerializeField] int scoreBar;
 
     [Header("Feeding Objective")]
     // Maximum feeding objective

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
@@ -74,7 +72,6 @@ public class AudioManager : MonoBehaviour
     {
         this.imageMusic = imageMusic; // Updates the image component for music icon
         imageMusic.sprite = currentValueMusic == minValue ? imageMusicOff : imageMusicOn;
-
     }
 
     /// <summary>

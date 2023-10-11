@@ -2870,6 +2870,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff1bc8ff7e057f04493d9138c481326e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  text: {fileID: 0}
   currentGameState: 0
   OnGameMode:
     m_PersistentCalls:
@@ -2891,6 +2892,7 @@ MonoBehaviour:
       m_Calls: []
   UserAlready: 0
   UserIsAnonymous: 0
+  UserIsLinker: 0
   gameMode: 3
   level: 0
   availableFruits:
@@ -2906,9 +2908,10 @@ MonoBehaviour:
   timeToMatch: 10
   minTimeToMatch: 3
   timeToMatchPenalty: 0.3
+  scoreBar: 0
   maxFeedingObjective: 40
-  probabilityMultiplicationFactor: 0
   maxScoreObjective: 3000
+  probabilityMultiplicationFactor: 0
   totalSeconds: 120
   matchObjectiveAmount: 25
   fruitCollectionAmount: 50

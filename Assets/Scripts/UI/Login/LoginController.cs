@@ -90,6 +90,25 @@ public class LoginController : MonoBehaviour
     }
 
     /// <summary>
+    /// Handles the success of linking a user account.
+    /// </summary>
+    public void LoginSuccessLinker()
+    {
+        this.userData = GameManager.Instance.UserData;
+        StartCoroutine(LoginSuccessLinkerRutiner());
+    }
+
+    /// <summary>
+    /// Coroutine for handling the login success routine for a linker user.
+    /// </summary>
+    IEnumerator LoginSuccessLinkerRutiner()
+    {
+        yield return new WaitForSecondsRealtime(.1f);
+        displaySingIn.SetActive(false);
+        displayGetGender.SetActive(true);
+    }
+
+    /// <summary>
     /// Coroutine to handle the UI transition after a successful login.
     /// </summary>
     IEnumerator LoginSuccessRutiner()
@@ -168,7 +187,9 @@ public class LoginController : MonoBehaviour
 
         SetInformationUser();
 
-        CreateNewUserDataBase();
+        if (GameManager.Instance.UserIsLinker)
+            CloudFirestore.Instance.UpdateLevelUser(userData);
+        else CreateNewUserDataBase();
     }
 
     /// <summary>

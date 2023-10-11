@@ -203,7 +203,7 @@ public class GUIManager : MonoBehaviour
             scoreDisplay = Mathf.RoundToInt(Mathf.Lerp(scoreDisplay, score, elapsedTime / lerpDurationScore));
             scoreText.text = scoreDisplay.ToString();
 
-            elapsedTime +=Time.deltaTime;
+            elapsedTime += Time.deltaTime;
             yield return null;
         }
         yield return null;
@@ -230,6 +230,13 @@ public class GUIManager : MonoBehaviour
             }
 
             yield return null;
+        }
+
+        if (currentTime > timeToMatch)
+        {
+            yield return new WaitUntil(() => !BoardManager.Instance.IsShifting);
+
+            if (currentTime >= timeToMatch) StartCoroutine(CheckGameStatus());
         }
 
         yield return null;

@@ -16,6 +16,8 @@ public class ProgressBar : MonoBehaviour
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+        
+        scoreGoal = GameManager.Instance.ScoreBar;
     }
 
     // Method in charge of updating the score bar and activating the stars if necessary
