@@ -2870,7 +2870,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff1bc8ff7e057f04493d9138c481326e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: {fileID: 0}
   currentGameState: 0
   OnGameMode:
     m_PersistentCalls:

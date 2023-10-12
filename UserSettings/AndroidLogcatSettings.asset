@@ -3,7 +3,7 @@
     "m_SelectedPackage": {
         "deviceId": "146268f60409",
         "name": "com.martandrey.hungrybat",
-        "processId": 8409,
+        "processId": 11717,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -11,61 +11,73 @@
         {
             "deviceId": "146268f60409",
             "name": "com.miui.home",
-            "processId": 1951,
+            "processId": 1990,
             "exited": false
         },
         {
             "deviceId": "146268f60409",
             "name": "com.martandrey.hungrybat",
-            "processId": 16272,
+            "processId": 6298,
             "exited": true
         },
         {
             "deviceId": "146268f60409",
             "name": "com.martandrey.hungrybat",
-            "processId": 19565,
+            "processId": 10236,
             "exited": true
         },
         {
             "deviceId": "146268f60409",
             "name": "com.martandrey.hungrybat",
-            "processId": 22188,
+            "processId": 13961,
             "exited": true
         },
         {
             "deviceId": "146268f60409",
             "name": "com.martandrey.hungrybat",
-            "processId": 24930,
+            "processId": 15842,
             "exited": true
         },
         {
             "deviceId": "146268f60409",
-            "name": "com.miui.securitycenter",
-            "processId": 21253,
+            "name": "com.martandrey.hungrybat",
+            "processId": 18375,
             "exited": false
         },
         {
             "deviceId": "146268f60409",
             "name": "com.martandrey.hungrybat",
-            "processId": 26951,
+            "processId": 20599,
             "exited": false
         },
         {
             "deviceId": "146268f60409",
             "name": "com.martandrey.hungrybat",
-            "processId": 29969,
+            "processId": 27286,
             "exited": false
         },
         {
             "deviceId": "146268f60409",
             "name": "com.martandrey.hungrybat",
-            "processId": 32458,
+            "processId": 2034,
             "exited": false
         },
         {
             "deviceId": "146268f60409",
             "name": "com.martandrey.hungrybat",
-            "processId": 8409,
+            "processId": 6304,
+            "exited": false
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 10885,
+            "exited": false
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.hungrybat",
+            "processId": 11717,
             "exited": false
         }
     ],

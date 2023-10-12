@@ -19,7 +19,7 @@ public class FirebaseApp : MonoBehaviour
     [SerializeField] MainMenuController mainMenuController;
     [SerializeField] Sprite defaultUserPhoto;
 
-    Dictionary<string, object> userData;
+    Dictionary<string, object> userData = new Dictionary<string, object>();
 
     Firebase.FirebaseApp app;
     Firebase.Auth.FirebaseUser user;
@@ -326,6 +326,30 @@ public class FirebaseApp : MonoBehaviour
     {
         loginController.UserPhoto = null;
         Firebase.Auth.FirebaseAuth.DefaultInstance.SignOut();
+        ClearAllDataUser();
+    }
+
+    /// <summary>
+    /// Clears all user data and initiates the process to reset the user's state.
+    /// </summary>
+    void ClearAllDataUser()
+    {
+        // Initiate the coroutine for clearing user data.
+        StartCoroutine(ClearAllDataUserRutiner());
+    }
+
+    /// <summary>
+    /// Coroutine to clear user data.
+    /// </summary>
+    /// <returns>An IEnumerator used for Unity's Coroutine system.</returns>
+    IEnumerator ClearAllDataUserRutiner()
+    {
+        // Wait for 1 second in real-time.
+        yield return new WaitForSecondsRealtime(1);
+        // Clear user data using GameManager and reset user-related variables.git s
+        GameManager.Instance.ClearAllDataUser();
+        userData.Clear();
+        user = null;
     }
 
     /// <summary>

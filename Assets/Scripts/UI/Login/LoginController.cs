@@ -325,7 +325,7 @@ public class LoginController : MonoBehaviour
         btnLoginText.text = textWhenNotLogin;
         btnLoginAvatar.SetActive(false);
         userPhoto = null;
-        GameManager.Instance.UserPhoto = null;
+        userData.Clear();
 
         ResetConfirmLogOut();
     }

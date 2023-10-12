@@ -8,7 +8,6 @@ using System.ComponentModel;
 using System.Net.NetworkInformation;
 using UnityEngine.Networking;
 using System.Threading.Tasks;
-using TMPro;
 
 // Define a set of game modes for different game objectives
 public enum GameMode
@@ -60,7 +59,6 @@ public enum GameState { LevelMenu, InGame }
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] TMP_Text text;
     public static GameManager Instance;  // Static reference to the GameManager instance
 
     public GameState currentGameState;
@@ -268,6 +266,30 @@ public class GameManager : MonoBehaviour
         };
 
         DontDestroyOnLoad(gameObject);
+    }
+
+    /// <summary>
+    /// Clears all user-related data and resets the user's state to default values.
+    /// </summary>
+    public void ClearAllDataUser()
+    {
+        // Clear user data containers.
+        userData.Clear();
+        levelsData.Clear();
+        collectiblesData.Clear();
+        // Reset user-related variables.
+        UserAlready = false;
+        UserIsAnonymous = false;
+        UserIsLinker = false;
+        level = 0;
+        difficulty = 1;
+        consecutiveVictory = 0;
+        consecutiveDefeat = 0;
+        // Save the difficulty level.
+        SaveDifficulty();
+        // Reset objective completion status and user photo.
+        objectiveComplete = false;
+        userPhoto = null;
     }
 
     /// <summary>
