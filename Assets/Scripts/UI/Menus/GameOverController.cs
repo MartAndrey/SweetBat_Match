@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using System.Collections;
 
 [RequireComponent(typeof(UpdateScoreUI))]
 public class GameOverController : MonoBehaviour
@@ -44,15 +45,23 @@ public class GameOverController : MonoBehaviour
         audioSourceCamera.Stop();
         boxGameOver.SetActive(true);
         overlay.SetActive(true);
-        particleSystemBrokenHeart.SetActive(true);
         audioSourceBoxGameOver.PlayDelayed(1f);
         StartCoroutine(updateScoreUI.UpdateScoreRutiner());
 
         // Reduce lives if not infinite lives
         if (!LifeController.Instance.IsInfinite)
+        {
+            StartCoroutine(ActiveHeartBroken());
             LifeController.Instance.ChangeLives(-1);
+        }
 
         GameManager.Instance.LoseGame();
+    }
+
+    IEnumerator ActiveHeartBroken()
+    {
+        yield return new WaitForSecondsRealtime(1);
+        particleSystemBrokenHeart.SetActive(true);
     }
 
     /// <summary>

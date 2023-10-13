@@ -7,6 +7,7 @@ public class PauseMenuController : MonoBehaviour
     [SerializeField] GameObject boxPause;
     [SerializeField] GameObject overlay;
     [SerializeField] GameObject particleSystemEnergy;
+    [SerializeField] GameObject particleSystemBrokenHeart;
     [SerializeField] Animator boxAnimator;
     [SerializeField] AudioClip popComplete;
 
@@ -56,7 +57,10 @@ public class PauseMenuController : MonoBehaviour
     {
         GameManager.Instance.LoseGame();
         if (!LifeController.Instance.IsInfinite)
+        {
+            particleSystemBrokenHeart.SetActive(true);
             LifeController.Instance.ChangeLives(-1);
+        }
         GameOverController.Instance.Replay();
         Time.timeScale = 1;
     }
@@ -84,7 +88,10 @@ public class PauseMenuController : MonoBehaviour
         audioSource.PlayOneShot(popComplete);
         StartCoroutine(ScreenChangeTransition.Instance.FadeOut("LevelMenu"));
         if (!LifeController.Instance.IsInfinite)
+        {
+            particleSystemBrokenHeart.SetActive(true);
             LifeController.Instance.ChangeLives(-1);
+        }
         Inventory.Instance.ResetParentPowerUps(true);
         Time.timeScale = 1;
     }

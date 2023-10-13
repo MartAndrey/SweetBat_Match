@@ -734,6 +734,14 @@ PrefabInstance:
       propertyPath: m_Materials.Array.size
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 496487244642044109, guid: f287076469a946b48b6015432d9023d0, type: 3}
+      propertyPath: useUnscaledTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 496487245117367879, guid: f287076469a946b48b6015432d9023d0, type: 3}
+      propertyPath: useUnscaledTime
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9027514048236820042, guid: f287076469a946b48b6015432d9023d0, type: 3}
       propertyPath: m_RootOrder
       value: 4
@@ -2424,6 +2432,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400006, guid: 5c3b5251f7288744595390280659aa68, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 19800000, guid: 5c3b5251f7288744595390280659aa68, type: 3}
+      propertyPath: startDelay.scalar
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 19800002, guid: 5c3b5251f7288744595390280659aa68, type: 3}
+      propertyPath: startDelay.scalar
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 19800004, guid: 5c3b5251f7288744595390280659aa68, type: 3}
+      propertyPath: startDelay.scalar
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 19800006, guid: 5c3b5251f7288744595390280659aa68, type: 3}
+      propertyPath: startDelay.scalar
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 19800000, guid: bcaff8fc36e95584bb27cc3cf7c6cb14, type: 3}
@@ -6207,7 +6231,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff1bc8ff7e057f04493d9138c481326e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: {fileID: 0}
   currentGameState: 0
   OnGameMode:
     m_PersistentCalls:
@@ -6241,13 +6264,13 @@ MonoBehaviour:
   - {fileID: 5182403206852857962, guid: b06ad6d962700de40a25e00ccd3b09c8, type: 3}
   - {fileID: 5076765230915325859, guid: fe78d4afa3f68664fa71adf376f4aea6, type: 3}
   - {fileID: 2705507177751519838, guid: 06e4910d9238ddb418ce390133ed7724, type: 3}
-  moveCounter: 15
-  timeToMatch: 12
+  moveCounter: 1
+  timeToMatch: 1
   minTimeToMatch: 3
   timeToMatchPenalty: 1
   scoreBar: 0
   maxFeedingObjective: 15
-  maxScoreObjective: 5000
+  maxScoreObjective: 10
   probabilityMultiplicationFactor: 0.3
   totalSeconds: 300
   matchObjectiveAmount: 50
@@ -10840,6 +10863,7 @@ MonoBehaviour:
   boxPause: {fileID: 815447010}
   overlay: {fileID: 563422427}
   particleSystemEnergy: {fileID: 127551900}
+  particleSystemBrokenHeart: {fileID: 682771546}
   boxAnimator: {fileID: 815447015}
   popComplete: {fileID: 8300000, guid: f1f1232f49e312346ac4fe3c1e5cee9f, type: 3}
   confirmationQuit: {fileID: 863295352}
