@@ -1,6 +1,7 @@
 using UnityEngine;
 using GoogleMobileAds.Api;
 using System.Collections.Generic;
+using System.Collections;
 
 public class AdsManager : MonoBehaviour
 {
@@ -55,24 +56,24 @@ public class AdsManager : MonoBehaviour
     /// <summary>
     /// Creates a 320x50 banner view at top of the screen.
     /// </summary>
-    public void CreateBannerView()
+    public void CreateBannerView(AdPosition position)
     {
         // If we already have a banner, destroy the old one.
         if (bannerView != null)
             DestroyBannerView();
 
         // Create a 320x50 banner at top of the screen
-        bannerView = new BannerView(bannerId, AdSize.Banner, AdPosition.Top);
+        bannerView = new BannerView(bannerId, AdSize.Banner, position);
     }
 
     /// <summary>
     /// Creates the banner view and loads a banner ad.
     /// </summary>
-    public void LoadAd()
+    public void LoadAd(AdPosition position)
     {
         // create an instance of a banner view first.
         if (bannerView == null)
-            CreateBannerView();
+            CreateBannerView(position);
 
         // create our request used to load the ad.
         var adRequest = new AdRequest();
@@ -159,6 +160,18 @@ public class AdsManager : MonoBehaviour
     }
 
     //========================Intersticial===========================//
+    public void ShowAndLoadInterstitialAd()
+    {
+        ShowInterstitialAd();
+        StartCoroutine(LoadInterstitialAdRutiner());
+    }
+
+    IEnumerator LoadInterstitialAdRutiner()
+    {
+        yield return new WaitForSeconds(.1f);
+        LoadInterstitialAd();
+    }
+
     /// <summary>
     /// Loads the interstitial ad.
     /// </summary>

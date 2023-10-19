@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Net.NetworkInformation;
 using UnityEngine.Networking;
 using System.Threading.Tasks;
+using GoogleMobileAds.Api;
 
 // Define a set of game modes for different game objectives
 public enum GameMode
@@ -559,6 +560,7 @@ public class GameManager : MonoBehaviour
 
         if (scene.name == "Game")
         {
+            AdsManager.Instance.DestroyBannerView();
             currentGameState = GameState.InGame;
             OnGameMode?.Invoke(gameMode);
             Inventory.Instance.SetPowerUpGame();
@@ -566,6 +568,8 @@ public class GameManager : MonoBehaviour
         else if (scene.name == "LevelMenu")
         {
             AdsManager.Instance.DestroyBannerView();
+            AdsManager.Instance.LoadAd(AdPosition.Bottom);
+
             currentGameState = GameState.LevelMenu;
             Time.timeScale = 1;
             UpdateAvatars();
@@ -574,7 +578,7 @@ public class GameManager : MonoBehaviour
         }
         else if (scene.name == "MainMenu")
         {
-            AdsManager.Instance.LoadAd();
+            AdsManager.Instance.LoadAd(AdPosition.Top);
         }
 
         CheckInternetConnection(scene);

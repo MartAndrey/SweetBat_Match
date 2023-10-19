@@ -70,6 +70,8 @@ public class LevelUI : MonoBehaviour
     {
         if (LifeController.Instance.HasLives || LifeController.Instance.IsInfinite)
         {
+            if (GetAdd()) AdsManager.Instance.ShowAndLoadInterstitialAd();
+
             GameManager.Instance.GameMode = gameMode;
             GameManager.Instance.ObjectiveComplete = false;
             GameManager.Instance.CurrentLevel = Convert.ToInt32(nameLevelText.text.Split(' ')[1]) - 1;
@@ -92,13 +94,15 @@ public class LevelUI : MonoBehaviour
         }
     }
 
+    bool GetAdd() => GameManager.Instance.Level % 3 == 0;
+
     /// <summary>
     /// Coroutine to delay resetting the parent of power-ups.
     /// </summary>
     /// <returns>An IEnumerator for use in StartCoroutine.</returns>
     IEnumerator ResetParentPowerUps()
     {
-        yield return new WaitForSeconds(.8f);
+        yield return new WaitForSecondsRealtime(.8f);
         Inventory.Instance.ResetParentPowerUps(false);
     }
     /// <summary>
