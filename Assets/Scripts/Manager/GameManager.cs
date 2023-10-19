@@ -23,6 +23,7 @@ public enum GameMode
 }
 
 public enum GamePlayMode { MovesLimited, TimedMatch }
+public enum TypeRewardedAd { Life, Coin }
 
 /// <summary>
 /// Enum representing different error types.
@@ -564,11 +565,16 @@ public class GameManager : MonoBehaviour
         }
         else if (scene.name == "LevelMenu")
         {
+            AdsManager.Instance.DestroyBannerView();
             currentGameState = GameState.LevelMenu;
             Time.timeScale = 1;
             UpdateAvatars();
             CoinController.Instance.UpdateCoinsUI();
             LifeController.Instance.UpdateLivesUI();
+        }
+        else if (scene.name == "MainMenu")
+        {
+            AdsManager.Instance.LoadAd();
         }
 
         CheckInternetConnection(scene);

@@ -41,7 +41,8 @@ public class CoinShop : MonoBehaviour
     /// </summary>
     public void GetCoinAds()
     {
-        Debug.LogWarning("TODO: Show Ads And Give Coin");
+        AdsManager.Instance.ShowRewardedAd(AdsManager.Instance.RewardedIdCoins);
+        AdsManager.Instance.LoadRewardedAd(AdsManager.Instance.RewardedIdCoins);
     }
 
     /// <summary>

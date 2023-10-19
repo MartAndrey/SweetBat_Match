@@ -82,7 +82,8 @@ public class LifeShop : MonoBehaviour
     // It gives us a life in exchange for seeing an ad
     public void PlusLifeAds()
     {
-        Debug.LogWarning("TODO: Show Ads And Give Life");
+        AdsManager.Instance.ShowRewardedAd(AdsManager.Instance.RewardedIdLife);
+        AdsManager.Instance.LoadRewardedAd(AdsManager.Instance.RewardedIdLife);
     }
 
     // Method in charge of showing the UI to ask your friends to send us lives

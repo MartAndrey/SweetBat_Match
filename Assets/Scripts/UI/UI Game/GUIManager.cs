@@ -52,6 +52,7 @@ public class GUIManager : MonoBehaviour
 
     [SerializeField] TMP_Text movesText, scoreText, multiplicationFactorText;
     [SerializeField] GameObject imageInfiniteMoves;
+    [SerializeField] TimerGame timerGame;
 
     [Header("Screens")]
     [SerializeField] GameOverController menuGameOver;
@@ -68,6 +69,8 @@ public class GUIManager : MonoBehaviour
 
     // Dictionary to map game modes to corresponding objective setting methods.
     Dictionary<GameMode, Action> gameModeHandlers;
+
+    public bool AlreadyLoseGame { get; set; }
 
     void OnEnable()
     {
@@ -94,6 +97,8 @@ public class GUIManager : MonoBehaviour
             { GameMode.TimeObjective, SetTimeObjective },
             { GameMode.CollectionObjective, SetCollectionObjective }
         };
+
+        AlreadyLoseGame = false;
     }
 
     void Start()
@@ -216,7 +221,7 @@ public class GUIManager : MonoBehaviour
     {
         float factor;
 
-        while (currentTime < timeToMatch)
+        while (currentTime < timeToMatch && !AlreadyLoseGame)
         {
             currentTime += Time.deltaTime;
             factor = Mathf.Clamp(currentTime / timeToMatch, 0, 1);
@@ -226,13 +231,17 @@ public class GUIManager : MonoBehaviour
             {
                 yield return new WaitUntil(() => !BoardManager.Instance.IsShifting);
 
-                if (currentTime >= timeToMatch) StartCoroutine(CheckGameStatus());
+                if (currentTime >= timeToMatch)
+                {
+                    AlreadyLoseGame = true;
+                    StartCoroutine(CheckGameStatus());
+                }
             }
 
             yield return null;
         }
 
-        if (currentTime > timeToMatch)
+        if (!AlreadyLoseGame && currentTime > timeToMatch)
         {
             yield return new WaitUntil(() => !BoardManager.Instance.IsShifting);
 
@@ -264,5 +273,34 @@ public class GUIManager : MonoBehaviour
         // Check whether the game objective is complete, the player earned at least three stars, and the game mode is TimedMatch.
         if (GameManager.Instance.ObjectiveComplete && ProgressBar.Instance.GetActiveStars() >= 3)
             StartCoroutine(CheckGameStatus());
+    }
+
+    public void ContinueGameReward()
+    {
+        GameOverController.Instance.HideScreen();
+        StartCoroutine(ContinueGameRewardRutiner());
+    }
+
+    IEnumerator ContinueGameRewardRutiner()
+    {
+        yield return new WaitForSeconds(1.1f);
+
+        if (gamePlayMode == GamePlayMode.MovesLimited)
+        {
+            moveCounter += 3;
+            movesText.text = moveCounter.ToString();
+        }
+        else
+        {
+            if (GameManager.Instance.GameMode == GameMode.TimeObjective)
+            {
+                timerGame.TimeRemaining += GameManager.Instance.TimeToMatch;
+                timerGame.RestartTimer = true;
+                StartCoroutine(timerGame.UpdateTimer());
+            }
+
+            currentTime = 0;
+            StartCoroutine(TimeToMatchCoroutine());
+        }
     }
 }

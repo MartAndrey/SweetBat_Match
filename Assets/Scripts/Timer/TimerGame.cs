@@ -4,7 +4,8 @@ using TMPro;
 
 public class TimerGame : MonoBehaviour
 {
-    public float TimeRemaining { get { return timeRemaining; } }
+    public float TimeRemaining { get { return timeRemaining; } set { timeRemaining = value; } }
+    public bool RestartTimer { get { return restartTimer; } set { restartTimer = value; } }
 
     [SerializeField] TMP_Text timerText;
 
@@ -13,11 +14,14 @@ public class TimerGame : MonoBehaviour
     int minutes;
     int seconds;
 
+    bool restartTimer = true;
+
     /// <summary>
     /// Starts the timer coroutine.
     /// </summary>
     public void StartTimer()
     {
+        timeRemaining = GameManager.Instance.TotalSeconds;
         StartCoroutine(UpdateTimer());
     }
 
@@ -25,11 +29,9 @@ public class TimerGame : MonoBehaviour
     /// Coroutine for updating the timer UI.
     /// </summary>
     /// <returns>An IEnumerator for coroutine execution.</returns>
-    IEnumerator UpdateTimer()
+    public IEnumerator UpdateTimer()
     {
-        timeRemaining = GameManager.Instance.TotalSeconds;
-
-        while (timeRemaining > 0)
+        while (timeRemaining > 0 && restartTimer)
         {
             timeRemaining -= Time.deltaTime;
 
@@ -42,10 +44,19 @@ public class TimerGame : MonoBehaviour
             yield return null;
         }
 
-        timerText.text = "00";
+        if (restartTimer)
+        {
+            timerText.text = "00";
 
-        yield return null;
+            yield return null;
 
-        StartCoroutine(GUIManager.Instance.CheckGameStatus());
+            StartCoroutine(GUIManager.Instance.CheckGameStatus());
+        }
+    }
+
+    public void StopTimer()
+    {
+        restartTimer = false;
+        StopAllCoroutines();
     }
 }

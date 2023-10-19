@@ -45,7 +45,6 @@ public class CompleteGameController : MonoBehaviour
         if (GameManager.Instance.GameMode == GameMode.TimeObjective)
         {
             TimerGame timerGame = FindObjectOfType<TimerGame>();
-            Debug.Log(timerGame.TimeRemaining);
             bonus = (int)timerGame.TimeRemaining / 10;
         }
 

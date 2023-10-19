@@ -1687,6 +1687,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7495080114105703711, guid: dade7306939b664438af07967a1db99c, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 7495080114105703907, guid: dade7306939b664438af07967a1db99c, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -3686,6 +3690,7 @@ MonoBehaviour:
       m_Calls: []
   UserAlready: 0
   UserIsAnonymous: 0
+  UserIsLinker: 0
   gameMode: 3
   level: 0
   availableFruits:
@@ -3701,9 +3706,10 @@ MonoBehaviour:
   timeToMatch: 10
   minTimeToMatch: 3
   timeToMatchPenalty: 0.3
+  scoreBar: 0
   maxFeedingObjective: 40
-  probabilityMultiplicationFactor: 0
   maxScoreObjective: 3000
+  probabilityMultiplicationFactor: 0
   totalSeconds: 120
   matchObjectiveAmount: 25
   fruitCollectionAmount: 50

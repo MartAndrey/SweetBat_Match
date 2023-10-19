@@ -5593,7 +5593,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Add 3 moves!
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 70a6d98c6ce034e43b79bfaa3805fb06, type: 2}
   m_sharedMaterial: {fileID: -5263338218149616523, guid: 70a6d98c6ce034e43b79bfaa3805fb06, type: 2}
@@ -5623,7 +5623,7 @@ MonoBehaviour:
   m_fontSize: 60
   m_fontSizeBase: 60
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
@@ -5636,7 +5636,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
@@ -6253,7 +6253,7 @@ MonoBehaviour:
   UserAlready: 0
   UserIsAnonymous: 0
   UserIsLinker: 0
-  gameMode: 1
+  gameMode: 2
   level: 0
   availableFruits:
   - {fileID: 9003223963689281457, guid: dcfa150433e47994ebf8b1bc2346b4f9, type: 3}
@@ -6265,14 +6265,14 @@ MonoBehaviour:
   - {fileID: 5076765230915325859, guid: fe78d4afa3f68664fa71adf376f4aea6, type: 3}
   - {fileID: 2705507177751519838, guid: 06e4910d9238ddb418ce390133ed7724, type: 3}
   moveCounter: 1
-  timeToMatch: 1
+  timeToMatch: 8
   minTimeToMatch: 3
   timeToMatchPenalty: 1
   scoreBar: 0
   maxFeedingObjective: 15
   maxScoreObjective: 10
   probabilityMultiplicationFactor: 0.3
-  totalSeconds: 300
+  totalSeconds: 30
   matchObjectiveAmount: 50
   fruitCollectionAmount: 35
   fruitCollectionProbability: 0.7
@@ -11010,6 +11010,7 @@ MonoBehaviour:
   scoreText: {fileID: 1280290898}
   multiplicationFactorText: {fileID: 737538029}
   imageInfiniteMoves: {fileID: 1895466977}
+  timerGame: {fileID: 563711766}
   menuGameOver: {fileID: 48206698457482140}
   menuCompleteGame: {fileID: 1935284343}
   timeBarUI: {fileID: 1112121126}
@@ -15680,8 +15681,10 @@ MonoBehaviour:
   audioSourceCamera: {fileID: 519420034}
   audioSourceBoxGameOver: {fileID: 48206698039242093}
   levelText: {fileID: 48206698141538857}
+  informationText: {fileID: 844001905}
   particleSystemEnergy: {fileID: 127551900}
   updateScoreUI: {fileID: 48206698457482143}
+  timerGame: {fileID: 563711766}
 --- !u!82 &48206698457482141
 AudioSource:
   m_ObjectHideFlags: 0
@@ -15890,7 +15893,70 @@ MonoBehaviour:
   scoreText: {fileID: 48206698712013461}
   easingCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1.0590767
+      outSlope: 1.0590767
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.19591993
+      value: 0.20749423
+      inSlope: 0.8671255
+      outSlope: 0.8671255
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.46110523
+      value: 0.38654053
+      inSlope: 0.789669
+      outSlope: 0.789669
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.7519707
+      value: 0.64953053
+      inSlope: 3.1699896
+      outSlope: 3.1699896
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.23386973
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.86793447
+      value: 0.87283295
+      inSlope: 0.44022623
+      outSlope: 0.44022623
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 1
+    - serializedVersion: 3
+      time: 0.9093482
+      value: 0.9553578
+      inSlope: 1.125912
+      outSlope: 1.125912
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0.49245802
+      outSlope: 0.49245802
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4

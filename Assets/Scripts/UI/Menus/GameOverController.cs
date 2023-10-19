@@ -20,12 +20,16 @@ public class GameOverController : MonoBehaviour
     [SerializeField] AudioSource audioSourceBoxGameOver;
     // Text object displaying the current level in the UI
     [SerializeField] TMP_Text levelText;
+    [SerializeField] TMP_Text informationText;
     // Text object displaying the current level in the UI
     [SerializeField] GameObject particleSystemEnergy;
     [SerializeField] UpdateScoreUI updateScoreUI;
+    [SerializeField] TimerGame timerGame;
 
     AudioSource audioSource;
-    // Text object displaying the current level in the UI
+    string moreMoves = "Add 3 moves!";
+    string moreTime;
+    bool alreadyShow;
 
     void Awake()
     {
@@ -33,6 +37,12 @@ public class GameOverController : MonoBehaviour
         else Destroy(gameObject);
 
         audioSource = GetComponent<AudioSource>();
+        moreTime = $"Add {GameManager.Instance.TimeToMatch} seconds!";
+    }
+
+    void Start()
+    {
+        informationText.text = GUIManager.Instance.GamePlayMode == GamePlayMode.MovesLimited ? moreMoves : moreTime;
     }
 
     /// <summary>
@@ -40,6 +50,14 @@ public class GameOverController : MonoBehaviour
     /// </summary>
     public void OnGameOver()
     {
+        GUIManager.Instance.AlreadyLoseGame = true;
+
+        if (GameManager.Instance.GameMode == GameMode.TimeObjective)
+        {
+            StopCoroutine(GUIManager.Instance.TimeToMatchCoroutine());
+            timerGame.StopTimer();
+        }
+
         particleSystemEnergy.SetActive(true);
         levelText.text = string.Format($"Level {GameManager.Instance.CurrentLevel + 1}");
         audioSourceCamera.Stop();
@@ -49,7 +67,7 @@ public class GameOverController : MonoBehaviour
         StartCoroutine(updateScoreUI.UpdateScoreRutiner());
 
         // Reduce lives if not infinite lives
-        if (!LifeController.Instance.IsInfinite)
+        if (!alreadyShow && !LifeController.Instance.IsInfinite)
         {
             StartCoroutine(ActiveHeartBroken());
             LifeController.Instance.ChangeLives(-1);
@@ -85,7 +103,25 @@ public class GameOverController : MonoBehaviour
     public void Ads()
     {
         audioSource.PlayOneShot(popComplete);
-        Debug.Log("Ads");
-        // TODO: Ads
+        AdsManager.Instance.ShowRewardedAd(AdsManager.Instance.RewardedIdContinueLevel);
+        AdsManager.Instance.LoadRewardedAd(AdsManager.Instance.RewardedIdContinueLevel);
+    }
+
+    public void HideScreen()
+    {
+        alreadyShow = true;
+        GUIManager.Instance.AlreadyLoseGame = false;
+        particleSystemEnergy.SetActive(false);
+        audioSourceCamera.Play();
+        boxGameOver.GetComponent<Animator>().SetTrigger("Transition");
+        StartCoroutine(OffBoxRutiner());
+        overlay.SetActive(false);
+        audioSourceBoxGameOver.Stop();
+    }
+
+    IEnumerator OffBoxRutiner()
+    {
+        yield return new WaitForSeconds(1);
+        boxGameOver.SetActive(false);
     }
 }
