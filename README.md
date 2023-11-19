@@ -1,8 +1,8 @@
-# Hungry Bat - Match 3 Game
+# SweetBat Match
 
-![Hungry Bat Logo](Assets/Sprites/Project/hungrybat_logo.png)
+![SweetBat Match Logo](Assets/Sprites/Project/SweetBat_MatchBG.png)
 
-Welcome to Hungry Bat, an exciting Match 3 puzzle adventure! Combine delicious fruits to create extraordinary combinations and advance through procedurally generated levels that offer unique challenges in each match.
+Welcome to SweetBat Match, an exciting Match 3 puzzle adventure! Combine delicious fruits to create extraordinary combinations and advance through procedurally generated levels that offer unique challenges in each match.
 
 ## Contents:
 
@@ -21,7 +21,7 @@ Welcome to Hungry Bat, an exciting Match 3 puzzle adventure! Combine delicious f
 <img src="https://github.com/MartAndrey/Hungry_Bat/assets/94258941/65ba4364-93c8-494b-817b-d9588dbea3bb" width="30%"></img>
 <img src="https://github.com/MartAndrey/Hungry_Bat/assets/94258941/665dd799-b08b-4597-bf34-7db7ba48fd16" width="30%"></img>
 
-[Watch Video](https://www.youtube.com/embed/Pu8vAirWgO4?si=PBLuCt3kibH2oB9b)
+[Watch Video](https://youtu.be/F-DekC9kqmg)
 
 ## Features
 - Addictive Match 3 game with captivating graphics.
@@ -45,12 +45,12 @@ Technologies used in the project:
 -   Firebase
 
 ## Privacy Policy
-You can find our full privacy policy [here](https://martandrey.github.io/Hungry-Bat-Privacy-Policy/). We value your privacy and are committed to protecting your personal data.
+You can find our full privacy policy [here](https://martandrey.github.io/SweetBat-Match-Privacy-Policy). We value your privacy and are committed to protecting your personal data.
 
 ## Contact
 If you have any questions, concerns or requests related to the game or the privacy policy, please feel free to contact us at the email address [martandreydev@gmail.com](mailto:martandreydev@gmail.com) .
 
-I'm excited to present to you my first commercial game developed in Unity with C#. I hope you enjoy Hungry Bat and I look forward to your comments and suggestions! Hungry Bat offers a free gaming experience with minimal ads designed to reward you with bonuses. Embark on this addictive, fruit-filled adventure that will leave you wanting more!
+I'm excited to present to you my first commercial game developed in Unity with C#. I hope you enjoy SweetBat Match and I look forward to your comments and suggestions! SweetBat Match offers a free gaming experience with minimal ads designed to reward you with bonuses. Embark on this addictive, fruit-filled adventure that will leave you wanting more!
 
 Enjoy the game and the experience we offer!
 
