@@ -420,11 +420,18 @@ public class GameManager : MonoBehaviour
             CloudFirestore.Instance.GetUserData(userData["id"].ToString());
             CloudFirestore.Instance.UserLevels(userData["id"].ToString());
             CloudFirestore.Instance.UserCollectibles(userData["id"].ToString());
+            StartCoroutine(WaitUserAlready());
             yield break;
         }
 
         // If user does not exist, create a new user
         CloudFirestore.Instance.CreateNewUser(userData);
+    }
+
+    IEnumerator WaitUserAlready()
+    {
+        yield return new WaitForSecondsRealtime(1);
+        UserAlready = true;
     }
 
     /// <summary>

@@ -1,9 +1,9 @@
 lastUpgrade=01014
 proj.pluginVersion=0.10.14
 proj.AppId=993798408935
-and.BundleId=com.martandrey.hungrybat
+and.BundleId=com.martandrey.sweetbatmatch
 proj.classDir=Assets
 proj.ConstantsClassName=GPGSIds
-and.ResourceData=%3c%3fxml+version%3d%221.0%22+encoding%3d%22utf-8%22%3f%3e%0d%0a%3c%21--Google+Play+game+services+IDs.+Save+this+file+as+res%2fvalues%2fgames-ids.xml+in+your+project.--%3e%0d%0a%3cresources%3e%0d%0a++%3c%21--app_id--%3e%0d%0a++%3cstring+name%3d%22app_id%22+translatable%3d%22false%22%3e993798408935%3c%2fstring%3e%0d%0a++%3c%21--package_name--%3e%0d%0a++%3cstring+name%3d%22package_name%22+translatable%3d%22false%22%3ecom.martandrey.hungrybat%3c%2fstring%3e%0d%0a++%3c%21--achievement+Welcome%2c+Nightflyer%21--%3e%0d%0a++%3cstring+name%3d%22achievement_welcome_nightflyer%22+translatable%3d%22false%22%3eCgkI55WBmPYcEAIQAQ%3c%2fstring%3e%0d%0a%3c%2fresources%3e
-and.ClientId=993798408935-afipk1g5gjr9e4ai52vfius6rs54rp1l.apps.googleusercontent.com
+and.ResourceData=%3c%3fxml+version%3d%221.0%22+encoding%3d%22utf-8%22%3f%3e%0d%0a%3c%21--Google+Play+game+services+IDs.+Save+this+file+as+res%2fvalues%2fgames-ids.xml+in+your+project.--%3e%0d%0a%3cresources%3e%0d%0a++%3c%21--app_id--%3e%0d%0a++%3cstring+name%3d%22app_id%22+translatable%3d%22false%22%3e993798408935%3c%2fstring%3e%0d%0a++%3c%21--package_name--%3e%0d%0a++%3cstring+name%3d%22package_name%22+translatable%3d%22false%22%3ecom.martandrey.sweetbatmatch%3c%2fstring%3e%0d%0a++%3c%21--achievement+Welcome%2c+Nightflyer%21--%3e%0d%0a++%3cstring+name%3d%22achievement_welcome_nightflyer%22+translatable%3d%22false%22%3eCgkI55WBmPYcEAIQAQ%3c%2fstring%3e%0d%0a%3c%2fresources%3e
+and.ClientId=993798408935-n27jgp64r5qdc71pu04j2qaq33r5mu7q.apps.googleusercontent.com
 android.SetupDone=true

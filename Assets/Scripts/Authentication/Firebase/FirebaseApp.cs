@@ -5,6 +5,7 @@ using UnityEngine.Events;
 using UnityEngine.Networking;
 using System;
 using System.Linq;
+using Firebase.AppCheck;
 
 public class FirebaseApp : MonoBehaviour
 {
@@ -78,6 +79,8 @@ public class FirebaseApp : MonoBehaviour
 
                 // Set a flag here to indicate whether Firebase is ready to use by your app.
                 OnSetFirebase?.Invoke();
+
+                FirebaseAppCheck.SetAppCheckProviderFactory(PlayIntegrityProviderFactory.Instance);
 
                 if (UserIsAuthenticated())
                 {

@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using DG.Tweening;
+using TMPro;
 
 public class MainMenuController : MonoBehaviour
 {
@@ -9,6 +10,11 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] AudioSource audioEnvironment;
     [SerializeField] CanvasGroup loading;
     [SerializeField] CanvasGroup alreadyLoading;
+
+    public void LinkAssets()
+    {
+        Application.OpenURL("https://assetstore.unity.com/packages/2d/gui/hungry-bat-match-3-ui-free-229197#publisher");
+    }
 
     /// <summary>
     /// Initiates the screen change transition and loads the level menu scene.

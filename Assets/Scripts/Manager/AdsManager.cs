@@ -33,8 +33,8 @@ public class AdsManager : MonoBehaviour
 
         rewardedAds = new Dictionary<string, RewardedAd>()
         {
-            // { rewardedIdLife, rewardedAdLife },
-            // { rewardedIdCoins, rewardedAdCoins },
+            { rewardedIdLife, rewardedAdLife },
+            { rewardedIdCoins, rewardedAdCoins },
             { rewardedIdContinueLevel, rewardedAdContinueLevel },
         };
 

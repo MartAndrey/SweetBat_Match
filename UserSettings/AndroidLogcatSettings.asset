@@ -1,42 +1,48 @@
 {
     "m_SelectedDeviceId": "146268f60409",
     "m_SelectedPackage": {
-        "deviceId": "",
-        "name": "",
-        "processId": 0,
+        "deviceId": "146268f60409",
+        "name": "com.martandrey.sweetbatmatch",
+        "processId": 30314,
         "exited": false
     },
     "m_SelectedPriority": 0,
     "m_KnownPackagesForSerialization": [
         {
             "deviceId": "146268f60409",
+            "name": "com.martandrey.sweetbatmatch",
+            "processId": 21743,
+            "exited": true
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.sweetbatmatch",
+            "processId": 22248,
+            "exited": true
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.sweetbatmatch",
+            "processId": 26141,
+            "exited": true
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.sweetbatmatch",
+            "processId": 31771,
+            "exited": true
+        },
+        {
+            "deviceId": "146268f60409",
             "name": "com.miui.home",
-            "processId": 1886,
+            "processId": 1891,
             "exited": false
         },
         {
             "deviceId": "146268f60409",
-            "name": "com.martandrey.hungrybat",
-            "processId": 26639,
-            "exited": true
-        },
-        {
-            "deviceId": "146268f60409",
-            "name": "com.zhiliaoapp.musically",
-            "processId": 21527,
-            "exited": true
-        },
-        {
-            "deviceId": "146268f60409",
-            "name": "com.martandrey.hungrybat",
-            "processId": 28065,
-            "exited": true
-        },
-        {
-            "deviceId": "146268f60409",
-            "name": "com.martandrey.hungrybat",
-            "processId": 32371,
-            "exited": true
+            "name": "com.martandrey.sweetbatmatch",
+            "processId": 30314,
+            "exited": false
         }
     ],
     "m_Tags": {
