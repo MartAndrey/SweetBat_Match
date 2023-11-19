@@ -17,9 +17,9 @@ Welcome to SweetBat Match, an exciting Match 3 puzzle adventure! Combine delicio
 
 ## Demo
 
-<img src="https://github.com/MartAndrey/Hungry_Bat/assets/94258941/b1e4001c-5a12-45b4-91cf-67e75c746baa" width="30%"></img>
-<img src="https://github.com/MartAndrey/Hungry_Bat/assets/94258941/65ba4364-93c8-494b-817b-d9588dbea3bb" width="30%"></img>
-<img src="https://github.com/MartAndrey/Hungry_Bat/assets/94258941/665dd799-b08b-4597-bf34-7db7ba48fd16" width="30%"></img>
+<img src="https://github.com/MartAndrey/SweetBat_Match/assets/94258941/beb9b4c7-2732-46e7-832e-e9b190aeac36" width="30%"></img>
+<img src="https://github.com/MartAndrey/SweetBat_Match/assets/94258941/743a2e6e-16bb-4d73-bec9-5826d4fe2bce" width="30%"></img>
+<img src="https://github.com/MartAndrey/SweetBat_Match/assets/94258941/64cfea2b-a51b-4733-adfa-d2a2530ecaaa" width="30%"></img>
 
 [Watch Video](https://youtu.be/F-DekC9kqmg)
 
