@@ -3,17 +3,11 @@
     "m_SelectedPackage": {
         "deviceId": "146268f60409",
         "name": "com.martandrey.sweetbatmatch",
-        "processId": 30314,
+        "processId": 18266,
         "exited": false
     },
     "m_SelectedPriority": 0,
     "m_KnownPackagesForSerialization": [
-        {
-            "deviceId": "146268f60409",
-            "name": "com.martandrey.sweetbatmatch",
-            "processId": 21743,
-            "exited": true
-        },
         {
             "deviceId": "146268f60409",
             "name": "com.martandrey.sweetbatmatch",
@@ -42,6 +36,18 @@
             "deviceId": "146268f60409",
             "name": "com.martandrey.sweetbatmatch",
             "processId": 30314,
+            "exited": true
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.android.chrome",
+            "processId": 8941,
+            "exited": false
+        },
+        {
+            "deviceId": "146268f60409",
+            "name": "com.martandrey.sweetbatmatch",
+            "processId": 18266,
             "exited": false
         }
     ],
